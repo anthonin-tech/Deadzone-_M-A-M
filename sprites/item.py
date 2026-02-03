@@ -1,5 +1,3 @@
-import pickle
-
 class Items:
     def __init__(self, name, durability, category, rarity, illustration, quantity=1):
         self._name = name 
@@ -8,74 +6,58 @@ class Items:
         self._rarity = rarity
         self._quantity = quantity
         self._illustration = illustration
+        self.image_surface = None
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def durability(self):
+        return self._durability
     
-    def __str__(self):
-        return (f"{self._name} \n| Durabilité : {self._durability} \n| Catégorie : {self._category} \n| Rareté : {self._rarity} \n| Quantité : {self._quantity}\n")
+    @durability.setter
+    def durability(self, value):
+        self._durability = max(0, min(100, value))
+
+    @property
+    def category(self):
+        return self._category
+
+    @property
+    def rarity(self):
+        return self._rarity
+
+    @property
+    def quantity(self):
+        return self._quantity
     
-    def to_dict_item(self):
-        return {
-            'name': self._name,
-            'durability': self._durability,
-            'category': self._category,
-            'rarity': self._rarity,
-            'quantity': self._quantity
-        }
+    @quantity.setter
+    def quantity(self, value):
+        self._quantity = max(0, value)
+
+    @property
+    def illustration(self):
+        return self._illustration
 
     def is_same_item(self, other):
-        return(self._name == other._name and self._category == other._category and self._rarity == other._rarity)
-    
-class Inventory:
-    def __init__(self):
-        self._inventory = []
+        if not isinstance(other, Items):
+            return False
+        return (
+            self._name == other._name and 
+            self._category == other._category and 
+            self._rarity == other._rarity and
+            self._illustration == other._illustration
+        )
 
+    def use(self):
+        if self._quantity > 0:
+            self._quantity -= 1
+            return True
+        return False
+    
+    def __repr__(self):
+        return f"Items(name='{self._name}', qty={self._quantity}, rarity='{self._rarity}')"
+    
     def __str__(self):
-        if not self._inventory:
-            return "Inventaire Vide"
-
-        texte = "\n Inventaire du joueur :\n"
-        for item in self._inventory:
-            texte += f"• {item}\n"
-        return texte     
-    
-    def add_item(self, name, durability, category, rarity, illustration, quantity=1,):
-
-        new_item = Items(name, durability, category, rarity, illustration, quantity)
-
-        for item in self._inventory:
-            if item.is_same_item(new_item):
-                item._quantity += 1
-                print(f"• {name} x {quantity} ajouté (Total: {item._quantity})")
-                return
-        
-        self._inventory.append(new_item)
-        print(f"• Nouveau {name} ajouté")
-    
-    def drop_item(self, name, durability, category, rarity, illustration, quantity=1):
-
-        drop_item = Items(name, durability, category, rarity, illustration, quantity)
-
-        for item in self._inventory:
-            if item.is_same_item(drop_item):
-                item._quantity -= 1
-                if item._quantity <= 0:
-                    self._inventory.remove(item)
-                print(f"• {name} x {quantity} supprimé (Total: {item._quantity})")
-                return
-
-if __name__ == "__main__": 
-  
-    player = Inventory()
-    player.add_item("Fusil à pompe", 100, "arme", "rare", "shotgun.png")
-    player.add_item("Fusil à pompe", 100, "arme", "rare", "shotgun.png")
-    player.add_item("Bouclier", 30, "Armure", "épique", "shield.png")
-    player.add_item("Fusil à pompe", 100, "arme", "rare", "shotgun.png")
-    player.add_item("Soin", 1, "soin", "légendaire", "potion_legendary.png")
-    player.add_item("Bouclier", 30, "Armure", "épique", "shield.png")
-    player.add_item("Soin", 1, "soin", "légendaire", "potion_legendary.png")
-    player.add_item("Soin", 1, "soin", "légendaire", "potion_legendary.png")
-
-    player.drop_item("Soin", 1, "soin", "légendaire", "potion_legendary.png")
-    player.drop_item("Soin", 1, "soin", "légendaire", "potion_legendary.png")
-    
-    print(player)
-
+        return f"{self._name} x{self._quantity} ({self._rarity})"
