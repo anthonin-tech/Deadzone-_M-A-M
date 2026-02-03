@@ -21,11 +21,11 @@ class Player:
         self._add_test_items()
     
     def _add_test_items(self):
-        self.inventory.add_item("Fusil à pompe", 100, "arme", "rare", "shotgun.png")
-        self.inventory.add_item("Pistolet", 70, "arme", "rare", "pistol.png")
-        self.inventory.add_item("Bandage", 100, "soin", "commun", "bandage.png", quantity=5)
-        self.inventory.add_item("Bouclier", 80, "armure", "épique", "shield.png")
-        self.inventory.add_item("Casque", 90, "armure", "épique", "helmet.png")
+        self.inventory.add_item("Fusil à pompe", 100, "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
+        self.inventory.add_item("Pistolet", 70, "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
+        self.inventory.add_item("Bandage", 100, "soin", "commun", "Bandage_Soin.png", "Soigne 5 PV", quantity=5)
+        self.inventory.add_item("Kit", 100, "soin", "légendaire", "Kit_Soin.png", "Soigne 20 PV",)
+        self.inventory.add_item("Eau", 100, "nourriture", "rare", "Eau_Nourriture.png", "Hydrate de 5", quantity=3)
 
     def handle_input(self, keys):
         self.velocity.x = 0

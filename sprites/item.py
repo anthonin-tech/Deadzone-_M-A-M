@@ -1,12 +1,13 @@
 class Items:
-    def __init__(self, name, durability, category, rarity, illustration, quantity=1):
+    def __init__(self, name, durability, category, rarity, illustration,  description, quantity=1):
         self._name = name 
-        self._durability = durability
+        self.durability = durability
         self._category = category
         self._rarity = rarity
-        self._quantity = quantity
+        self.quantity = quantity
         self._illustration = illustration
         self.image_surface = None
+        self._description = description
 
     @property
     def name(self):
@@ -39,6 +40,10 @@ class Items:
     @property
     def illustration(self):
         return self._illustration
+    
+    @property
+    def description(self):
+        return self._description
 
     def is_same_item(self, other):
         if not isinstance(other, Items):
@@ -47,7 +52,8 @@ class Items:
             self._name == other._name and 
             self._category == other._category and 
             self._rarity == other._rarity and
-            self._illustration == other._illustration
+            self._illustration == other._illustration and
+            self._description == other._description
         )
 
     def use(self):
