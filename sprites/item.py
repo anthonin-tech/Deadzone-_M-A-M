@@ -53,7 +53,8 @@ class Items:
             self._category == other._category and 
             self._rarity == other._rarity and
             self._illustration == other._illustration and
-            self._description == other._description
+            self._description == other._description and
+            self._durability == other._durability
         )
 
     def use(self):

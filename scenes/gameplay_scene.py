@@ -48,7 +48,7 @@ class Gameplay_Scene:
             durability=100,
             category="nourriture",
             rarity="commun",
-            illustration="Eau_Nourrituez.png",
+            illustration="Eau_Nourriture.png",
             description="Hydratation de 5",
             quantity=1
         )

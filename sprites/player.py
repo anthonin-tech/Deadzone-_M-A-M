@@ -18,6 +18,14 @@ class Player:
         self.rect = self.image.get_rect(center=self.position)
 
         self.inventory = Inventory(capacity=20)
+
+        self.equipment = {
+            "weapon": None,
+            "helmet": None,
+            "chestplate": None,
+            "boots": None
+        }
+
         self._add_test_items()
     
     def _add_test_items(self):
@@ -26,6 +34,9 @@ class Player:
         self.inventory.add_item("Bandage", 100, "soin", "commun", "Bandage_Soin.png", "Soigne 5 PV", quantity=5)
         self.inventory.add_item("Kit", 100, "soin", "légendaire", "Kit_Soin.png", "Soigne 20 PV",)
         self.inventory.add_item("Eau", 100, "nourriture", "rare", "Eau_Nourriture.png", "Hydrate de 5", quantity=3)
+        self.inventory.add_item("Casque en fer", 100, "armure", "rare", "Bandage_Soin.png", "Protège la tête")
+        self.inventory.add_item("Plastron en cuir", 80, "armure", "commun", "Kit_Soin.png", "Protection basique du torse")
+        self.inventory.add_item("Bottes renforcées", 90, "armure", "épique", "Eau_Nourriture.png", "Bottes résistantes")
 
     def handle_input(self, keys):
         self.velocity.x = 0
@@ -53,7 +64,21 @@ class Player:
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         self._draw_health_bar(screen)
+
+        if self.equipment["weapon"]:
+            self._draw_weapon(screen)
     
+    def _draw_weapon(self, screen):
+        weapon = self.equipment["weapon"]
+
+        weapon_x = self.rect.right + 2 
+        weapon_y = self.rect.centery - 10
+
+        weapon_size = (24, 24)
+        weapon_image = pygame.transform.scale(weapon.image_surface, weapon_size)
+
+        screen.blit(weapon_image, (weapon_x, weapon_y))
+        
     def _draw_health_bar(self, screen):
         bar_width = 40
         bar_height = 5
@@ -75,3 +100,52 @@ class Player:
     def heal(self, amount):
         self.health = min(self.max_health, self.health + amount)
         print(f"💚 Joueur soigné ! Vie: {self.health}/{self.max_health}")
+
+    def equip_item(self, item, slot):
+        if slot not in self.equipment:
+            print(f"❌ Slot invalide: {slot}")
+            return False
+
+        if self.equipment[slot] is not None:
+            old_item = self.equipment[slot]
+            self.inventory.add_item(
+                old_item.name,
+                old_item.durability,
+                old_item.category,
+                old_item.rarity,
+                old_item.illustration,
+                old_item.description
+            )
+        
+        self.equipment[slot] = item
+        self.inventory.remove_item(item, quantity = 1)
+        print(f"⚔️ {item.name} équipé dans {slot}")
+        return True
+    
+    def unequip_item(self, slot):
+        if slot not in self.equipment:
+            print(f"❌ Slot invalide: {slot}")
+            return False
+        
+        if self.equipment[slot] is None:
+            print(f"❌ Aucun item équipé dans {slot}")
+            return False
+        
+        item = self.equipment[slot]
+
+        success = self.inventory.add_item(
+            item.name,
+            item.durability,
+            item.category,
+            item.rarity,
+            item.illustration,
+            item.description
+        )
+
+        if success:
+            self.equipment[slot] = None
+            print(f"🎒 {item.name} déséquipé de {slot}")
+            return True
+        else:
+            print(f"❌ Inventaire plein, impossible de déséquiper")
+            return False
