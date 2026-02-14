@@ -58,7 +58,7 @@ class Items:
         )
 
     def use(self):
-        if self._quantity > 0:
+        if (self._category == "soin" or self._category == "nourriture") and self._quantity > 0:
             self._quantity -= 1
             return True
         return False

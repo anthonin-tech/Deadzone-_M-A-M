@@ -2,25 +2,36 @@ import pygame
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from scenes.inventory_scene import InventoryScene
 from sprites.dropped_item import DroppedItem
 from sprites.item import Items
-from scenes.inventory_scene import InventoryScene
+from sprites.enemy import Enemy
 
 class Gameplay_Scene:
     def __init__(self, game, player):
         self.game = game
         self.player = player
+        self.enemies = []
+        self.dropped_items = []
         
         self.bg_color = (30, 80, 30)
         
         self.font = pygame.font.Font(None, 24)
         self.font_pickup = pygame.font.Font(None, 28)
 
-        self.dropped_items = []
         self.nearby_item = None
 
+        self.enemies_killed = 0
+        self.start_time = pygame.time.get_ticks()
+
         self._spawn_test_items()
-    
+        self._spawn_enemies()
+
+    def _spawn_enemies(self):
+        """Crée quelques ennemis pour tester"""
+        self.enemies.append(Enemy(100, 100))
+        self.enemies.append(Enemy(700, 500))
+
     def _spawn_test_items(self):
         """Crée quelques items au sol pour tester"""
         item1 = Items(
@@ -67,10 +78,12 @@ class Gameplay_Scene:
                 self.try_pickup_item()
 
             if event.key == pygame.K_h:
-                self.player.take_damage(10)
+                attacker_x = 400
+                attacker_y = 300
+                self.player.take_damage(5, attacker_x, attacker_y)
             
             if event.key == pygame.K_j:
-                self.player.heal(15)
+                self.player.heal(5)
     
     def try_pickup_item(self):
         if self.nearby_item:
@@ -94,11 +107,14 @@ class Gameplay_Scene:
     def update(self, dt):
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
+        self.player.update(dt)
         
         self.player.update(dt)
 
         for item in self.dropped_items:
             item.update(dt)
+        
+        self.update_enemies(dt)
         
         self.check_nearby_items()
 
@@ -108,6 +124,20 @@ class Gameplay_Scene:
                 drop_y = self.player.y
                 self.dropped_items.append(DroppedItem(item, drop_x, drop_y))
             self.game.items_to_drop.clear()
+        
+        if self.player.health <= 0:
+            from scenes.gameover_scene import GameOverScene
+            
+            time_survived = (pygame.time.get_ticks() - self.start_time) / 1000
+
+            stats = {
+                'enemies_killed': self.enemies_killed,
+                'time_survived': time_survived
+            }
+
+            self.game.change_scene(GameOverScene(self.game, stats))
+            return
+            
 
     def check_nearby_items(self):
         self.nearby_item = None
@@ -128,19 +158,46 @@ class Gameplay_Scene:
                     closest_distance = distance
                     self.nearby_item = dropped
 
-    
+    def update_enemies(self, dt):
+        player_x = self.player.position.x
+        player_y = self.player.position.y
+
+        for enemy in self.enemies[:]:   #[:] pour copie si on supprime
+            distance = enemy.calculate_distance(player_x, player_y)
+
+            if distance < enemy.detection_radius and distance > enemy.attack_distance:
+                enemy.move_towards(player_x, player_y, dt)
+            
+            elif distance <= enemy.attack_distance and enemy.can_attack():
+                self.player.take_damage(enemy.damage, enemy.x, enemy.y)
+                enemy.last_attack = pygame.time.get_ticks()
+                print(f"💥 Ennemi Attaque ! PV player: {self.player.health}")
+
+            # Update graphique
+            enemy.update(dt)
+
+            if enemy.health <= 0:
+                self.enemies.remove(enemy)
+                self.enemies_killed += 1
+
     def draw(self, screen):
         screen.fill(self.bg_color)
 
         for dropped in self.dropped_items:
             dropped.draw(screen)
         
+        for enemy in self.enemies:
+            enemy.draw(screen)
+
         self.player.draw(screen)
         
         if self.nearby_item:
             self.draw_pickup_prompt(screen)
 
         self._draw_instructions(screen)
+
+        enemy_text = self.font.render(f"Ennemi: {len(self.enemies)}", True, (255, 255, 255))
+        screen.blit(enemy_text, (10, screen.get_height() - 60))
     
     def draw_pickup_prompt(self, screen):
         text = f"[E] {self.nearby_item.item.name}"

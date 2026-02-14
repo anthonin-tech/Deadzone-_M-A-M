@@ -3,18 +3,33 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from systems.inventory import Inventory
+from sprites.weapon import Weapon
 
 class Player:
     def __init__(self, x=400, y=300):
         self.position = pygame.Vector2(x, y)
         self.velocity = pygame.Vector2(0, 0)
-        self.speed = 200
+        self.speed = 100
 
         self.health = 20
         self.max_health = 20
 
+        # Animation de dégâts - FLASH
+        self.is_hit = False
+        self.hit_flash_duration = 0.2  # ← En SECONDES (200ms = 0.2s)
+        self.hit_timer = 0
+
+        # Knockback (recul)
+        self.knockback_velocity = pygame.Vector2(0, 0)
+        self.knockback_strength = 200  # Force du recul
+
+        # Couleurs
+        self.original_color = (50, 100, 255)
+        self.hit_color = (255, 255, 255)
+
+        # Image
         self.image = pygame.Surface((32, 32))
-        self.image.fill((50, 100, 255))
+        self.image.fill(self.original_color)
         self.rect = self.image.get_rect(center=self.position)
 
         self.inventory = Inventory(capacity=20)
@@ -38,6 +53,35 @@ class Player:
         self.inventory.add_item("Plastron en cuir", 80, "armure", "commun", "Kit_Soin.png", "Protection basique du torse")
         self.inventory.add_item("Bottes renforcées", 90, "armure", "épique", "Eau_Nourriture.png", "Bottes résistantes")
 
+    def take_damage(self, amount, attacker_x=None, attacker_y=None):
+        """
+        Prend des dégâts avec animation de flash et knockback
+        
+        Args:
+            amount: Points de dégâts
+            attacker_x: Position X de l'attaquant (pour le knockback)
+            attacker_y: Position Y de l'attaquant (pour le knockback)
+        """
+        self.health = max(0, self.health - amount)
+        
+        # ← Active le flash blanc
+        self.is_hit = True
+        self.hit_timer = self.hit_flash_duration
+        
+        # ← Calcule le knockback si on connaît la position de l'attaquant
+        if attacker_x is not None and attacker_y is not None:
+            # Direction opposée à l'attaquant
+            dx = self.position.x - attacker_x
+            dy = self.position.y - attacker_y
+            distance = (dx**2 + dy**2) ** 0.5
+            
+            if distance > 0:
+                # Normalise et applique la force
+                self.knockback_velocity.x = (dx / distance) * self.knockback_strength
+                self.knockback_velocity.y = (dy / distance) * self.knockback_strength
+        
+        print(f"💔 Joueur blessé ! Vie: {self.health}/{self.max_health}")
+
     def handle_input(self, keys):
         self.velocity.x = 0
         self.velocity.y = 0
@@ -58,13 +102,42 @@ class Player:
             self.velocity = self.velocity.normalize()
         
     def update(self, dt):
+        # Mouvement normal
         self.position += self.velocity * self.speed * dt
+        
+        # ← Applique le knockback
+        self.position += self.knockback_velocity * dt
+        
+        # ← Friction sur le knockback (ralentit progressivement)
+        self.knockback_velocity *= 0.85  # Perd 15% de vitesse chaque frame
+        
+        # Arrête le knockback s'il est très faible
+        if self.knockback_velocity.length() < 1:
+            self.knockback_velocity.x = 0
+            self.knockback_velocity.y = 0
+        
         self.rect.center = self.position
+
+        # ← Gestion du flash blanc
+        if self.is_hit:
+            self.hit_timer -= dt  # dt est en secondes
+            
+            if self.hit_timer <= 0:
+                # Flash terminé
+                self.is_hit = False
+                self.image.fill(self.original_color)
+            else:
+                # Pendant le flash : devient blanc
+                self.image.fill(self.hit_color)
     
     def draw(self, screen):
+        # Dessine le joueur
         screen.blit(self.image, self.rect)
+        
+        # Barre de vie
         self._draw_health_bar(screen)
 
+        # Arme équipée
         if self.equipment["weapon"]:
             self._draw_weapon(screen)
     
@@ -92,10 +165,6 @@ class Player:
         pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))
 
         pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
-
-    def take_damage(self, amount):
-        self.health = max(0, self.health - amount)
-        print(f"💔 Joueur blessé ! Vie: {self.health}/{self.max_health}")
     
     def heal(self, amount):
         self.health = min(self.max_health, self.health + amount)

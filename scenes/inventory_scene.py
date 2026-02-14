@@ -10,18 +10,22 @@ class InventoryScene:
 
         self.slot_size = 64
         self.margin = 10
-        self.cols = 5
+        self.cols = 9
 
-        self.equipment_slot_size = 56
+        self.equipment_slot_size = 64
 
-        self.character_panel_x = 50
+        total_inventory_width = self.cols * self.slot_size + (self.cols - 1) * self.margin
+        screen_width = 1280
+        self.inventory_x = (screen_width - total_inventory_width) // 2
+        self.inventory_y = 400
+
+        self.character_panel_x = self.inventory_x
         self.character_panel_y = 150
-        self.character_panel_width = 300
-        self.character_panel_height = 450
+        self.character_panel_width = 180
+        self.character_panel_height = 220
 
-        total_width = self.cols * self.slot_size + (self.cols - 1) * self.margin
-        self.start_x = self.character_panel_x + self.character_panel_width + 50
-        self.start_y = 150
+        self.equipment_inventory_x = self.character_panel_x + self.character_panel_width + 20
+        self.equipment_inventory_y = self.character_panel_y + 30
 
         self.bg_color = (40, 40, 50)
         self.slot_color = (60, 60, 70)
@@ -44,7 +48,7 @@ class InventoryScene:
         self.hovered_item = None
 
         self.selected_item_index = None
-
+         
         self._load_item_images()
 
     def _load_item_images(self):
@@ -72,9 +76,9 @@ class InventoryScene:
                 from scenes.gameplay_scene import Gameplay_Scene
                 self.game.change_scene(Gameplay_Scene(self.game, self.player))
         
-        elif event.type == pygame.K_e:
-            if self.hovered_item:
-                self._equip_hovered_item()
+            elif event.key == pygame.K_e:
+                if self.hovered_item:
+                    self._equip_hovered_item()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -104,14 +108,17 @@ class InventoryScene:
     def handle_click(self, mouse_pos):
         mx, my = mouse_pos
 
-        equipement_slots = {
-            "helmet": (self.character_panel_x + 180, self.character_panel_y + 50),
-            "chestplate": (self.character_panel_x + 180, self.character_panel_y + 120),
-            "boots": (self.character_panel_x + 180, self.character_panel_y + 190),
-            "weapon": (self.character_panel_x + 180, self.character_panel_y + 260)
+        equipement_positions = {
+            "helmet": (0, 0),
+            "chestplate": (1, 0),
+            "boots": (0, 1),
+            "weapon": (1, 1)
         }
 
-        for slot_name, (slot_x, slot_y) in equipement_slots.items():
+        for slot_name, (grid_x, grid_y) in equipement_positions.items():
+            slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
+            slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
+
             rect = pygame.Rect(slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size)
             if rect.collidepoint(mx, my):
                 if self.player.equipment[slot_name] is not None:
@@ -123,8 +130,8 @@ class InventoryScene:
             col = i % self.cols
             row = i // self.cols
 
-            x = self.start_x + col * (self.slot_size + self.margin)
-            y = self.start_y + row * (self.slot_size + self.margin)
+            x = self.inventory_x + col * (self.slot_size + self.margin)
+            y = self.inventory_y + row * (self.slot_size + self.margin)
 
             rect = pygame.Rect(x, y, self.slot_size, self.slot_size)
             if rect.collidepoint(mx, my):
@@ -142,8 +149,8 @@ class InventoryScene:
             col = i % self.cols
             row = i // self.cols
 
-            x = self.start_x + col * (self.slot_size + self.margin)
-            y = self.start_y + row * (self.slot_size + self.margin)
+            x = self.inventory_x + col * (self.slot_size + self.margin)
+            y = self.inventory_y + row * (self.slot_size + self.margin)
 
             rect = pygame.Rect(x, y, self.slot_size, self.slot_size)
             if rect.collidepoint(mx, my):
@@ -158,11 +165,28 @@ class InventoryScene:
         self.tooltip_surface = None
         self.hovered_item = None
 
+        equipment_positions = {
+            "helmet": (0, 0),
+            "chestplate": (0, 1),
+            "boots": (0, 2),
+            "weapon": (1, 0)
+        }
+
+        for slot_name, (grid_x, grid_y) in equipment_positions.items():
+            slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
+            slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
+
+            rect = pygame.Rect(slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size)
+            if rect.collidepoint(mx, my) and self.player.equipment[slot_name]:
+                self.hovered_item = self.player.equipment[slot_name]
+                self._create_tooltip(self.player.equipment[slot_name], mx, my)
+                return
+            
         for i, item in enumerate(self.player.inventory.items):
             col = i % self.cols
             row = i // self.cols
-            x = self.start_x + col * (self.slot_size + self.margin)
-            y = self.start_y + row * (self.slot_size + self.margin)
+            x = self.inventory_x + col * (self.slot_size + self.margin)
+            y = self.inventory_y + row * (self.slot_size + self.margin)
 
             rect = pygame.Rect(x, y, self.slot_size, self.slot_size)
             if rect.collidepoint(mx, my):
@@ -213,7 +237,7 @@ class InventoryScene:
         screen.fill(self.bg_color)
 
         title = self.font_title.render("INVENTAIRE", True, (220, 220, 220))
-        screen.blit(title, (screen.get_width()//2 - title.get_width()//2, 60))
+        screen.blit(title, (screen.get_width()//2 - title.get_width()//2, 40))
 
         info_text = self.font_info.render(
             f"Slots: {len(self.player.inventory.items)}/{self.player.inventory.capacity}  |  "
@@ -221,16 +245,18 @@ class InventoryScene:
             True, (180, 180, 180)
         )
 
-        screen.blit(info_text, (screen.get_width()//2 - info_text.get_width()//2, 110))
+        screen.blit(info_text, (screen.get_width()//2 - info_text.get_width()//2, 85))
 
         self._draw_character_panel(screen)
+
+        self._draw_equipment_slots(screen)
 
         for i in range(self.player.inventory.capacity):
             col = i % self.cols
             row = i // self.cols
 
-            x = self.start_x + col * (self.slot_size + self.margin)
-            y = self.start_y + row * (self.slot_size + self.margin)
+            x = self.inventory_x + col * (self.slot_size + self.margin)
+            y = self.inventory_y + row * (self.slot_size + self.margin)
 
             pygame.draw.rect(screen, self.slot_color, (x, y, self.slot_size, self.slot_size))
 
@@ -286,7 +312,7 @@ class InventoryScene:
         panel_title = self.font_tooltip.render("PERSONNAGE", True, (220, 220, 220))
         screen.blit(panel_title, (self.character_panel_x + 10, self.character_panel_y + 10))
 
-        char_x = self.character_panel_x + 60
+        char_x = self.character_panel_x + self.character_panel_width // 2
         char_y = self.character_panel_y + 80
 
         pygame.draw.circle(screen, (255, 200, 150), (char_x, char_y), 20)
@@ -305,7 +331,7 @@ class InventoryScene:
             pygame.draw.rect(screen, (100, 100, 100), (char_x + 2, char_y + 100, 10, 15))
 
         if self.player.equipment["weapon"]:
-            weapon = self.player.equipment["equipment"]
+            weapon = self.player.equipment["weapon"]
             weapon_x = char_x + 30
             weapon_y = char_y + 40
 
@@ -318,21 +344,33 @@ class InventoryScene:
             else:
                 pygame.draw.rect(screen, (128, 128, 128), (weapon_x, weapon_y - 2, 20, 4))
 
-        equipment_slots = {
-            "helmet": ("Casque", self.character_panel_y + 50),
-            "chestplate": ("Plastron", self.character_panel_y + 120),
-            "boots": ("Bottes", self.character_panel_y + 190),
-            "weapon": ("Arme", self.character_panel_y + 260)
+    def _draw_equipment_slots(self, screen):
+        equipment_positions = {
+            "helmet": (0, 0, "Casque"),
+            "chestplate": (0, 1, "Plastron"),
+            "boots": (0, 2, "Bottes"),
+            "weapon": (1, 0, "Arme") 
         }
 
-        slot_x = self.character_panel_x = 160
+        for slot_name, (grid_x, grid_y, label) in equipment_positions.items():
+            slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
+            slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
 
-        for slot_name, (label, slot_y) in equipment_slots.items():
-            label_text = self.font_info.render(label, True, (200, 200, 200))
-            screen.blit(label_text, (slot_x, slot_y - 20))
+            if grid_x == 0:
+                label_text = self.font_info.render(label, True, (200, 200, 200))
+                screen.blit(label_text, (slot_x, slot_y - 20))
+            elif grid_x == 1:
+                label_text = self.font_info.render(label, True, (200, 200, 200))
+                screen.blit(label_text, (slot_x, slot_y - 20))
 
-            pygame.draw.rect(screen, self.slot_border_color, (slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size))
-            pygame.draw.rect(screen, self.slot_border_color, (slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size), 2)
+            pygame.draw.rect(screen, self.slot_color, 
+                           (slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size))
+            
+            border_width = 3 if (self.player.equipment[slot_name] and 
+                                self.player.equipment[slot_name] == self.hovered_item) else 2
+            pygame.draw.rect(screen, self.slot_border_color, 
+                           (slot_x, slot_y, self.equipment_slot_size, self.equipment_slot_size), 
+                           border_width)
 
             equipped_item = self.player.equipment[slot_name]
             if equipped_item:
