@@ -9,25 +9,23 @@ class Player:
     def __init__(self, x=400, y=300):
         self.position = pygame.Vector2(x, y)
         self.velocity = pygame.Vector2(0, 0)
-        self.speed = 100
+        self.speed = 80
 
         self.health = 20
         self.max_health = 20
 
-        # Animation de dégâts - FLASH
         self.is_hit = False
-        self.hit_flash_duration = 0.2  # ← En SECONDES (200ms = 0.2s)
+        self.hit_flash_duration = 0.2
         self.hit_timer = 0
 
-        # Knockback (recul)
         self.knockback_velocity = pygame.Vector2(0, 0)
-        self.knockback_strength = 200  # Force du recul
+        self.knockback_strength = 200
 
-        # Couleurs
+        self.last_shot_time = 0
+
         self.original_color = (50, 100, 255)
         self.hit_color = (255, 255, 255)
 
-        # Image
         self.image = pygame.Surface((32, 32))
         self.image.fill(self.original_color)
         self.rect = self.image.get_rect(center=self.position)
@@ -42,7 +40,7 @@ class Player:
         }
 
         self._add_test_items()
-    
+        
     def _add_test_items(self):
         self.inventory.add_item("Fusil à pompe", 100, "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
         self.inventory.add_item("Pistolet", 70, "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
@@ -54,33 +52,40 @@ class Player:
         self.inventory.add_item("Bottes renforcées", 90, "armure", "épique", "Eau_Nourriture.png", "Bottes résistantes")
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
-        """
-        Prend des dégâts avec animation de flash et knockback
-        
-        Args:
-            amount: Points de dégâts
-            attacker_x: Position X de l'attaquant (pour le knockback)
-            attacker_y: Position Y de l'attaquant (pour le knockback)
-        """
         self.health = max(0, self.health - amount)
-        
-        # ← Active le flash blanc
+
         self.is_hit = True
         self.hit_timer = self.hit_flash_duration
-        
-        # ← Calcule le knockback si on connaît la position de l'attaquant
+
         if attacker_x is not None and attacker_y is not None:
-            # Direction opposée à l'attaquant
             dx = self.position.x - attacker_x
             dy = self.position.y - attacker_y
             distance = (dx**2 + dy**2) ** 0.5
             
             if distance > 0:
-                # Normalise et applique la force
                 self.knockback_velocity.x = (dx / distance) * self.knockback_strength
                 self.knockback_velocity.y = (dy / distance) * self.knockback_strength
         
         print(f"💔 Joueur blessé ! Vie: {self.health}/{self.max_health}")
+    
+    def get_equipped_weapon(self):
+        weapon_item = self.equipment["weapon"]
+        if weapon_item is None:
+            return None
+        return Weapon.from_item(weapon_item)
+    
+    def shoot(self, mouse_pos):
+        weapon = self.get_equipped_weapon()
+        if weapon is None:
+            return []
+        
+        now = pygame.time.get_ticks()
+        if now - self.last_shot_time < weapon.cooldown_ms:
+            return []
+        
+        self.last_shot_time = now
+        origin = pygame.Vector2(self.rect.centerx, self.rect.centery)
+        return weapon.shoot(origin, pygame.Vector2(mouse_pos))
 
     def handle_input(self, keys):
         self.velocity.x = 0
@@ -102,42 +107,32 @@ class Player:
             self.velocity = self.velocity.normalize()
         
     def update(self, dt):
-        # Mouvement normal
         self.position += self.velocity * self.speed * dt
         
-        # ← Applique le knockback
         self.position += self.knockback_velocity * dt
-        
-        # ← Friction sur le knockback (ralentit progressivement)
-        self.knockback_velocity *= 0.85  # Perd 15% de vitesse chaque frame
-        
-        # Arrête le knockback s'il est très faible
+
+        self.knockback_velocity *= 0.85 
+
         if self.knockback_velocity.length() < 1:
             self.knockback_velocity.x = 0
             self.knockback_velocity.y = 0
         
         self.rect.center = self.position
 
-        # ← Gestion du flash blanc
         if self.is_hit:
-            self.hit_timer -= dt  # dt est en secondes
+            self.hit_timer -= dt  
             
             if self.hit_timer <= 0:
-                # Flash terminé
                 self.is_hit = False
                 self.image.fill(self.original_color)
             else:
-                # Pendant le flash : devient blanc
                 self.image.fill(self.hit_color)
     
     def draw(self, screen):
-        # Dessine le joueur
         screen.blit(self.image, self.rect)
         
-        # Barre de vie
         self._draw_health_bar(screen)
 
-        # Arme équipée
         if self.equipment["weapon"]:
             self._draw_weapon(screen)
     

@@ -1,36 +1,72 @@
 import pygame
+import random
+import math
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from systems.inventory import Items
-from systems.projectile import Projectile
+from sprites.projectile import Projectile
 
 class Weapon:
-    def __init__(self, name, damage, cooldown, projectile_speed):
-        self.name = name
-        self.damage = damage
-        self.cooldown = cooldown
-        self.projectile_speed = projectile_speed
+    PROFILES = {
+        "pistol": {
+            "cooldown_ms": 250,
+            "projectile_speed": 900,
+            "projectile_damage": 15,
+            "pellets": 1,
+            "spread_deg": 2,
+            "max_distance": 950
+        },
+        "shotgun": {
+            "cooldown_ms": 700,
+            "projectile_speed": 750,
+            "projectile_damage": 8,
+            "pellets": 6,
+            "spread_deg": 18,
+            "max_distance": 550
+        }
+    }
 
-        self.last_shot_time = 0
-
-    def can_shoot(self):
-        current_time = pygame.time.get_ticks()
-        return current_time - self.last_shot_time >= self.cooldown
+    def __init__(self, profile_name):
+        data = self.PROFILES[profile_name]
+        self.profile_name = profile_name
+        self.cooldown_ms = data["cooldown_ms"]
+        self.projectile_speed = data["projectile_speed"]
+        self.projectile_damage = data["projectile_damage"]
+        self.pellets = data["pellets"]
+        self.spread_deg = data["spread_deg"]
+        self.max_distance = data["max_distance"]
     
-    def shoot(self, position, direction):
-        if not self.can_shoot():
-            return None
+    @classmethod
+    def from_item(cls, item):
+        name = item.name.lower()
+        if "pompe" in name :
+            return cls("shotgun")
+        if "pistolet":
+            return cls("pistol")
+        return cls("pistol")
+    
+    def shoot(self, origin, target):
+        direction = pygame.Vector2(target) - pygame.Vector2(origin)
+        if direction.length_squared() == 0:
+            return []
         
-        self.last_shot_time =pygame.time.get_ticks()
+        base_angle = math.atan2(direction.y, direction.x)
+        projectiles = []
 
-        projectile = Projectile(
-            position=position,
-            direction=direction,
-            speed=self.projectile_speed,
-            damage=self.damage
-        )
+        for _ in range(self.pellets):
+            offset = random.uniform(-self.spread_deg / 2, self.spread_deg / 2)
+            angle = base_angle + math.radians(offset)
+            shot_dir = pygame.Vector2(math.cos(angle), math.sin(angle))
 
-        return projectile
-
+            p = Projectile(
+                origin.x,
+                origin.y,
+                shot_dir,
+                speed=self.projectile_speed,
+                damage=self.projectile_damage,
+                radius=4,
+                max_distance=self.max_distance
+            )
+            projectiles.append(p)
         
+        return projectiles

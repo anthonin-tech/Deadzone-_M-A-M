@@ -8,11 +8,11 @@ class Enemy():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.speed = 75
+        self.speed = 55
         self.radius = 10
         self.color = (255, 0, 0)
 
-        self.health = 20
+        self.health = 40
         self.max_health = 20
 
         self.detection_radius = 200

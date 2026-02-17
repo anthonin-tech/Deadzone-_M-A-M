@@ -1,4 +1,5 @@
 import pygame
+import math
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -6,6 +7,7 @@ from scenes.inventory_scene import InventoryScene
 from sprites.dropped_item import DroppedItem
 from sprites.item import Items
 from sprites.enemy import Enemy
+from sprites.weapon import Weapon
 
 class Gameplay_Scene:
     def __init__(self, game, player):
@@ -24,8 +26,11 @@ class Gameplay_Scene:
         self.enemies_killed = 0
         self.start_time = pygame.time.get_ticks()
 
+        self.projectiles = []
+
         self._spawn_test_items()
         self._spawn_enemies()
+
 
     def _spawn_enemies(self):
         """Crée quelques ennemis pour tester"""
@@ -45,7 +50,7 @@ class Gameplay_Scene:
         )
         
         item2 = Items(
-            name="Fusil à pompe",
+            name="pompe",
             durability=80,
             category="arme",
             rarity="épique",
@@ -84,6 +89,9 @@ class Gameplay_Scene:
             
             if event.key == pygame.K_j:
                 self.player.heal(5)
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            self.projectiles.extend(self.player.shoot(event.pos))
     
     def try_pickup_item(self):
         if self.nearby_item:
@@ -108,14 +116,12 @@ class Gameplay_Scene:
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
         self.player.update(dt)
-        
-        self.player.update(dt)
 
         for item in self.dropped_items:
             item.update(dt)
         
         self.update_enemies(dt)
-        
+        self.update_weapon(dt)
         self.check_nearby_items()
 
         if hasattr(self.game, 'items_to_drop') and self.game.items_to_drop:
@@ -137,6 +143,9 @@ class Gameplay_Scene:
 
             self.game.change_scene(GameOverScene(self.game, stats))
             return
+        
+        if pygame.mouse.get_pressed()[0]:
+            self.projectiles.extend(self.player.shoot(pygame.mouse.get_pos()))
             
 
     def check_nearby_items(self):
@@ -173,12 +182,32 @@ class Gameplay_Scene:
                 enemy.last_attack = pygame.time.get_ticks()
                 print(f"💥 Ennemi Attaque ! PV player: {self.player.health}")
 
-            # Update graphique
             enemy.update(dt)
 
             if enemy.health <= 0:
                 self.enemies.remove(enemy)
                 self.enemies_killed += 1
+
+    def update_weapon(self, dt):
+        for projectile in self.projectiles[:]:
+            projectile.update(dt)
+            if not projectile.alive:
+                self.projectiles.remove(projectile)
+                continue
+
+            for enemy in self.enemies[:]:
+                enemy_pos = pygame.Vector2(enemy.x, enemy.y)
+                dist = enemy_pos.distance_to(projectile.position)
+                if dist <= (enemy.radius + projectile.radius):
+                    enemy.health -= projectile.damage
+                    projectile.alive = False
+                    if enemy.health <= 0:
+                        self.enemies.remove(enemy)
+                        self.enemies_killed += 1
+                    break
+            
+            if not projectile.alive and projectile in self.projectiles:
+                self.projectiles.remove(projectile)
 
     def draw(self, screen):
         screen.fill(self.bg_color)
@@ -198,6 +227,11 @@ class Gameplay_Scene:
 
         enemy_text = self.font.render(f"Ennemi: {len(self.enemies)}", True, (255, 255, 255))
         screen.blit(enemy_text, (10, screen.get_height() - 60))
+
+        for projectile in self.projectiles:
+            projectile.draw(screen)
+
+        self._draw_aim_preview(screen)
     
     def draw_pickup_prompt(self, screen):
         text = f"[E] {self.nearby_item.item.name}"
@@ -237,3 +271,28 @@ class Gameplay_Scene:
             True, (255, 255, 0)
         )
         screen.blit(items_text, (10, screen.get_height() - 30))
+    
+    def _draw_aim_preview(self, screen):
+        if not pygame.mouse.get_pressed()[0]:
+            return
+        
+        weapon = self.player.get_equipped_weapon()
+        origin = pygame.Vector2(self.player.rect.centerx, self.player.rect.centery)
+        target = pygame.Vector2(pygame.mouse.get_pos())
+        direction = target - origin
+        if direction.length_squared() == 0:
+            return
+        direction = direction.normalize()
+
+        end_pos = origin + direction * min(weapon.max_distance, 220)
+        pygame.draw.line(screen, (255, 255, 255), origin, end_pos, 2)
+
+        if weapon.pellets > 1:
+            base_angle = math.atan2(direction.y, direction.x)
+            half_spread = math.radians(weapon.spread_deg / 2)
+
+            left = pygame.Vector2(math.cos(base_angle - half_spread), math.sin(base_angle - half_spread))
+            right = pygame.Vector2(math.cos(base_angle + half_spread), math.sin(base_angle + half_spread))
+
+            pygame.draw.line(screen, (255, 200, 120), origin, origin + left * 180, 1)
+            pygame.draw.line(screen, (255, 200, 120), origin, origin + right * 180, 1)
