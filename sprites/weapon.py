@@ -9,21 +9,21 @@ from sprites.projectile import Projectile
 class Weapon:
     PROFILES = {
         "pistol": {
-            "cooldown_ms": 250,
-            "projectile_speed": 900,
+            "cooldown_ms": 1000,
+            "projectile_speed": 700,
             "projectile_damage": 15,
             "pellets": 1,
             "spread_deg": 2,
-            "max_distance": 950
+            "max_distance": 200
         },
         "shotgun": {
-            "cooldown_ms": 700,
-            "projectile_speed": 750,
+            "cooldown_ms": 1500,
+            "projectile_speed": 500,
             "projectile_damage": 8,
-            "pellets": 6,
-            "spread_deg": 18,
-            "max_distance": 550
-        }
+            "pellets": 10,
+            "spread_deg": 20,
+            "max_distance": 150
+        },
     }
 
     def __init__(self, profile_name):

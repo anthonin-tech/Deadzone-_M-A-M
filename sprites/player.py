@@ -4,6 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from systems.inventory import Inventory
 from sprites.weapon import Weapon
+from sprites.item import Items
 
 class Player:
     def __init__(self, x=400, y=300):
@@ -13,6 +14,15 @@ class Player:
 
         self.health = 20
         self.max_health = 20
+        self.lost_health = 2
+
+        self.thirst = 50
+        self.max_thirst = 50
+        self.lost_thirst = 0.05
+
+        self.hunger = 50
+        self.max_hunger = 50
+        self.lost_hunger = 0.05
 
         self.is_hit = False
         self.hit_flash_duration = 0.2
@@ -30,7 +40,7 @@ class Player:
         self.image.fill(self.original_color)
         self.rect = self.image.get_rect(center=self.position)
 
-        self.inventory = Inventory(capacity=20)
+        self.inventory = Inventory(capacity=35)
 
         self.equipment = {
             "weapon": None,
@@ -105,65 +115,33 @@ class Player:
         
         if self.velocity.length() > 0:
             self.velocity = self.velocity.normalize()
-        
-    def update(self, dt):
-        self.position += self.velocity * self.speed * dt
-        
-        self.position += self.knockback_velocity * dt
-
-        self.knockback_velocity *= 0.85 
-
-        if self.knockback_velocity.length() < 1:
-            self.knockback_velocity.x = 0
-            self.knockback_velocity.y = 0
-        
-        self.rect.center = self.position
-
-        if self.is_hit:
-            self.hit_timer -= dt  
-            
-            if self.hit_timer <= 0:
-                self.is_hit = False
-                self.image.fill(self.original_color)
-            else:
-                self.image.fill(self.hit_color)
-    
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-        
-        self._draw_health_bar(screen)
-
-        if self.equipment["weapon"]:
-            self._draw_weapon(screen)
-    
-    def _draw_weapon(self, screen):
-        weapon = self.equipment["weapon"]
-
-        weapon_x = self.rect.right + 2 
-        weapon_y = self.rect.centery - 10
-
-        weapon_size = (24, 24)
-        weapon_image = pygame.transform.scale(weapon.image_surface, weapon_size)
-
-        screen.blit(weapon_image, (weapon_x, weapon_y))
-        
-    def _draw_health_bar(self, screen):
-        bar_width = 40
-        bar_height = 5
-        bar_x = self.rect.centerx - bar_width // 2
-        bar_y = self.rect.top - 10
-
-        pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
-
-        health_width = int(bar_width * (self.health / self.max_health))
-        health_color = (0, 255, 0) if self.health > 10 else (255, 165, 0) if self.health > 5 else (255, 0, 0)
-        pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))
-
-        pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
     
     def heal(self, amount):
         self.health = min(self.max_health, self.health + amount)
         print(f"💚 Joueur soigné ! Vie: {self.health}/{self.max_health}")
+
+    def drink(self, amount):
+        self.thirst = min(self.max_thirst, self.thirst + amount)
+        print(f"💧 Joueur a bu ! Soif: {self.thirst}/{self.max_thirst}")
+
+    
+    def eat(self, amount):
+        self.hunger = min(self.max_hunger, self.hunger + amount)
+        print(f"🍖 Joueur a mangé ! Faim: {self.hunger/self.max_hunger}")
+
+    def use_item(self, item):
+        actions = {
+            "soin": self.heal,
+            "boisson": self.drink,
+            "nourriture": self.eat 
+        }
+
+        action = actions.get(item.category)
+        if action:
+            action(item.effect)
+            self.inventory.remove_item(item, 1)
+        else:
+            print("❌ Objet non utilisable")
 
     def equip_item(self, item, slot):
         if slot not in self.equipment:
@@ -213,3 +191,93 @@ class Player:
         else:
             print(f"❌ Inventaire plein, impossible de déséquiper")
             return False
+    
+    def update(self, dt):
+        self.position += self.velocity * self.speed * dt
+        
+        self.position += self.knockback_velocity * dt
+
+        self.knockback_velocity *= 0.85 
+
+        if self.knockback_velocity.length() < 1:
+            self.knockback_velocity.x = 0
+            self.knockback_velocity.y = 0
+        
+        self.rect.center = self.position
+
+        if self.is_hit:
+            self.hit_timer -= dt  
+            
+            if self.hit_timer <= 0:
+                self.is_hit = False
+                self.image.fill(self.original_color)
+            else:
+                self.image.fill(self.hit_color)
+        
+        self.hunger -= self.lost_hunger * dt
+        self.hunger = max(0, min(self.hunger, self.max_hunger))
+
+        self.thirst -= self.lost_thirst * dt
+        self.thirst = max(0, min(self.thirst, self.max_thirst))
+
+        if self.thirst == 0 or self.hunger == 0:
+            self.health -= self.lost_health * dt
+            self.health = max(0, min(self.health, self.max_health))
+        return self.health
+    
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+        
+        self._draw_health_bar(screen)
+        self._draw_needs_bar(screen)
+
+        if self.equipment["weapon"]:
+            self._draw_weapon(screen)
+    
+    def _draw_weapon(self, screen):
+        weapon = self.equipment["weapon"]
+
+        weapon_x = self.rect.right + 2 
+        weapon_y = self.rect.centery - 10
+
+        weapon_size = (24, 24)
+        weapon_image = pygame.transform.scale(weapon.image_surface, weapon_size)
+
+        screen.blit(weapon_image, (weapon_x, weapon_y))
+        
+    def _draw_health_bar(self, screen):
+        bar_width = 40
+        bar_height = 5
+        bar_x = self.rect.centerx - bar_width // 2
+        bar_y = self.rect.top - 10
+
+        pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+
+        health_width = int(bar_width * (self.health / self.max_health))
+        health_color = (0, 255, 0) if self.health > 10 else (255, 165, 0) if self.health > 5 else (255, 0, 0)
+        pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))
+
+        pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
+
+    def _draw_needs_bar(self, screen):
+        bar_width = 120
+        bar_height = 10
+        margin = 10
+
+        screen_height = screen.get_height()
+
+        thirst_y = screen_height - margin - bar_height
+        hunger_y = thirst_y - bar_height - 5
+        bar_x = margin
+
+        pygame.draw.rect(screen, (80, 80, 80), (bar_x, thirst_y, bar_width, bar_height))
+        pygame.draw.rect(screen, (80, 80, 80), (bar_x, hunger_y, bar_width, bar_height))
+
+        thirst_width = int(bar_width * (self.thirst / self.max_thirst))
+        hunger_width = int(bar_width * (self.hunger / self.max_hunger))
+
+        pygame.draw.rect(screen, (0, 150, 255), (bar_x, thirst_y, thirst_width, bar_height))
+        pygame.draw.rect(screen, (255, 180, 0), (bar_x, hunger_y, hunger_width, bar_height))
+
+        pygame.draw.rect(screen, (255, 255, 255), (bar_x, thirst_y, bar_width, bar_height), 1)
+        pygame.draw.rect(screen, (255, 255, 255), (bar_x, hunger_y, bar_width, bar_height), 1)

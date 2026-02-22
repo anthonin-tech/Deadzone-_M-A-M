@@ -35,7 +35,6 @@ class Gameplay_Scene:
     def _spawn_enemies(self):
         """Crée quelques ennemis pour tester"""
         self.enemies.append(Enemy(100, 100))
-        self.enemies.append(Enemy(700, 500))
 
     def _spawn_test_items(self):
         """Crée quelques items au sol pour tester"""
@@ -68,8 +67,7 @@ class Gameplay_Scene:
             description="Hydratation de 5",
             quantity=1
         )
-        
-        # Place les items à différentes positions
+
         self.dropped_items.append(DroppedItem(item1, 200, 150))
         self.dropped_items.append(DroppedItem(item2, 400, 300))
         self.dropped_items.append(DroppedItem(item3, 600, 200))
@@ -225,9 +223,6 @@ class Gameplay_Scene:
 
         self._draw_instructions(screen)
 
-        enemy_text = self.font.render(f"Ennemi: {len(self.enemies)}", True, (255, 255, 255))
-        screen.blit(enemy_text, (10, screen.get_height() - 60))
-
         for projectile in self.projectiles:
             projectile.draw(screen)
 
@@ -265,18 +260,14 @@ class Gameplay_Scene:
             text = self.font.render(instruction, True, (255, 255, 255))
             screen.blit(text, (10, y))
             y += 25
-        
-        items_text = self.font.render(
-            f"Items: {len(self.player.inventory)}/{self.player.inventory.capacity}", 
-            True, (255, 255, 0)
-        )
-        screen.blit(items_text, (10, screen.get_height() - 30))
     
     def _draw_aim_preview(self, screen):
         if not pygame.mouse.get_pressed()[0]:
             return
         
         weapon = self.player.get_equipped_weapon()
+        if weapon is None:
+            return
         origin = pygame.Vector2(self.player.rect.centerx, self.player.rect.centery)
         target = pygame.Vector2(pygame.mouse.get_pos())
         direction = target - origin
@@ -284,7 +275,7 @@ class Gameplay_Scene:
             return
         direction = direction.normalize()
 
-        end_pos = origin + direction * min(weapon.max_distance, 220)
+        end_pos = origin + direction * min(int(weapon.max_distance), 220)
         pygame.draw.line(screen, (255, 255, 255), origin, end_pos, 2)
 
         if weapon.pellets > 1:
