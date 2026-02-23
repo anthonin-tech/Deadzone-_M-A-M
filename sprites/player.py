@@ -4,7 +4,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from systems.inventory import Inventory
 from sprites.weapon import Weapon
-from sprites.item import Items
 
 class Player:
     def __init__(self, x=400, y=300):
@@ -12,8 +11,8 @@ class Player:
         self.velocity = pygame.Vector2(0, 0)
         self.speed = 80
 
-        self.health = 20
-        self.max_health = 20
+        self.health = 100
+        self.max_health = 100
         self.lost_health = 2
 
         self.thirst = 50
@@ -52,14 +51,14 @@ class Player:
         self._add_test_items()
         
     def _add_test_items(self):
-        self.inventory.add_item("Fusil à pompe", 100, "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
-        self.inventory.add_item("Pistolet", 70, "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
-        self.inventory.add_item("Bandage", 100, "soin", "commun", "Bandage_Soin.png", "Soigne 5 PV", quantity=5)
-        self.inventory.add_item("Kit", 100, "soin", "légendaire", "Kit_Soin.png", "Soigne 20 PV",)
-        self.inventory.add_item("Eau", 100, "nourriture", "rare", "Eau_Nourriture.png", "Hydrate de 5", quantity=3)
-        self.inventory.add_item("Casque en fer", 100, "armure", "rare", "Bandage_Soin.png", "Protège la tête")
-        self.inventory.add_item("Plastron en cuir", 80, "armure", "commun", "Kit_Soin.png", "Protection basique du torse")
-        self.inventory.add_item("Bottes renforcées", 90, "armure", "épique", "Eau_Nourriture.png", "Bottes résistantes")
+        self.inventory.add_item("Fusil à pompe", "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
+        self.inventory.add_item("Pistolet", "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
+        self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 5 PV", quantity=5)
+        self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 20 PV",)
+        self.inventory.add_item("Eau", "nourriture", "rare", "Eau_Nourriture.png", "Hydrate de 5", quantity=3)
+        self.inventory.add_item("Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz")
+        self.inventory.add_item("Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
         self.health = max(0, self.health - amount)
@@ -124,7 +123,6 @@ class Player:
         self.thirst = min(self.max_thirst, self.thirst + amount)
         print(f"💧 Joueur a bu ! Soif: {self.thirst}/{self.max_thirst}")
 
-    
     def eat(self, amount):
         self.hunger = min(self.max_hunger, self.hunger + amount)
         print(f"🍖 Joueur a mangé ! Faim: {self.hunger/self.max_hunger}")
