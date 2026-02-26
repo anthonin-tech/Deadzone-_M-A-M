@@ -13,7 +13,16 @@ class Inventory:
         return self._inventory
     
     def add_item(self, name, category, rarity, illustration,  description, durability=100, effect=0, quantity=1):
-        new_item = Items(name, category, rarity, illustration,  description, durability=100, effect=0, quantity=1)
+        new_item = Items(
+            name,
+            category,
+            rarity,
+            illustration,
+            description,
+            durability=durability,
+            effect=effect,
+            quantity=quantity
+        )
 
         for item in self._inventory:
             if item.is_same_item(new_item):

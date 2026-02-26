@@ -9,20 +9,20 @@ from sprites.projectile import Projectile
 class Weapon:
     PROFILES = {
         "pistol": {
-            "cooldown_ms": 1000,
+            "cooldown_ms": 320,
             "projectile_speed": 700,
-            "projectile_damage": 15,
+            "projectile_damage": 12,
             "pellets": 1,
-            "spread_deg": 2,
-            "max_distance": 200
+            "spread_deg": 1.5,
+            "max_distance": 380
         },
         "shotgun": {
-            "cooldown_ms": 1500,
-            "projectile_speed": 500,
-            "projectile_damage": 8,
-            "pellets": 10,
-            "spread_deg": 20,
-            "max_distance": 150
+            "cooldown_ms": 900,
+            "projectile_speed": 540,
+            "projectile_damage": 7,
+            "pellets": 8,
+            "spread_deg": 18,
+            "max_distance": 175
         },
     }
 
@@ -41,7 +41,7 @@ class Weapon:
         name = item.name.lower()
         if "pompe" in name :
             return cls("shotgun")
-        if "pistolet":
+        if "pistolet" in name:
             return cls("pistol")
         return cls("pistol")
     
@@ -65,7 +65,8 @@ class Weapon:
                 speed=self.projectile_speed,
                 damage=self.projectile_damage,
                 radius=4,
-                max_distance=self.max_distance
+                max_distance=self.max_distance,
+                owner="player"
             )
             projectiles.append(p)
         

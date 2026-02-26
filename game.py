@@ -2,7 +2,6 @@ import pygame
 import sys
 from pathlib import Path
 
-# Ajouter le dossier racine au PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent))
 
 from sprites.player import Player

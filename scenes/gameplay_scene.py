@@ -43,6 +43,7 @@ class Gameplay_Scene:
             rarity="légendaire",
             illustration="Kit_Soin.png",
             description="Restaure 20 PV",
+            effect=30,
             quantity=1
         )
 
@@ -63,6 +64,7 @@ class Gameplay_Scene:
             rarity="commun",
             illustration="Eau_Nourriture.png",
             description="Hydratation de 5",
+            effect=12,
             quantity=1
         )
 
@@ -73,7 +75,7 @@ class Gameplay_Scene:
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_TAB:
-                self.game.change_scene(InventoryScene(self.game, self.player))
+                self.game.change_scene(InventoryScene(self.game, self.player, return_scene=self))
 
             if event.key == pygame.K_e:
                 self.try_pickup_item()
@@ -93,6 +95,7 @@ class Gameplay_Scene:
                 rarity=self.nearby_item.item.rarity,
                 illustration=self.nearby_item.item.illustration,
                 description=self.nearby_item.item.description,
+                effect=self.nearby_item.item.effect,
                 quantity=self.nearby_item.item.quantity
             )
 
@@ -182,18 +185,26 @@ class Gameplay_Scene:
                 self.projectiles.remove(projectile)
                 continue
 
-            for enemy in self.enemies[:]:
-                enemy_pos = pygame.Vector2(enemy.x, enemy.y)
-                dist = enemy_pos.distance_to(projectile.position)
+            if projectile.owner == "player":
+                for enemy in self.enemies[:]:
+                    enemy_pos = pygame.Vector2(enemy.x, enemy.y)
+                    dist = enemy_pos.distance_to(projectile.position)
 
-                if dist <= (enemy.radius + projectile.radius):
-                    enemy.health -= projectile.damage
+                    if dist <= (enemy.radius + projectile.radius):
+                        enemy.health -= projectile.damage
+                        projectile.alive = False
+
+                        if enemy.health <= 0:
+                            self.enemies.remove(enemy)
+                            self.enemies_killed += 1
+                        break
+            elif projectile.owner == "enemy":
+                player_pos = pygame.Vector2(self.player.rect.centerx, self.player.rect.centery)
+                dist = player_pos.distance_to(projectile.position)
+                player_radius = max(self.player.rect.width, self.player.rect.height) / 2
+                if dist <= (player_radius + projectile.radius):
+                    self.player.take_damage(projectile.damage, projectile.position.x, projectile.position.y)
                     projectile.alive = False
-
-                    if enemy.health <= 0:
-                        self.enemies.remove(enemy)
-                        self.enemies_killed += 1
-                    break
 
             if not projectile.alive and projectile in self.projectiles:
                 self.projectiles.remove(projectile)
@@ -286,3 +297,5 @@ class Gameplay_Scene:
 
             pygame.draw.line(screen, (255, 200, 120), origin, origin + left * 180, 1)
             pygame.draw.line(screen, (255, 200, 120), origin, origin + right * 180, 1)
+
+    

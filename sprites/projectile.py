@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class Projectile(pygame.sprite.Sprite):
-        def __init__(self, x, y, direction, speed=700, damage=10, radius=4, color=(255, 230, 120), max_distance=900):
+        def __init__(self, x, y, direction, speed=700, damage=10, radius=4, color=(255, 230, 120), max_distance=900, owner="player"):
                 super().__init__()
                 self.position = pygame.Vector2(x, y)
                 self.direction = pygame.Vector2(direction)
@@ -21,6 +21,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.max_distance = max_distance
                 self.distance_travelled = 0
                 self.alive = True
+                self.owner = owner
 
         def update(self, dt):
                 if not self.alive:

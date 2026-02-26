@@ -56,7 +56,6 @@ class GameOverScene:
         if self.alpha >= 255:
             y = screen.get_height()//2 - 20
             
-            # Affiche les stats
             if 'enemies_killed' in self.stats:
                 stat_text = self.font_stat.render(
                     f"Enemi tué: {self.stats['enemies_killed']}", 

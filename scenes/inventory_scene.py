@@ -4,9 +4,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class InventoryScene:
-    def __init__(self, game, player):
+    def __init__(self, game, player, return_scene=None):
         self.game = game
         self.player = player
+        self.return_scene = return_scene
 
         self.slot_size = 64
         self.margin = 10
@@ -48,6 +49,12 @@ class InventoryScene:
         self.hovered_item = None
 
         self.selected_item_index = None
+        self.equipment_positions = {
+            "helmet": (0, 0, "Casque"),
+            "chestplate": (0, 1, "Plastron"),
+            "boots": (0, 2, "Bottes"),
+            "weapon": (1, 0, "Arme")
+        }
          
         self._load_item_images()
 
@@ -73,11 +80,19 @@ class InventoryScene:
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_ESCAPE, pygame.K_TAB):
-                from scenes.gameplay_scene import Gameplay_Scene
-                self.game.change_scene(Gameplay_Scene(self.game, self.player))
+                if self.return_scene is not None:
+                    self.game.change_scene(self.return_scene)
+                else:
+                    from scenes.gameplay_scene import Gameplay_Scene
+                    self.game.change_scene(Gameplay_Scene(self.game, self.player))
         
             elif event.key == pygame.K_e:
                 if self.hovered_item:
+                    for slot_name, equipped_item in self.player.equipment.items():
+                        if equipped_item is self.hovered_item:
+                            self.player.unequip_item(slot_name)
+                            self._load_item_images()
+                            return
                     self._equip_hovered_item()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -107,15 +122,7 @@ class InventoryScene:
 
     def handle_click(self, mouse_pos):
         mx, my = mouse_pos
-
-        equipement_positions = {
-            "helmet": (0, 0),
-            "chestplate": (1, 0),
-            "boots": (0, 1),
-            "weapon": (1, 1)
-        }
-
-        for slot_name, (grid_x, grid_y) in equipement_positions.items():
+        for slot_name, (grid_x, grid_y, _) in self.equipment_positions.items():
             slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
             slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
 
@@ -136,12 +143,12 @@ class InventoryScene:
             rect = pygame.Rect(x, y, self.slot_size, self.slot_size)
             if rect.collidepoint(mx, my):
                 print(f"🖱️ Clic gauche : {item.name} (quantité: {item.quantity})")
-                if item.category == "soin":
-                    self.player.heal(5)
-                    self.player.inventory.remove_item(item, quantity=1)
-                    if item.quantity <= 0:
+                if item.category in ("soin", "nourriture", "boisson"):
+                    self.player.use_item(item)
+                    if item not in self.player.inventory.items:
                         self._load_item_images()
                 break
+
     
     def handle_right_click(self, mouse_pos):
         mx, my = mouse_pos
@@ -165,14 +172,7 @@ class InventoryScene:
         self.tooltip_surface = None
         self.hovered_item = None
 
-        equipment_positions = {
-            "helmet": (0, 0),
-            "chestplate": (0, 1),
-            "boots": (0, 2),
-            "weapon": (1, 0)
-        }
-
-        for slot_name, (grid_x, grid_y) in equipment_positions.items():
+        for slot_name, (grid_x, grid_y, _) in self.equipment_positions.items():
             slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
             slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
 
@@ -206,7 +206,7 @@ class InventoryScene:
             f"Quantité: {item.quantity}"
         ]
 
-        if item.category == "soin" or item.category == "nourriture":
+        if item.category == "soin" or item.category == "nourriture" or item.category == "boisson":
             lines.append("Clic gauche pour utiliser")
         
         if item.category == "arme" or item.category == "armure":
@@ -345,14 +345,7 @@ class InventoryScene:
                 pygame.draw.rect(screen, (128, 128, 128), (weapon_x, weapon_y - 2, 20, 4))
 
     def _draw_equipment_slots(self, screen):
-        equipment_positions = {
-            "helmet": (0, 0, "Casque"),
-            "chestplate": (0, 1, "Plastron"),
-            "boots": (0, 2, "Bottes"),
-            "weapon": (1, 0, "Arme") 
-        }
-
-        for slot_name, (grid_x, grid_y, label) in equipment_positions.items():
+        for slot_name, (grid_x, grid_y, label) in self.equipment_positions.items():
             slot_x = self.equipment_inventory_x + grid_x * (self.equipment_slot_size + self.margin)
             slot_y = self.equipment_inventory_y + grid_y * (self.equipment_slot_size + self.margin)
 

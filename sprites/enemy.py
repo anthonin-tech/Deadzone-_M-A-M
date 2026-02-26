@@ -63,7 +63,26 @@ class Enemy:
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        self._draw_health_bar(screen)
 
+    def _draw_health_bar(self, screen):
+        bar_width = 46
+        bar_height = 6
+        bar_x = int(self.x) - bar_width // 2
+        bar_y = int(self.y) - self.radius - 16
+
+        pygame.draw.rect(screen, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
+
+        ratio = max(0, self.health) / self.max_health
+        fill_w = int(bar_width * ratio)
+        color = (0, 220, 0) if ratio > 0.5 else (255, 170, 0) if ratio > 0.25 else (220, 0 , 0)
+        pygame.draw.rect(screen, color, (bar_x, bar_y, fill_w, bar_height))
+
+        font = pygame.font.Font(None, 16)
+        hp_text = f"{max(0, int(self.health))}/{int(self.max_health)}"
+        text_surface = font.render(hp_text, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(int(self.x), bar_y - 7))
+        screen.blit(text_surface, text_rect)
 
 class FastEnemy(Enemy):
     def __init__(self, x, y):
@@ -95,9 +114,9 @@ class BossEnemy(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.speed = 30
-        self.health = 250
-        self.max_health = 250
-        self.damage = 40
+        self.health = 520
+        self.max_health = 520
+        self.damage = 16
         self.radius = 20
         self.color = (0, 0, 0)
 
@@ -107,14 +126,14 @@ class BossEnemy(Enemy):
         self.cast_end_time = 0
         self.recovery_end_time = 0
         self.last_special_time = 0
-        self.global_special_cd = 1500
+        self.global_special_cd = 2200
 
         self.skill_order = ["projectile", "aoe", "summon"]
         self.skill_index = 0
         self.skill_data = {
-            "aoe": {"cooldown": 6000, "last_used": -99999, "cast": 800, "recover": 600, "phase_min": 1},
-            "summon": {"cooldown": 12000, "last_used": -99999, "cast": 1200, "recover": 900, "phase_min": 2},
-            "projectile": {"cooldown": 3500, "last_used": -99999, "cast": 500, "recover": 400, "phase_min": 1},
+            "aoe": {"cooldown": 7000, "last_used": -99999, "cast": 900, "recover": 700, "phase_min": 1},
+            "summon": {"cooldown": 14000, "last_used": -99999, "cast": 1300, "recover": 1000, "phase_min": 2},
+            "projectile": {"cooldown": 4200, "last_used": -99999, "cast": 600, "recover": 500, "phase_min": 1},
         }
 
     def update_phase(self):
@@ -148,11 +167,11 @@ class BossEnemy(Enemy):
         aoe_radius = 120
         dist = self.calculate_distance(px, py)
         if dist <= aoe_radius:
-            player.take_damage(35 if self.phase < 3 else 50, self.x, self.y)
+            player.take_damage(18 if self.phase < 3 else 28, self.x, self.y)
 
     def do_summon(self, enemies):
-        normal_count = 3 if self.phase == 2 else 4
-        fast_count = 2 if self.phase == 2 else 3
+        normal_count = 2 if self.phase == 2 else 3
+        fast_count = 1 if self.phase == 2 else 2
 
         for _ in range(normal_count):
             enemies.append(Enemy(self.x + random.randint(-70, 70), self.y + random.randint(-70, 70)))
@@ -166,10 +185,10 @@ class BossEnemy(Enemy):
         else:
             px, py = player.x, player.y
 
-        shots = 1 if self.phase < 3 else 3
+        shots = 1 if self.phase < 3 else 2
         base_angle = math.atan2(py - self.y, px - self.x)
-        spread = 0.20
-        speed = 300
+        spread = 0.16
+        speed = 280
 
         for i in range(shots):
             offset = (i - (shots - 1) / 2) * spread
@@ -185,10 +204,11 @@ class BossEnemy(Enemy):
                 self.y,
                 direction,
                 speed=speed,
-                damage=20 if self.phase < 3 else 30,
+                damage=12 if self.phase < 3 else 18,
                 radius=6,
                 color=(40, 40, 40),
-                max_distance=900
+                max_distance=900,
+                owner="enemy"
             )
 
             projectiles.append(projectile)
@@ -235,6 +255,6 @@ class BossEnemy(Enemy):
                 self.begin_cast(skill, now)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        super().draw(screen) 
         if self.state == self.CASTING and self.cast_skill == "aoe":
             pygame.draw.circle(screen, (255, 120, 120), (int(self.x), int(self.y)), 120, 2)

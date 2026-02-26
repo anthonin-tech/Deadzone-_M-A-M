@@ -13,15 +13,15 @@ class Player:
 
         self.health = 100
         self.max_health = 100
-        self.lost_health = 2
+        self.lost_health = 1
 
         self.thirst = 50
         self.max_thirst = 50
-        self.lost_thirst = 0.05
+        self.lost_thirst = 0.03
 
         self.hunger = 50
         self.max_hunger = 50
-        self.lost_hunger = 0.05
+        self.lost_hunger = 0.03
 
         self.is_hit = False
         self.hit_flash_duration = 0.2
@@ -53,12 +53,13 @@ class Player:
     def _add_test_items(self):
         self.inventory.add_item("Fusil à pompe", "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
         self.inventory.add_item("Pistolet", "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
-        self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 5 PV", quantity=5)
-        self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 20 PV",)
-        self.inventory.add_item("Eau", "nourriture", "rare", "Eau_Nourriture.png", "Hydrate de 5", quantity=3)
-        self.inventory.add_item("Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz")
-        self.inventory.add_item("Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat")
-        self.inventory.add_item("Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 12 PV", effect=12, quantity=4)
+        self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 30 PV", effect=30, quantity=2)
+        self.inventory.add_item("Eau", "boisson", "rare", "Eau_Nourriture.png", "Hydrate de 12", effect=12, quantity=4)
+        self.inventory.add_item("Viande", "nourriture", "rare", "", "Rassasit de 12", effect=12, quantity=4  )
+        self.inventory.add_item("Casque - Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz")
+        self.inventory.add_item("Plastron - Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
         self.health = max(0, self.health - amount)
@@ -125,7 +126,7 @@ class Player:
 
     def eat(self, amount):
         self.hunger = min(self.max_hunger, self.hunger + amount)
-        print(f"🍖 Joueur a mangé ! Faim: {self.hunger/self.max_hunger}")
+        print(f"🍖 Joueur a mangé ! Faim: {self.hunger}/{self.max_hunger}")
 
     def use_item(self, item):
         actions = {
@@ -149,12 +150,14 @@ class Player:
         if self.equipment[slot] is not None:
             old_item = self.equipment[slot]
             self.inventory.add_item(
-                old_item.name,
-                old_item.durability,
-                old_item.category,
-                old_item.rarity,
-                old_item.illustration,
-                old_item.description
+                name=old_item.name,
+                category=old_item.category,
+                rarity=old_item.rarity,
+                illustration=old_item.illustration,
+                description=old_item.description,
+                durability=old_item.durability,
+                effect=old_item.effect,
+                quantity=1
             )
         
         self.equipment[slot] = item
@@ -174,12 +177,14 @@ class Player:
         item = self.equipment[slot]
 
         success = self.inventory.add_item(
-            item.name,
-            item.durability,
-            item.category,
-            item.rarity,
-            item.illustration,
-            item.description
+            name=item.name,
+            category=item.category,
+            rarity=item.rarity,
+            illustration=item.illustration,
+            description=item.description,
+            durability=item.durability,
+            effect=item.effect,
+            quantity=1
         )
 
         if success:
