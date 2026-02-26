@@ -1,50 +1,30 @@
+from map import MapManager
 from sprites.player import Player 
-import pygame
-import pytmx
-import pyscroll
-import os
+import pygame, pyscroll, pytmx, os
 
 class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode((800,700))
         pygame.display.set_caption("MAM")
 
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        tmx_data = pytmx.util_pygame.load_pygame(os.path.join(base_dir, "asset", "map.tmx"))
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        map_layer.zoom = 2 
+        self.player = Player(0, 0)
+        self.map_manager = MapManager(self.screen, self.player)
 
-        player_position = tmx_data.get_object_by_name('Player')
-        self.player = Player(player_position.x, player_position.y)
-
-        self.walls = []
-
-        for obj in tmx_data.objects:
-            if obj.type == "collision":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-
-        self.group = pyscroll.PyscrollGroup(map_layer = map_layer, default_layer = 13)
-        self.group.add(self.player)
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
 
-        if pressed[pygame.K_UP]:
+        if pressed[pygame.K_z]:
             self.player.move_up()
-        elif pressed[pygame.K_DOWN]:
+        elif pressed[pygame.K_s]:
             self.player.move_down()
-        elif pressed[pygame.K_LEFT]:
+        elif pressed[pygame.K_q]:
             self.player.move_left()
-        elif pressed[pygame.K_RIGHT]:
+        elif pressed[pygame.K_d]:
             self.player.move_right()
 
     def update(self):
-        self.group.update()
-
-        for sprite in self.group.sprites():
-            if sprite.feet.collidelist(self.walls) > -1:
-                sprite.move_back()
+        self.map_manager.update()
 
     def run(self):
 
@@ -57,8 +37,7 @@ class Game:
             self.player.save_location()
             self.handle_input()
             self.update()
-            self.group.center(self.player.rect.center)
-            self.group.draw(self.screen)
+            self.map_manager.draw()
             pygame.display.flip()
             
             for event in pygame.event.get():
