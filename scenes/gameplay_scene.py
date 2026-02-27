@@ -137,7 +137,14 @@ class Gameplay_Scene:
             return
 
         if pygame.mouse.get_pressed()[0]:
-            self.projectiles.extend(self.player.shoot(pygame.mouse.get_pos()))
+            self.projectiles.extend(self.player.shoot(pygame.mouse.get_pos(), enemies=self.enemies))
+            self._remove_dead_enemies()
+
+    def _remove_dead_enemies(self):
+        for enemy in self.enemies[:]:
+            if enemy.health <= 0:
+                self.enemies.remove(enemy)
+                self.enemies_killed += 1
 
     def check_nearby_items(self):
         self.nearby_item = None
@@ -264,11 +271,10 @@ class Gameplay_Scene:
             y += 25
 
     def _draw_aim_preview(self, screen):
-        if not pygame.mouse.get_pressed()[0]:
-            return
-
         weapon = self.player.get_equipped_weapon()
         if weapon is None:
+            return
+        if weapon.attack_type != "melee" and not pygame.mouse.get_pressed()[0]:
             return
 
         origin = pygame.Vector2(self.player.rect.centerx, self.player.rect.centery)
@@ -279,6 +285,25 @@ class Gameplay_Scene:
             return
 
         direction = direction.normalize()
+        if weapon.attack_type == "melee":
+            reach = int(weapon.melee_range)
+            base_angle = math.atan2(direction.y, direction.x)
+            half_arc = math.radians(weapon.melee_arc_deg / 2)
+            steps = 18
+            points = [(int(origin.x), int(origin.y))]
+            for i in range(steps + 1):
+                t = i / steps
+                angle = (base_angle - half_arc) + (2 * half_arc * t)
+                x = origin.x + math.cos(angle) * reach
+                y = origin.y + math.sin(angle) * reach
+                points.append((int(x), int(y)))
+
+            cone_surface = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+            pygame.draw.polygon(cone_surface, (255, 200, 120, 90), points)
+            pygame.draw.polygon(cone_surface, (255, 230, 170, 180), points, 2)
+            screen.blit(cone_surface, (0, 0))
+            return
+
         end_pos = origin + direction * min(int(weapon.max_distance), 220)
         pygame.draw.line(screen, (255, 255, 255), origin, end_pos, 2)
 

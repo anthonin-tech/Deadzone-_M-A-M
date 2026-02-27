@@ -1,4 +1,5 @@
 import pygame
+import math
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -53,7 +54,8 @@ class Player:
     def _add_test_items(self):
         self.inventory.add_item("Fusil à pompe", "arme", "épique", "Pompe_Arme.png" ,"Arme très puissante au corp à corp")
         self.inventory.add_item("Pistolet", "arme", "rare", "Pistolet_Arme.png", "Arme a semi_distance")
-        self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 12 PV", effect=12, quantity=4)
+        self.inventory.add_item("Hache", "arme", "rare", "Hache_Arme.png", "Arme de corps à corps")
+        self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 12 PV", effect=7, quantity=4)
         self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 30 PV", effect=30, quantity=2)
         self.inventory.add_item("Eau", "boisson", "rare", "Eau_Nourriture.png", "Hydrate de 12", effect=12, quantity=4)
         self.inventory.add_item("Viande", "nourriture", "rare", "", "Rassasit de 12", effect=12, quantity=4  )
@@ -84,7 +86,7 @@ class Player:
             return None
         return Weapon.from_item(weapon_item)
     
-    def shoot(self, mouse_pos):
+    def shoot(self, mouse_pos, enemies=None):
         weapon = self.get_equipped_weapon()
         if weapon is None:
             return []
@@ -95,7 +97,33 @@ class Player:
         
         self.last_shot_time = now
         origin = pygame.Vector2(self.rect.centerx, self.rect.centery)
-        return weapon.shoot(origin, pygame.Vector2(mouse_pos))
+        target = pygame.Vector2(mouse_pos)
+
+        if weapon.attack_type == "melee":
+            if enemies is None:
+                return []
+
+            direction = target - origin
+            if direction.length_squared() == 0:
+                direction = pygame.Vector2(1, 0)
+            else:
+                direction = direction.normalize()
+
+            min_dot = math.cos(math.radians(weapon.melee_arc_deg / 2))
+
+            for enemy in enemies:
+                to_enemy = pygame.Vector2(enemy.x, enemy.y) - origin
+                dist = to_enemy.length()
+                if dist == 0:
+                    continue
+
+                if dist <= (weapon.melee_range + enemy.radius):
+                    if direction.dot(to_enemy.normalize()) >= min_dot:
+                        enemy.health -= weapon.melee_damage
+
+            return []
+
+        return weapon.shoot(origin, target)
 
     def handle_input(self, keys):
         self.velocity.x = 0

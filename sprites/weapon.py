@@ -9,6 +9,7 @@ from sprites.projectile import Projectile
 class Weapon:
     PROFILES = {
         "pistol": {
+            "attack_type": "ranged",
             "cooldown_ms": 320,
             "projectile_speed": 700,
             "projectile_damage": 12,
@@ -17,6 +18,7 @@ class Weapon:
             "max_distance": 380
         },
         "shotgun": {
+            "attack_type": "ranged",
             "cooldown_ms": 900,
             "projectile_speed": 540,
             "projectile_damage": 7,
@@ -24,28 +26,44 @@ class Weapon:
             "spread_deg": 18,
             "max_distance": 175
         },
+        "axe": {
+            "cooldown_ms": 1000,
+            "attack_type": "melee",
+            "melee_damage": 26,
+            "melee_range": 68,
+            "melee_arc_deg": 150
+        }
     }
 
     def __init__(self, profile_name):
         data = self.PROFILES[profile_name]
         self.profile_name = profile_name
+        self.attack_type = data.get("attack_type", "ranged")
         self.cooldown_ms = data["cooldown_ms"]
-        self.projectile_speed = data["projectile_speed"]
-        self.projectile_damage = data["projectile_damage"]
-        self.pellets = data["pellets"]
-        self.spread_deg = data["spread_deg"]
-        self.max_distance = data["max_distance"]
+        self.projectile_speed = data.get("projectile_speed", 0)
+        self.projectile_damage = data.get("projectile_damage", 0)
+        self.pellets = data.get("pellets", 0)
+        self.spread_deg = data.get("spread_deg", 0)
+        self.max_distance = data.get("max_distance", 0)
+        self.melee_damage = data.get("melee_damage", 0)
+        self.melee_range = data.get("melee_range", 0)
+        self.melee_arc_deg = data.get("melee_arc_deg", 0)
     
     @classmethod
     def from_item(cls, item):
         name = item.name.lower()
         if "pompe" in name :
             return cls("shotgun")
+        if "hache" in name or "axe" in name:
+            return cls("axe")
         if "pistolet" in name:
             return cls("pistol")
         return cls("pistol")
     
     def shoot(self, origin, target):
+        if self.attack_type == "melee":
+            return []
+
         direction = pygame.Vector2(target) - pygame.Vector2(origin)
         if direction.length_squared() == 0:
             return []
