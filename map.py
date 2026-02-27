@@ -25,7 +25,10 @@ class MapManager:
         self.current_map = "map"
 
         self.register_map("map", portals=[
-            Portal(from_world="map", origin_point="enter_cave", target_world="cave-1", teleport_point="spawn_cave")
+            Portal(from_world="map", origin_point="enter_cave", target_world="cave-1", teleport_point="spawn_cave"),
+            Portal(from_world="map", origin_point="enter_bunker", target_world="Bunker", teleport_point="spawn_bunker"),
+            Portal(from_world="map", origin_point="enter_church", target_world="church", teleport_point="spawn_church"),
+            Portal(from_world="map", origin_point="enter_camp", target_world="camp", teleport_point="spawn_camp")
         ])
 
         
@@ -36,6 +39,18 @@ class MapManager:
 
         self.register_map("cave-2", portals=[
             Portal(from_world="cave-2", origin_point="exit_cave_2", target_world="cave-1", teleport_point="enter_cave_2_exit")
+        ])
+
+        self.register_map("Bunker", portals=[
+            Portal(from_world="Bunker", origin_point="exit_bunker", target_world="map", teleport_point="enter_bunker_exit")
+        ])
+
+        self.register_map("church", portals=[
+            Portal(from_world="church", origin_point="exit_church", target_world="map", teleport_point="enter_church_exit")
+        ])
+
+        self.register_map("camp", portals=[
+            Portal(from_world="camp", origin_point="exit_camp", target_world="map", teleport_point="enter_camp_exit")
         ])
 
         self.teleport_player("player")
@@ -74,7 +89,7 @@ class MapManager:
             if obj.type == "collision":
                 walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
-        group = pyscroll.PyscrollGroup(map_layer = map_layer, default_layer = 13)
+        group = pyscroll.PyscrollGroup(map_layer = map_layer, default_layer = 10)
         group.add(self.player)
 
         self.maps[name] = Map(name, walls, group, tmx_data, portals)
