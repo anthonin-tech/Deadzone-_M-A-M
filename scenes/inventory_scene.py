@@ -2,6 +2,8 @@ import pygame
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from systems.crafting_manager import CraftingManager
+from scenes.craft_scene import CraftScene
 
 class InventoryScene:
     def __init__(self, game, player, return_scene=None):
@@ -55,6 +57,9 @@ class InventoryScene:
             "boots": (0, 2, "Bottes"),
             "weapon": (1, 0, "Arme")
         }
+
+        self.crafting_manager = CraftingManager(self.player.inventory)
+        self.craf_scene = CraftScene(self.game, self.crafting_manager)
          
         self._load_item_images()
 
@@ -94,12 +99,17 @@ class InventoryScene:
                             self._load_item_images()
                             return
                     self._equip_hovered_item()
+            
+            elif event.key == pygame.K_c:
+                self.craf_scene.toggle()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.handle_click(event.pos)
             elif event.button == 3:
                 self.handle_right_click(event.pos)
+        
+        self.craf_scene.handle_event(event)
     
     def _equip_hovered_item(self):
         if not self.hovered_item:
@@ -298,7 +308,9 @@ class InventoryScene:
 
         if self.tooltip_surface:
             screen.blit(self.tooltip_surface, self.tooltip_pos)
-    
+
+        self.craf_scene.draw(screen)
+        
     def _draw_character_panel(self, screen):
         panel_rect = pygame.Rect(
             self.character_panel_x,
