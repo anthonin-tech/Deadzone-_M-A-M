@@ -28,7 +28,8 @@ class MapManager:
             Portal(from_world="map", origin_point="enter_cave", target_world="cave-1", teleport_point="spawn_cave"),
             Portal(from_world="map", origin_point="enter_bunker", target_world="Bunker", teleport_point="spawn_bunker"),
             Portal(from_world="map", origin_point="enter_church", target_world="church", teleport_point="spawn_church"),
-            Portal(from_world="map", origin_point="enter_camp", target_world="camp", teleport_point="spawn_camp")
+            Portal(from_world="map", origin_point="enter_camp", target_world="camp", teleport_point="spawn_camp"),
+            Portal(from_world="map", origin_point="enter_school", target_world="School-hall", teleport_point="spawn_school")
         ])
 
         
@@ -51,6 +52,25 @@ class MapManager:
 
         self.register_map("camp", portals=[
             Portal(from_world="camp", origin_point="exit_camp", target_world="map", teleport_point="enter_camp_exit")
+        ])
+
+        self.register_map("School-hall", portals=[
+            Portal(from_world="School-hall", origin_point="exit_school", target_world="map", teleport_point="enter_school_exit"),
+            Portal(from_world="School-hall", origin_point="enter_school_canteen", target_world="School-canteen", teleport_point="spawn_school_canteen"),
+            Portal(from_world="School-hall", origin_point="enter_school_desk", target_world="School-desk", teleport_point="spawn_school_desk"),
+            Portal(from_world="School-hall", origin_point="enter_school_class", target_world="School-class", teleport_point="spawn_school_class")
+        ])
+
+        self.register_map("School-canteen", portals=[
+            Portal(from_world="School-canteen", origin_point="exit_school_canteen", target_world="School-hall", teleport_point="enter_school_canteen_exit")
+        ])
+
+        self.register_map("School-desk", portals=[
+            Portal(from_world="School-desk", origin_point="exit_school_desk", target_world="School-hall", teleport_point="enter_school_desk_exit")
+        ])
+
+        self.register_map("School-class", portals=[
+            Portal(from_world="School-class", origin_point="exit_school_class", target_world="School-hall", teleport_point="enter_school_class_exit")
         ])
 
         self.teleport_player("player")
