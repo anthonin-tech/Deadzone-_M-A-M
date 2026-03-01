@@ -33,6 +33,9 @@ class Gameplay_Scene:
 
     def _spawn_enemies(self):
         self.enemies.append(BossEnemy(100, 100))
+        self.enemies.append(Enemy(200, 100))
+        self.enemies.append(FastEnemy(300, 100))
+        self.enemies.append(TankEnemy(400, 100))
 
     def _spawn_test_items(self):
         item1 = Items(

@@ -103,7 +103,7 @@ class Player:
 
         weapon_item = self.equipment["weapon"]
         if weapon_item:
-            weapon_item.durability = max(0, weapon_item.durability - 2)
+            weapon_item.durability = max(0, weapon_item.durability - 1)
             if weapon_item.durability == 0:
                 self.equipment["weapon"] = None
                 return []

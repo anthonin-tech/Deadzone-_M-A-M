@@ -64,10 +64,3 @@ class Game:
         print("👋 Fermeture du jeu...")
         pygame.quit()
         sys.exit()
-    
-    def _draw_fps(self):
-        """Affiche le FPS dans le coin supérieur droit"""
-        font = pygame.font.Font(None, 24)
-        fps = int(self.clock.get_fps())
-        fps_text = font.render(f"FPS: {fps}", True, (255, 255, 0))
-        self.screen.blit(fps_text, (self.screen.get_width() - 80, 10))
