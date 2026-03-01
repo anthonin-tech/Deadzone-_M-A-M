@@ -42,13 +42,6 @@ class CraftScene():
             recipe = self._recipe_at(event.pos)
             if recipe and self.cm.can_craft(recipe):
                 self.cm.craft(recipe)
-            
-        if event.type == pygame.MOUSEWHEEL:
-            max_scroll = max(0, len(RECIPES) * self.slot_h - (self.panel_rect - 50))
-            self.scroll_offset = max(0, min(
-                self.scroll_offset - event.y * self.slot_h,
-                max_scroll
-            ))
 
     def _recipe_at(self, pos):
         if not self.panel_rect.collidepoint(pos):

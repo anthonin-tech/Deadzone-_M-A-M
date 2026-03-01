@@ -9,7 +9,6 @@ from scenes.inventory_scene import InventoryScene
 from sprites.dropped_item import DroppedItem
 from sprites.item import Items
 from sprites.enemy import *
-from sprites.weapon import Weapon
 
 
 class Gameplay_Scene:

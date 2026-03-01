@@ -58,9 +58,11 @@ class Player:
         self.inventory.add_item("Bandage", "soin", "commun", "Bandage_Soin.png", "Soigne 12 PV", effect=7, quantity=4)
         self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 30 PV", effect=30, quantity=2)
         self.inventory.add_item("Eau", "boisson", "rare", "Eau_Nourriture.png", "Hydrate de 12", effect=12, quantity=4)
-        self.inventory.add_item("Viande", "nourriture", "rare", "", "Rassasit de 12", effect=12, quantity=4  )
+        self.inventory.add_item("Viande", "nourriture", "rare", "Viande_Nourriture.png", "Rassasit de 12", effect=12, quantity=4)
         self.inventory.add_item("Casque - Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz")
         self.inventory.add_item("Plastron - Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
         self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
@@ -99,6 +101,13 @@ class Player:
         origin = pygame.Vector2(self.rect.centerx, self.rect.centery)
         target = pygame.Vector2(mouse_pos)
 
+        weapon_item = self.equipment["weapon"]
+        if weapon_item:
+            weapon_item.durability = max(0, weapon_item.durability - 2)
+            if weapon_item.durability == 0:
+                self.equipment["weapon"] = None
+                return []
+            
         if weapon.attack_type == "melee":
             if enemies is None:
                 return []
@@ -123,7 +132,7 @@ class Player:
 
             return []
 
-        return weapon.shoot(origin, target)
+        return weapon.shoot(origin, target) 
 
     def handle_input(self, keys):
         self.velocity.x = 0
