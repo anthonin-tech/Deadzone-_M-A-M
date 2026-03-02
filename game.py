@@ -57,8 +57,6 @@ class Game:
 
             self.current_scene.draw(self.screen)
 
-            self._draw_fps()
-
             pygame.display.flip()
 
         print("👋 Fermeture du jeu...")
