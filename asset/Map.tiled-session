@@ -1,0 +1,546 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "sans titre.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "A1_Nature2_Rasak.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "A2_Garden_Rasak.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "A5_House_Rasak.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "A5_Nature2_Rasak.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        },
+        "All_Chest_Sprites_Combined.tsx": {
+            "scaleInEditor": 4
+        },
+        "Background_Bleak-Yellow_TileSet.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "Bord-trottoir-1.png.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "Building.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Building_.tsx": {
+            "scaleInEditor": 1
+        },
+        "Buildings_dark_TileSet.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "Bunker.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Camp.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Camp_resized.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Camp_resized_0.25x.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Camp_resized_0.75x.tsx": {
+            "scaleInEditor": 1
+        },
+        "Camping_161x16Icons.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "Camping_Furnitureset.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "Camping_Furnitureset_x2.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Camping_Tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "Capture d'écran 2026-01-28 141117.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "Cave.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Character_down_run_no-hands-Sheet6.tsx": {
+            "scaleInDock": 8,
+            "scaleInEditor": 11
+        },
+        "ChatGPT Image 12 févr. 2026, 23_18_31.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "ChatGPT Image 14 févr. 2026, 20_01_01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "ChatGPT Image 17 févr. 2026, 09_25_10.tsx": {
+            "scaleInEditor": 0.5
+        },
+        "Chruch-1.png (2).tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Chruch-1.png (3).tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 1
+        },
+        "Chruch-1.png (4).tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 1
+        },
+        "Chruch-1.png (5).tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "Chruch-1.png (6).tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "Chruch-1.png (7).tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "Chruch-1.png.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 4
+        },
+        "Chruch.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Church.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Church_resized_1_5x.tsx": {
+            "scaleInDock": 2
+        },
+        "Church_upscaled_1_5x.tsx": {
+            "scaleInEditor": 2
+        },
+        "Church_upscaled_4x.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Cluly_GB_Forest_Tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "Dechetterie_resized_half.tsx": {
+            "dynamicWrapping": false
+        },
+        "Déchetterie.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Gemini_Generated_Image_9p24p99p24p99p24.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 0.75
+        },
+        "Gemini_Generated_Image_gulqc7gulqc7gulq.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "Gemini_Generated_Image_mgrpj8mgrpj8mgrp.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Gemini_Generated_Image_ru71wsru71wsru71.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 0.5
+        },
+        "Gemini_Generated_Image_xkt8eaxkt8eaxkt8.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Interieur - bunker.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Interieur - eglise-1.png.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Interieur-bunker.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Interieur-camp..tmx": {
+            "scale": 1.6476562499999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 159.013750592698,
+                "y": 249.74869606448556
+            }
+        },
+        "Interieur-camp.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 79.66666666666666,
+                "y": 313.99999999999994
+            }
+        },
+        "Interieur-ecole.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Interieur-grotte 2.tsx": {
+            "scaleInDock": 0.25,
+            "scaleInEditor": 0.5
+        },
+        "Interieur-grotte-1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -42,
+                "y": 63
+            }
+        },
+        "Interieur-grotte-2.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -252,
+                "y": -45
+            }
+        },
+        "Interieur-grotte.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Interieur_eglise.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 41,
+                "y": 205.5
+            }
+        },
+        "Interieur_eglise_320x480.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Interrieur-tente-1.png (1).tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Interrieur-tente-1.png.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Lac.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Nouveau dossier/Troittoir 1-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Nouveau dossier/Trottoir-angle-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Obejct.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        },
+        "Object.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Passage piéton-1.png.tsx": {
+            "scaleInDock": 8,
+            "scaleInEditor": 1
+        },
+        "Rock-1_upscaled_150.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        },
+        "Rock.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Route 1-1.png.tsx": {
+            "scaleInDock": 23
+        },
+        "Route 2-1.png.tsx": {
+            "scaleInDock": 23,
+            "scaleInEditor": 3
+        },
+        "Route ligne blanche-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 45
+        },
+        "Route-1.png.tsx": {
+            "scaleInDock": 32,
+            "scaleInEditor": 3
+        },
+        "Route-troittoir-angle-haut-droit-1.png.tsx": {
+            "scaleInDock": 8,
+            "scaleInEditor": 1
+        },
+        "Route-troittoir-bas-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 1
+        },
+        "Route-troittoire gauche-1.png (1).tsx": {
+            "scaleInDock": 32,
+            "scaleInEditor": 1
+        },
+        "Route-troittoire gauche-1.png.tsx": {
+            "scaleInDock": 23,
+            "scaleInEditor": 1
+        },
+        "Route-trottoir-1.png.tsx": {
+            "scaleInDock": 23,
+            "scaleInEditor": 11
+        },
+        "Route-trottoir-angle-bas-droite-1.png.tsx": {
+            "scaleInDock": 5.5
+        },
+        "Route-trottoir-angle-bas-gauche-1.png.tsx": {
+            "scaleInDock": 4
+        },
+        "Route-trottoir-angle-haut-droit-1.png.tsx": {
+            "scaleInDock": 2
+        },
+        "Route-trottoir-bas-1.png.tsx": {
+            "scaleInDock": 5.5
+        },
+        "Route-trottoir-bas-droite-1.png.tsx": {
+            "scaleInDock": 8,
+            "scaleInEditor": 1
+        },
+        "Route-trottoir-bas-gauche-1.png.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "Route-trottoir-droite-1.png.tsx": {
+            "scaleInDock": 5.5
+        },
+        "Route-trottoir-haut-1.png.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "Route-trottoir-haut-gauche-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 5.5
+        },
+        "Route-trottoire gauche-1.png (1).tsx": {
+            "scaleInDock": 5.5
+        },
+        "Sol-camp.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Sol.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "Troittoir 1-1.png.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "Troittoir 2-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 1
+        },
+        "Trottoir-angle-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 4
+        },
+        "Wire-Fence_TileSet.tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 8
+        },
+        "Wire-Fence_TileSet_x2.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 4,
+            "scaleInEditor": 2
+        },
+        "Zombie Apocalypse Tileset Reference.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 5.5,
+            "scaleInEditor": 11
+        },
+        "angle-interieur-trottoir-1.png.tsx": {
+            "scaleInDock": 16,
+            "scaleInEditor": 1
+        },
+        "angle-interieur-trottoir-1.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "bunker_reduit.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "bunker_reduit_x3.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "bunker_x2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "camp abandonné-1.png.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "camp_abandoned_256px.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 2
+        },
+        "church_enlarged_x4.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "dead-tree-1-1.png.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "dead-tree-2-1.png.tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 1
+        },
+        "dead-tree-3-1.png.tsx": {
+            "scaleInDock": 8,
+            "scaleInEditor": 1
+        },
+        "dead-tree-4-1.png.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "granite_cave_256px_darker.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "image_agrandie_x1_5.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "image_pixel_art_x2_bigger.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "image_pixel_art_x3_smaller.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 997.3333333333333,
+                "y": 801.6666666666666
+            }
+        },
+        "pixellab-Chruch-2d-16-16-post-apocalips-1769765978660.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 8
+        },
+        "pixellab-dead-tree-with-no-more-leaf-1770115518892.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 1
+        },
+        "resized_image_new.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "rock-1.png.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 3
+        },
+        "sans titre.tmx": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 278.75,
+                "y": 167.375
+            }
+        },
+        "tente_pixel_reduite.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tente_pixel_x1_5.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "wasteland_bg_dark.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Église en ruines avec croix cassée.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 0.125
+        }
+    },
+    "last.exportedFilePath": "C:/Users/maely/Documents/Projet jeu map",
+    "last.externalTilesetPath": "C:/Users/maely/Documents/Projet jeu map",
+    "last.imagePath": "C:/Users/maely/Downloads",
+    "map.height": 40,
+    "map.lastUsedExportFilter": "Tous les Fichiers (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "Background_Bleak-Yellow_TileSet.tsx",
+        "sans titre.tmx"
+    ],
+    "project": "Map.tiled-project",
+    "recentFiles": [
+        "ChatGPT Image 17 févr. 2026, 09_25_10.tsx",
+        "Interieur-grotte 2.tsx",
+        "Interieur-grotte-2.tmx",
+        "bunker_x2.tsx",
+        "sans titre.tmx",
+        "Interieur-camp..tmx",
+        "bunker_reduit_x3.tsx",
+        "Interieur-bunker.tsx",
+        "bunker_reduit.tsx",
+        "Bunker.tsx",
+        "Interieur_eglise.tmx",
+        "Interieur-grotte-1.tmx"
+    ],
+    "tileset.lastUsedFilter": "Fichiers de jeu de tuiles Tiled (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

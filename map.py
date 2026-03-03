@@ -1,0 +1,131 @@
+from dataclasses import dataclass
+import pygame, pytmx, pyscroll
+
+@dataclass
+class Portal:
+    from_world: str
+    origin_point: str
+    target_world: str
+    teleport_point: str
+
+@dataclass
+class Map:
+    name: str
+    walls: list[pygame.Rect]
+    group: pyscroll.PyscrollGroup
+    tmx_data: pytmx.TiledMap
+    portals: list[Portal]
+
+class MapManager:
+
+    def __init__(self, screen, player):
+        self.maps = dict()
+        self.screen = screen
+        self.player = player
+        self.current_map = "map"
+
+        self.register_map("map", portals=[
+            Portal(from_world="map", origin_point="enter_cave", target_world="cave-1", teleport_point="spawn_cave"),
+            Portal(from_world="map", origin_point="enter_bunker", target_world="Bunker", teleport_point="spawn_bunker"),
+            Portal(from_world="map", origin_point="enter_church", target_world="church", teleport_point="spawn_church"),
+            Portal(from_world="map", origin_point="enter_camp", target_world="camp", teleport_point="spawn_camp"),
+            Portal(from_world="map", origin_point="enter_school", target_world="School-hall", teleport_point="spawn_school")
+        ])
+
+        
+        self.register_map("cave-1", portals=[
+            Portal(from_world="cave-1", origin_point="exit_cave", target_world="map", teleport_point="enter_cave_exit"),
+            Portal(from_world="cave-1", origin_point="enter_cave_2", target_world="cave-2", teleport_point="spawn_cave_2")
+        ])
+
+        self.register_map("cave-2", portals=[
+            Portal(from_world="cave-2", origin_point="exit_cave_2", target_world="cave-1", teleport_point="enter_cave_2_exit")
+        ])
+
+        self.register_map("Bunker", portals=[
+            Portal(from_world="Bunker", origin_point="exit_bunker", target_world="map", teleport_point="enter_bunker_exit")
+        ])
+
+        self.register_map("church", portals=[
+            Portal(from_world="church", origin_point="exit_church", target_world="map", teleport_point="enter_church_exit")
+        ])
+
+        self.register_map("camp", portals=[
+            Portal(from_world="camp", origin_point="exit_camp", target_world="map", teleport_point="enter_camp_exit")
+        ])
+
+        self.register_map("School-hall", portals=[
+            Portal(from_world="School-hall", origin_point="exit_school", target_world="map", teleport_point="enter_school_exit"),
+            Portal(from_world="School-hall", origin_point="enter_school_canteen", target_world="School-canteen", teleport_point="spawn_school_canteen"),
+            Portal(from_world="School-hall", origin_point="enter_school_desk", target_world="School-desk", teleport_point="spawn_school_desk"),
+            Portal(from_world="School-hall", origin_point="enter_school_class", target_world="School-class", teleport_point="spawn_school_class")
+        ])
+
+        self.register_map("School-canteen", portals=[
+            Portal(from_world="School-canteen", origin_point="exit_school_canteen", target_world="School-hall", teleport_point="enter_school_canteen_exit")
+        ])
+
+        self.register_map("School-desk", portals=[
+            Portal(from_world="School-desk", origin_point="exit_school_desk", target_world="School-hall", teleport_point="enter_school_desk_exit")
+        ])
+
+        self.register_map("School-class", portals=[
+            Portal(from_world="School-class", origin_point="exit_school_class", target_world="School-hall", teleport_point="enter_school_class_exit")
+        ])
+
+        self.teleport_player("player")
+
+    def check_collisions(self):
+        for portal in self.get_map().portals:
+            if portal.from_world == self.current_map:
+                point = self.get_object(portal.origin_point)
+                rect = pygame.Rect(point.x, point.y, point.width, point.height)
+
+                if self.player.feet.colliderect(rect):
+                    copy_portal = portal
+                    self.current_map = portal.target_world
+                    self.teleport_player(copy_portal.teleport_point)
+
+        for sprite in self.get_group().sprites():
+            if sprite.feet.collidelist(self.get_walls()) > -1:
+                sprite.move_back()
+
+    def teleport_player(self, name):
+        point = self.get_object(name)
+        self.player.position[0] = point.x
+        self.player.position[1] = point.y
+        self.player.save_location()
+
+    def register_map(self, name, portals=[]):
+
+        tmx_data = pytmx.util_pygame.load_pygame(f"asset/{name}.tmx")
+        map_data = pyscroll.data.TiledMapData(tmx_data)
+        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        map_layer.zoom = 3
+
+        walls = []
+
+        for obj in tmx_data.objects:
+            if obj.type == "collision":
+                walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+
+        group = pyscroll.PyscrollGroup(map_layer = map_layer, default_layer = 10)
+        group.add(self.player)
+
+        self.maps[name] = Map(name, walls, group, tmx_data, portals)
+
+    def get_map(self): return self.maps[self.current_map]
+
+    def get_group(self): return self.get_map().group
+
+    def get_walls(self): return self.get_map().walls
+
+    def get_object(self, name): return self.get_map().tmx_data.get_object_by_name(name)
+
+    def draw(self):
+        self.get_group().draw(self.screen)
+        self.get_group().center(self.player.rect.center)
+
+    def update(self):
+        self.get_group().update()
+        self.check_collisions()
