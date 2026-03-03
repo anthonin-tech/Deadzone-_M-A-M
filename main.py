@@ -1,11 +1,7 @@
+import pygame
 from game import Game
 
-
-if __name__ == "__main__":
-    print("=" * 50)
-    print("🧟 DEADZONE M-A-M - Survie Zombie 🧟")
-    print("=" * 50)
-    print()
-    
+if __name__ == '__main__':
+    pygame.init()
     game = Game()
-    game.run()
+    game.run()  
