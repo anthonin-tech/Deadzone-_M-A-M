@@ -59,6 +59,5 @@ class Game:
 
             pygame.display.flip()
 
-        print("👋 Fermeture du jeu...")
         pygame.quit()
         sys.exit()

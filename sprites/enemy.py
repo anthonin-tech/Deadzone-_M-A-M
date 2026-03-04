@@ -126,7 +126,7 @@ class BossEnemy(Enemy):
         self.cast_end_time = 0
         self.recovery_end_time = 0
         self.last_special_time = 0
-        self.global_special_cd = 2200
+        self.global_special_cd = 50
 
         self.skill_order = ["projectile", "aoe", "summon"]
         self.skill_index = 0

@@ -16,6 +16,17 @@ class Player:
         self.max_health = 100
         self.lost_health = 1
 
+        self.shield = 0
+        self.max_shield = 0
+        self.default_armor_shield_bonus = {
+            "helmet": 15,
+            "chestplate": 30,
+            "boots": 15
+        }
+        self.shield_regen_rate = 8
+        self.shield_regen_delay = 3
+        self.time_since_last_damage = 0
+
         self.thirst = 50
         self.max_thirst = 50
         self.lost_thirst = 0.03
@@ -59,15 +70,22 @@ class Player:
         self.inventory.add_item("Kit", "soin", "légendaire", "Kit_Soin.png", "Soigne 30 PV", effect=30, quantity=2)
         self.inventory.add_item("Eau", "boisson", "rare", "Eau_Nourriture.png", "Hydrate de 12", effect=12, quantity=4)
         self.inventory.add_item("Viande", "nourriture", "rare", "Viande_Nourriture.png", "Rassasit de 12", effect=12, quantity=4)
-        self.inventory.add_item("Casque - Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz")
-        self.inventory.add_item("Plastron - Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat")
-        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
-        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
-        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat")
+        self.inventory.add_item("Casque - Masque à gaz", "armure", "épique", "Casque_Soldat_Armure.png", "Protège la tête et du gaz", effect=15)
+        self.inventory.add_item("Plastron - Haut de Soldat", "armure", "épique", "Tshirt_Soldat_Armure.png", "Protection solide d'un ancien soldat", effect=30)
+        self.inventory.add_item("Botte - Bas de Soldat", "armure", "épique", "Jean_Soldat_Armure.png", "Protection solide d'un ancien soldat", effect=10)
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
-        self.health = max(0, self.health - amount)
+        remaining_damage = amount
 
+        if self.shield > 0:
+            absorbed = min(self.shield, remaining_damage)
+            self.shield -= absorbed
+            remaining_damage -= absorbed
+
+        if remaining_damage > 0:
+            self.health = max(0, self.health - remaining_damage)
+
+        self.time_since_last_damage = 0
         self.is_hit = True
         self.hit_timer = self.hit_flash_duration
 
@@ -165,11 +183,47 @@ class Player:
         self.hunger = min(self.max_hunger, self.hunger + amount)
         print(f"🍖 Joueur a mangé ! Faim: {self.hunger}/{self.max_hunger}")
 
+    def _get_armor_slot_for_item(self, item):
+        item_name = item.name.lower()
+
+        if "casque" in item_name or "helmet" in item_name :
+            return "helmet"
+        if "plastron" in item_name or "chestplate" in item_name :
+            return "chestplate"
+        if "botte" in item_name or "boots" in item_name :
+            return "boots"
+        return None
+
+    def _get_item_shield_value(self, item, slot=None):
+        if item.effect and item.effect > 0:
+            return item.effect
+        resolved_slot = slot or self._get_armor_slot_for_item(item)
+        if resolved_slot is None:
+            return 0
+        return self.default_armor_shield_bonus.get(resolved_slot, 0)
+    
+    def _recalculate_shield_from_equipment(self, refill=False):
+        old_max_shield = self.max_shield
+        new_max_shield = 0
+        
+        for slot in ("helmet", "chestplate", "boots"):
+            equipped_item = self.equipment[slot]
+            if equipped_item is not None:
+                new_max_shield += self._get_item_shield_value(equipped_item, slot)
+
+        self.max_shield = max(0, new_max_shield)
+
+        if refill and self.max_shield > old_max_shield:
+            gained_shield = self.max_shield - old_max_shield
+            self.shield = min(self.max_shield, self.shield + gained_shield)
+        else:
+            self.shield = min(self.shield, self.max_shield)
+
     def use_item(self, item):
         actions = {
             "soin": self.heal,
             "boisson": self.drink,
-            "nourriture": self.eat 
+            "nourriture": self.eat,
         }
 
         action = actions.get(item.category)
@@ -199,6 +253,8 @@ class Player:
         
         self.equipment[slot] = item
         self.inventory.remove_item(item, quantity = 1)
+        if slot in ("helmet", "chestplate", "boots"):
+            self._recalculate_shield_from_equipment(refill=True)
         print(f"⚔️ {item.name} équipé dans {slot}")
         return True
     
@@ -226,6 +282,10 @@ class Player:
 
         if success:
             self.equipment[slot] = None
+
+            if slot in ("helmet", "chestplate", "boots"):
+                self._recalculate_shield_from_equipment(refill=False)    
+
             print(f"🎒 {item.name} déséquipé de {slot}")
             return True
         else:
@@ -263,8 +323,19 @@ class Player:
         if self.thirst == 0 or self.hunger == 0:
             self.health -= self.lost_health * dt
             self.health = max(0, min(self.health, self.max_health))
+
+        self.time_since_last_damage += dt
+
+        can_regen = (
+            self.max_shield > 0
+            and self.shield < self.max_shield
+            and self.time_since_last_damage >= self.shield_regen_delay
+        )
+        if can_regen:
+            self.shield = min(self.max_shield, self.shield + self.shield_regen_rate * dt)
+
         return self.health
-    
+        
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         
@@ -290,6 +361,16 @@ class Player:
         bar_height = 5
         bar_x = self.rect.centerx - bar_width // 2
         bar_y = self.rect.top - 10
+
+        if self.max_shield > 0:
+            shield_bar_y = bar_y - (bar_height + 2)
+            pygame.draw.rect(screen, (100, 100, 100), (bar_x, shield_bar_y, bar_width, bar_height))
+
+            shield_ratio = 0 if self.max_shield <= 0 else self.shield / self.max_shield
+            shield_width = int(bar_width * shield_ratio)
+            pygame.draw.rect(screen, (0, 170, 255), (bar_x, shield_bar_y, shield_width, bar_height))
+
+            pygame.draw.rect(screen, (255, 255, 255), (bar_x, shield_bar_y, bar_width, bar_height), 1)
 
         pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
 
