@@ -14,42 +14,38 @@ ASSET_DIR    = os.path.join(PROJECT_ROOT, "asset")
 
 @dataclass
 class Portal:
-    from_world:    str
-    origin_point:  str
-    target_world:  str
+    from_world: str
+    origin_point: str
+    target_world: str
     teleport_point: str
 
 @dataclass
 class Map:
-    name:     str
-    walls:    list
-    group:    object
+    name: str
+    walls: list
+    group: object
     tmx_data: object
-    portals:  list
+    portals: list
 
 class MapManager:
 
     def __init__(self, screen, player):
-        self.maps        = dict()
-        self.screen      = screen
-        self.player      = player
+        self.maps = dict()
+        self.screen = screen
+        self.player = player
         self.current_map = "map"
         self._last_teleport_time = 0
-        self._teleport_cooldown  = 800
+        self._teleport_cooldown = 800
 
         if not MAP_AVAILABLE:
             return
 
-        for tmx_file in os.listdir(ASSET_DIR):
-            if tmx_file.endswith(".tmx"):
-                self._repair_tileset_images(os.path.join(ASSET_DIR, tmx_file))
-
         self.register_map("map", portals=[
-            Portal("map", "enter_cave",   "cave-1",      "spawn_cave"),
-            Portal("map", "enter_bunker", "Bunker",       "spawn_bunker"),
-            Portal("map", "enter_church", "church",       "spawn_church"),
-            Portal("map", "enter_camp",   "Camp",         "spawn_camp"),
-            Portal("map", "enter_school", "School-hall",  "spawn_school"),
+            Portal("map","enter_cave", "cave-1",      "spawn_cave"),
+            Portal("map","enter_bunker", "Bunker",       "spawn_bunker"),
+            Portal("map","enter_church", "church",       "spawn_church"),
+            Portal("map","enter_camp", "Camp",         "spawn_camp"),
+            Portal("map","enter_school", "School-hall",  "spawn_school"),
         ])
         self.register_map("cave-1", portals=[
             Portal("cave-1", "exit_cave",    "map",    "enter_cave_exit"),
@@ -163,7 +159,6 @@ class MapManager:
     def get_object(self, name): return self.get_map().tmx_data.get_object_by_name(name)
 
     def get_player_screen_pos(self):
-
         if not self.maps:
             return None
         group = self.get_group()
@@ -191,38 +186,3 @@ class MapManager:
             return
         self.get_group().update()
         self.check_collisions()
-
-    def _repair_tileset_images(self, tmx_path):
-        import xml.etree.ElementTree as ET
-        try:
-            for ts_elem in ET.parse(tmx_path).findall(".//tileset"):
-                src = ts_elem.get("source")
-                if not src:
-                    continue
-                tsx_path = os.path.join(ASSET_DIR, src)
-                if not os.path.exists(tsx_path):
-                    continue
-                for img_elem in ET.parse(tsx_path).findall(".//image"):
-                    img_src = img_elem.get("source")
-                    if not img_src:
-                        continue
-                    img_path = os.path.join(ASSET_DIR, img_src)
-                    if not os.path.exists(img_path) or os.path.getsize(img_path) == 0:
-                        w = int(img_elem.get("width",  16))
-                        h = int(img_elem.get("height", 16))
-                        self._create_placeholder_image(img_path, w, h)
-        except Exception:
-            pass
-
-    @staticmethod
-    def _create_placeholder_image(path, w, h):
-        import struct, zlib
-        def chunk(tag, data):
-            c = struct.pack(">I", len(data)) + tag + data
-            return c + struct.pack(">I", zlib.crc32(c[4:]) & 0xFFFFFFFF)
-        raw = zlib.compress(b"".join(b"\x00" + b"\x80\x80\x80" * w for _ in range(h)))
-        png = (b"\x89PNG\r\n\x1a\n"
-               + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
-               + chunk(b"IDAT", raw)
-               + chunk(b"IEND", b""))
-        open(path, "wb").write(png)
