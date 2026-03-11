@@ -21,7 +21,6 @@ def _hit(s):
     o=pygame.Surface(s.get_size(),pygame.SRCALPHA); o.fill((255,60,60,140)); s.blit(o,(0,0))
 
 def _outline(s, col=Z_OUT):
-    """Ajoute un contour 1px autour des pixels opaques."""
     w,h=s.get_size()
     o=pygame.Surface((w,h),pygame.SRCALPHA)
     alpha=pygame.surfarray.pixels_alpha(s)
@@ -251,7 +250,6 @@ class Enemy:
         self._hit=True; self._hit_t=0.15
 
     def update(self,dt,player,enemies=None,projectiles=None):
-        # player=None quand le joueur est invisible (Anthonin)
         if player is None:
             self._moving=self._atk=False
             if self._hit:
@@ -313,8 +311,11 @@ class FastEnemy(Enemy):
     WALK_FPS=10; SPRITE_W=14; SPRITE_H=22
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.speed=70; self.health=20; self.max_health=20
-        self.damage=5; self.attack_cooldown=1200
+        self.speed=70
+        self.health=20
+        self.max_health=20
+        self.damage=5
+        self.attack_cooldown=1200
     def _get_raw(self):
         return ZombieAnim.fast(self._frame%3, self._hit, self._atk)
 
@@ -322,14 +323,24 @@ class TankEnemy(Enemy):
     WALK_FPS=3; SPRITE_W=22; SPRITE_H=24
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.speed=28; self.health=150; self.max_health=150
-        self.damage=12; self.attack_cooldown=2000; self.radius=9
+        self.speed=28
+        self.health=150
+        self.max_health=150
+        self.damage=12
+        self.attack_cooldown=2000
+        self.radius=9
+
     def _get_raw(self):
         return ZombieAnim.tank(self._frame%2, self._hit, self._atk)
 
 class BossEnemy(Enemy):
-    IDLE="idle"; CHASE="chase"; CASTING="casting"; RECOVERY="recovery"
-    WALK_FPS=4; SPRITE_W=22; SPRITE_H=26
+    IDLE="idle"
+    CHASE="chase"
+    CASTING="casting"
+    RECOVERY="recovery"
+    WALK_FPS=4
+    SPRITE_W=22
+    SPRITE_H=26
 
     def __init__(self,x,y):
         super().__init__(x,y)
@@ -396,7 +407,6 @@ class BossEnemy(Enemy):
         self.cast_skill=None
 
     def update(self,dt,player,enemies=None,projectiles=None):
-        # player=None quand le joueur est invisible (Anthonin)
         if player is None:
             self._moving=self._atk=False
             if self._hit:

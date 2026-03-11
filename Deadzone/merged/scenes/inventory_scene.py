@@ -40,7 +40,6 @@ def rivet(surf, cx, cy, r=5):
     pygame.draw.circle(surf, RIVET,   (cx, cy), r-2)
 
 def leather_panel(surf, x, y, w, h):
-    """Cadre cuir avec parchemin intérieur et rivets."""
     pygame.draw.rect(surf, LEATHER,  (x,   y,   w,   h))
     pygame.draw.rect(surf, LEATHER_L,(x+2, y+2, w-4, h-4), 2)
     pygame.draw.rect(surf, PARCH,    (x+6, y+6, w-12,h-12))
@@ -59,7 +58,6 @@ def leather_panel(surf, x, y, w, h):
         rivet(surf, cx2, cy2)
 
 def panel_title(surf, text, rx, ry, rw, font, col=RED_INK):
-    """Titre sur un rectangle de cuir en haut du panneau."""
     t = font.render(text, True, col)
     tw = t.get_width() + 20
     th = t.get_height() + 6
@@ -97,7 +95,6 @@ def draw_char_silhouette(surf, cx, cy):
     pygame.draw.rect(surf, S, (cx+2,  cy-12, 13, 34))
 
 def stitch_line(surf, x1, y1, x2, y2):
-    """Ligne de coutures (tirets)."""
     dx, dy = x2-x1, y2-y1
     n = max(abs(dx),abs(dy))
     if n==0: return

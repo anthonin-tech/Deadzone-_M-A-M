@@ -19,7 +19,6 @@ class Game:
         self.player = None
         self.items_to_drop = []
 
-        # Démarre sur le menu principal
         from scenes.menu import MenuScene
         self.current_scene = MenuScene(self)
 

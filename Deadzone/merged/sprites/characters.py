@@ -1,9 +1,3 @@
-"""
-Personnages jouables M-A-M.
-Chacun hérite du Player de base et ajoute un pouvoir spécial unique.
-Sprites affichés en 16x16 natif (pixel art).
-"""
-
 import time
 import pygame
 import os
@@ -15,19 +9,11 @@ from sprites.player import Player
 
 
 class MAMPlayer(Player):
-    """
-    Etend Player avec :
-    - Sprite 16x16 natif issu de player_sheet.png
-    - Animation directionnelle (haut/bas/gauche/droite)
-    - Pouvoir special activable avec P
-    """
-
     SPRITE_COLUMN     = 0
     CHARACTER_NAME    = "MAM"
     POWER_NAME        = "Pouvoir"
     POWER_DESCRIPTION = ""
 
-    # Taille d'affichage en pixels (16x16 natif, pas de zoom)
     DISPLAY_W = 16
     DISPLAY_H = 16
 
@@ -43,10 +29,6 @@ class MAMPlayer(Player):
         self._current_dir   = "down"
         self._sheet_loaded  = False
         self._try_load_sheet()
-
-    # ---------------------------------------------------------------- #
-    #  Chargement sprite sheet — frames 16x16 natifs
-    # ---------------------------------------------------------------- #
 
     def _try_load_sheet(self):
         base_dir   = os.path.dirname(os.path.abspath(__file__))
@@ -65,30 +47,22 @@ class MAMPlayer(Player):
             self._sheet_anim_speed = 0.15
             self._sheet_loaded     = True
 
-            # Remplace l'image et le rect par la version sheet
             self.image = self._sheet_images["down"][0]
             self.rect  = self.image.get_rect(center=(int(self.position.x), int(self.position.y)))
-            # Feet proportionnel au sprite 16x16
             self.feet  = pygame.Rect(0, 0, max(1, self.DISPLAY_W // 2), 3)
             self.feet.midbottom = self.rect.midbottom
         except Exception as e:
             print(f"[{self.CHARACTER_NAME}] Sprite sheet non chargée : {e}")
 
     def _cut_frames(self, sheet, row):
-        """Découpe 3 frames 16x16 pour la direction donnée."""
         frames = []
         for frame in range(3):
             x = (self.SPRITE_COLUMN * 3 + frame) * 16
             y = row * 16
             surf = pygame.Surface((16, 16), pygame.SRCALPHA)
             surf.blit(sheet, (0, 0), (x, y, 16, 16))
-            # Pas de redimensionnement — 16x16 natif
             frames.append(surf)
         return frames
-
-    # ---------------------------------------------------------------- #
-    #  Input + animation directionnelle
-    # ---------------------------------------------------------------- #
 
     def handle_input(self, keys):
         super().handle_input(keys)
@@ -114,10 +88,6 @@ class MAMPlayer(Player):
             self._sheet_anim_idx = 0.0
         self.image = frames[int(self._sheet_anim_idx)]
 
-    # ---------------------------------------------------------------- #
-    #  Pouvoir special
-    # ---------------------------------------------------------------- #
-
     def activate_power(self):
         return False
 
@@ -141,11 +111,6 @@ class MAMPlayer(Player):
     def update(self, dt=None):
         super().update(dt)
         self.update_power()
-
-
-# ================================================================== #
-#  Mahé — Uppercut (+6 dégâts mêlée)
-# ================================================================== #
 
 class Mahe(MAMPlayer):
     SPRITE_COLUMN     = 0
@@ -185,11 +150,6 @@ class Mahe(MAMPlayer):
             return []
         return super().shoot(mouse_pos, enemies)
 
-
-# ================================================================== #
-#  Maëlys — Bouclier (réduit les dégâts de moitié)
-# ================================================================== #
-
 class Maelys(MAMPlayer):
     SPRITE_COLUMN     = 2
     CHARACTER_NAME    = "Maelys"
@@ -207,11 +167,6 @@ class Maelys(MAMPlayer):
         if self.power_active:
             amount = max(1, amount // 2)
         super().take_damage(amount, attacker_x, attacker_y)
-
-
-# ================================================================== #
-#  Anthonin — Invisibilité (zombies l'ignorent)
-# ================================================================== #
 
 class Anthonin(MAMPlayer):
     SPRITE_COLUMN     = 1

@@ -26,7 +26,6 @@ def _rivet(surf, cx, cy):
     pygame.draw.circle(surf, (55,60,72), (cx,cy), 1)
 
 def _forge_panel(surf, x, y, w, h):
-    """Cadre forgé : plaque de métal sombre avec parchemin."""
     pygame.draw.rect(surf, (22,24,30),   (x,   y,   w,   h))
     pygame.draw.rect(surf, IRON_L,       (x+2, y+2, w-4, h-4), 2)
     pygame.draw.rect(surf, IRON_HL,      (x+3, y+3, w-6, 2))
@@ -74,7 +73,6 @@ class CraftScene:
         self._panel_surf = None
 
     def _build_panel_surf(self):
-        """Cache du fond du panneau (ne change pas)."""
         s = pygame.Surface((self.rect.w, self.rect.h), pygame.SRCALPHA)
         _forge_panel(s, 0, 0, self.rect.w, self.rect.h)
 

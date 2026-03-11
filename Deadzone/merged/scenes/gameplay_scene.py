@@ -51,15 +51,10 @@ class Gameplay_Scene:
                     os.chdir(old_cwd)
 
                 if not self.map_manager.maps:
-                    print("⚠️  Aucune carte chargée → mode fond vert")
                     self.map_manager = None
-                else:
-                    print("✅ Carte Tiled chargée !")
-            else:
-                print("ℹ️  Mode sans carte Tiled (fond vert)")
+
         except Exception as e:
             traceback.print_exc()
-            print(f"⚠️  MapManager erreur : {e}")
             self.map_manager = None
 
     def world_to_screen(self, wx, wy):
@@ -108,13 +103,11 @@ class Gameplay_Scene:
                 self.player.take_damage(5, 400, 300)
             if event.key == pygame.K_j:
                 self.player.heal(5)
-            # Pouvoir special (personnages M-A-M) — touche P
             if event.key == pygame.K_p:
                 if hasattr(self.player, "activate_power"):
                     activated = self.player.activate_power()
                     if activated:
                         name = getattr(self.player, "POWER_NAME", "Pouvoir")
-                        print(f"[{name}] Active !")
 
     def try_pickup_item(self):
         if not self.nearby_item:
@@ -123,9 +116,6 @@ class Gameplay_Scene:
         if ok:
             self.dropped_items.remove(self.nearby_item)
             self.nearby_item = None
-            print("✅ Item ramassé !")
-        else:
-            print("❌ Inventaire plein !")
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -182,12 +172,10 @@ class Gameplay_Scene:
                 self.nearby_item = dropped
 
     def update_enemies(self, dt):
-        # Invisibilite Anthonin : les ennemis n'attaquent pas le joueur
         player_invisible = getattr(self.player, "is_invisible", False)
 
         for enemy in self.enemies[:]:
             if player_invisible:
-                # L'ennemi se deplace mais n'attaque pas
                 enemy.update(dt, None, self.enemies, self.projectiles)
             else:
                 enemy.update(dt, self.player, self.enemies, self.projectiles)
@@ -279,7 +267,6 @@ class Gameplay_Scene:
         self._draw_power_hud(screen)
 
     def _draw_power_hud(self, screen):
-        """Affiche l'etat du pouvoir special pour les personnages M-A-M."""
         if not hasattr(self.player, "get_power_status"):
             return
         power_active, cooldown_active, remaining = self.player.get_power_status()
@@ -300,7 +287,6 @@ class Gameplay_Scene:
             color = (160, 160, 255)
             label = f"[P] {power_name} : pret"
 
-        # Fond semi-transparent
         bg = pygame.Surface((220, 38), pygame.SRCALPHA)
         bg.fill((0, 0, 0, 140))
         screen.blit(bg, (x - 5, y - 4))

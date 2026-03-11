@@ -2,12 +2,6 @@ import pygame
 import os
 
 class AnimateSprite(pygame.sprite.Sprite):
-    """
-    Gère les animations directionnelles (haut/bas/gauche/droite)
-    à partir d'une sprite sheet.
-    Chaque personnage a une colonne différente dans la sprite sheet.
-    """
-
     def __init__(self, sprite_column):
         super().__init__()
 

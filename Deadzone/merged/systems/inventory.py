@@ -26,16 +26,12 @@ class Inventory:
 
     def remove_item(self, item, quantity=1):
         if item not in self._inventory:
-            print(f"❌ {item.name} n'est pas dans l'inventaire")
             return False
 
         item.quantity -= quantity
 
         if item.quantity <= 0:
             self._inventory.remove(item)
-            print(f"🗑️ {item.name} retiré de l'inventaire")
-        else:
-            print(f"➖ {item.name} x{quantity} retiré (Reste: {item.quantity})")
 
         return True
 
@@ -43,7 +39,6 @@ class Inventory:
         for item in self._inventory:
             if item.name == name:
                 return self.remove_item(item, quantity)
-        print(f"❌ {name} introuvable dans l'inventaire")
         return False
 
     def get_item_by_index(self, index):
@@ -65,7 +60,6 @@ class Inventory:
 
     def clear(self):
         self._inventory.clear()
-        print("🗑️ Inventaire vidé")
 
     def get_items_by_category(self, category):
         return [item for item in self._inventory if item.category == category]
@@ -77,6 +71,4 @@ class Inventory:
         return f"Inventory({len(self._inventory)}/{self.capacity} items)"
 
     def __str__(self):
-        if not self._inventory:
-            return "Inventaire vide"
         return "\n".join([str(item) for item in self._inventory])
