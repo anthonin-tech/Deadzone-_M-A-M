@@ -129,3 +129,21 @@ IRON =Items(
     illustration = "Fer_Ressource.png",
     description = "On peut forger des choses avec le fer",
 )
+
+ITEMS_BY_NAME = {
+    "CARE_KIT": CARE_KIT,
+    "BANDAGE": BANDAGE,
+    "MEAT": MEAT,
+    "WATER": WATER,
+    "SHOTGUN": SHOTGUN,
+    "GUN": GUN,
+    "AXE": AXE,
+    "CAP": CAP,
+    "TSHIRT": TSHIRT,
+    "PANTS": PANTS,
+    "HELMET_SOLDAT": HELMET_SOLDAT,
+    "CHESPLATE_SOLDAT": CHESPLATE_SOLDAT,
+    "BOTTS_SOLDAT": BOTTS_SOLDAT,
+    "WOOD": WOOD,
+    "IRON": IRON
+}

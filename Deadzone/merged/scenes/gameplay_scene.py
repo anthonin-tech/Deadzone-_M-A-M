@@ -2,6 +2,7 @@ import pygame
 import math
 import sys
 import os
+import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -9,16 +10,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from scenes.inventory_scene import InventoryScene
 from sprites.dropped_item import DroppedItem
 from sprites.item import Items
-from sprites.library_item import CARE_KIT, SHOTGUN, WATER
+from sprites.library_item import ITEMS_BY_NAME
 from sprites.enemy import BossEnemy, Enemy, FastEnemy, TankEnemy
 
+
+
 MAP_ZOOM = 3
+SAVE_FILE = "savegame.json" 
 
 class Gameplay_Scene:
 
     def __init__(self, game, player):
         self.game   = game
         self.player = player
+        self.paused = False  
 
         self.enemies       = []
         self.dropped_items = []
@@ -34,10 +39,11 @@ class Gameplay_Scene:
 
         self.map_manager = None
         self._try_init_map()
-
+        
         self._spawn_enemies()
         self._spawn_test_items()
-
+       
+    
     def _try_init_map(self):
         import traceback
         try:
@@ -87,6 +93,7 @@ class Gameplay_Scene:
         self.enemies.append(TankEnemy  (px - 160, py + 200))
 
     def _spawn_test_items(self):
+        from sprites.library_item import CARE_KIT, SHOTGUN, WATER
         px = self.player.position.x
         py = self.player.position.y
         self.dropped_items.append(DroppedItem(CARE_KIT,  px +  60, py +  30))
@@ -109,6 +116,17 @@ class Gameplay_Scene:
                     if activated:
                         name = getattr(self.player, "POWER_NAME", "Pouvoir")
 
+            if event.key == pygame.K_F5:
+                self.save_game()
+
+
+            if event.key == pygame.K_F9:
+                 if os.path.exists(SAVE_FILE):
+                  self.load_game()
+
+            if event.key == pygame.K_m:  
+                self.paused = not self.paused  
+
     def try_pickup_item(self):
         if not self.nearby_item:
             return
@@ -118,6 +136,9 @@ class Gameplay_Scene:
             self.nearby_item = None
 
     def update(self, dt):
+        if self.paused:
+            return  
+
         keys = pygame.key.get_pressed()
         self.player.save_location()
         self.player.handle_input(keys)
@@ -151,8 +172,7 @@ class Gameplay_Scene:
         if pygame.mouse.get_pressed()[0]:
             mx, my = pygame.mouse.get_pos()
             world_target = self.screen_to_world(mx, my)
-            self.projectiles.extend(
-                self.player.shoot(world_target, enemies=self.enemies))
+            self.projectiles.extend(self.player.shoot(world_target, enemies=self.enemies))
             self._remove_dead_enemies()
 
     def _remove_dead_enemies(self):
@@ -262,9 +282,15 @@ class Gameplay_Scene:
 
         if self.nearby_item:
             self.draw_pickup_prompt(screen)
-
-        self._draw_instructions(screen)
+        
         self._draw_power_hud(screen)
+
+        if self.paused:
+        
+            pause_bg = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+            pause_bg.fill((0, 0, 0, 180))
+            screen.blit(pause_bg, (0, 0))
+            self._draw_instructions(screen)
 
     def _draw_power_hud(self, screen):
         if not hasattr(self.player, "get_power_status"):
@@ -317,12 +343,17 @@ class Gameplay_Scene:
             "Clic gauche : Tirer / Attaquer",
             "H : Dégâts (test)",
             "J : Soigner (test)",
-            "ESC : Quitter"
+            "M : Pause",
+            "F5 : Sauvegarder",
+            "F9 : Charger",
         ]
-        y = 10
-        for line in lines:
-            screen.blit(self.font.render(line, True, (255, 255, 255)), (10, y))
-            y += 25
+        
+        y_start = screen.get_height() // 2 - (len(lines) * 15)
+        for i, line in enumerate(lines):
+            surf = self.font.render(line, True, (255, 255, 255))
+            x = screen.get_width() // 2 - surf.get_width() // 2
+            y = y_start + i * 30
+            screen.blit(surf, (x, y))
 
     def _draw_aim_preview(self, screen):
         weapon = self.player.get_equipped_weapon()
@@ -372,3 +403,102 @@ class Gameplay_Scene:
                     pygame.draw.line(screen, (255, 200, 120),
                                      (int(origin_s.x), int(origin_s.y)),
                                      (int(ep.x), int(ep.y)), 1)
+   
+    def save_game(self):
+    
+        inventory_items = []
+        for item in self.player.inventory.items:
+            if item:
+                for key, value in ITEMS_BY_NAME.items():
+                    if value == item:
+                        inventory_items.append(key)
+
+       
+        dropped_items = []
+        for dropped in self.dropped_items:
+            for key, value in ITEMS_BY_NAME.items():
+                if value == dropped.item:
+                    dropped_items.append({
+                        "id": key,
+                        "x": dropped.x,
+                        "y": dropped.y
+                    })
+
+        
+        enemies_data = []
+        for enemy in self.enemies:
+            enemies_data.append({
+                "type": enemy.__class__.__name__,
+                "x": enemy.x,
+                "y": enemy.y,
+                "health": enemy.health
+            })
+
+        data = {
+            "player_class": self.player.__class__.__name__,  
+            "player_x": self.player.position.x,
+            "player_y": self.player.position.y,
+            "player_health": self.player.health,
+            "inventory": inventory_items,
+            "dropped_items": dropped_items,
+            "enemies": enemies_data,
+            "enemies_killed": self.enemies_killed,
+            "time": pygame.time.get_ticks() - self.start_time
+        }
+
+        with open(SAVE_FILE, "w") as f:
+            json.dump(data, f)
+
+        print("Partie sauvegardée !")
+
+
+    def load_game(self):
+        if not os.path.exists(SAVE_FILE):
+            print("Aucune sauvegarde trouvée")
+            return
+
+        with open(SAVE_FILE, "r") as f:
+            data = json.load(f)
+
+        
+        player_class_name = data.get("player_class")
+        player_class = globals().get(player_class_name)
+        if player_class:
+            self.player = player_class()
+
+       
+        self.player.position.x = data["player_x"]
+        self.player.position.y = data["player_y"]
+        self.player.rect.centerx = int(self.player.position.x)
+        self.player.rect.centery = int(self.player.position.y)
+        self.player.health = data["player_health"]
+
+        
+        self.player.inventory.items.clear()
+        for item_id in data.get("inventory", []):
+            item = ITEMS_BY_NAME.get(item_id)
+            if item:
+                self.player.inventory.add_item(item)
+
+        
+        self.dropped_items.clear()
+        for dropped in data.get("dropped_items", []):
+            item = ITEMS_BY_NAME.get(dropped["id"])
+            if item:
+                self.dropped_items.append(
+                    DroppedItem(item, dropped["x"], dropped["y"])
+                )
+
+        
+        self.enemies.clear()
+        for enemy_data in data.get("enemies", []):
+            enemy_class = globals().get(enemy_data["type"])
+            if enemy_class:
+                enemy = enemy_class(enemy_data["x"], enemy_data["y"])
+                enemy.health = enemy_data["health"] 
+                self.enemies.append(enemy)
+
+        self.enemies_killed = data["enemies_killed"]
+        self.start_time = pygame.time.get_ticks() - data["time"]
+
+        print("Sauvegarde chargée !")

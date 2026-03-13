@@ -6,6 +6,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from sprites.characters import Mahe, Maelys, Anthonin
+from scenes.gameplay_scene import Gameplay_Scene
+from sprites.player import Player
+import json
+
+SAVE_FILE = "savegame.json"
 
 class Button:
     def __init__(self, text, x, y, width, height,
@@ -60,7 +65,8 @@ class MenuScene:
         self._btn_play  = Button("Jouer",              bx, 230, bw, bh)
         self._btn_char  = Button("Choisir personnage", bx, 230 + (bh+gap),     bw, bh)
         self._btn_help  = Button("Aide",               bx, 230 + (bh+gap)*2,   bw, bh)
-        self._btn_quit  = Button("Quitter",            bx, 230 + (bh+gap)*3,   bw, bh,
+        self._btn_load  = Button("Partie sauvegarder",               bx, 230 + (bh+gap)*3,   bw, bh)
+        self._btn_quit  = Button("Quitter",            bx, 230 + (bh+gap)*4,   bw, bh,
                                  color=(100, 20, 20), hover_color=(180, 0, 0))
 
         self._btn_prev = Button("<", cx - 260, sh//2 - 30, 60, 60,
@@ -90,12 +96,44 @@ class MenuScene:
                 return
 
         if self.state == self.STATE_MAIN:
+
             if self._btn_play.is_clicked(event):
                 self._start_game()
+
             elif self._btn_char.is_clicked(event):
                 self.state = self.STATE_CHARACTER
+
             elif self._btn_help.is_clicked(event):
                 self.state = self.STATE_HELP
+
+            elif self._btn_load.is_clicked(event):
+
+                if os.path.exists(SAVE_FILE):
+
+                    import json
+
+                    with open(SAVE_FILE, "r") as f:
+                        data = json.load(f)
+
+                    player_class_name = data.get("player_class")
+
+                    if player_class_name == "Mahe":
+                        player = Mahe()
+                    elif player_class_name == "Maelys":
+                        player = Maelys()
+                    elif player_class_name == "Anthonin":
+                        player = Anthonin()
+                    else:
+                        player = Player()
+
+                    scene = Gameplay_Scene(self.game, player)
+                    scene.load_game()
+
+                    self.game.change_scene(scene)
+
+                else:
+                    print("Pas de sauvegarde trouvée")
+                    
             elif self._btn_quit.is_clicked(event):
                 pygame.quit()
                 sys.exit()
@@ -165,6 +203,7 @@ class MenuScene:
         self._btn_play.draw(screen, self._font_btn)
         self._btn_char.draw(screen, self._font_btn)
         self._btn_help.draw(screen, self._font_btn)
+        self._btn_load.draw(screen, self._font_btn)
         self._btn_quit.draw(screen, self._font_btn)
 
     def _draw_character(self, screen):
@@ -214,6 +253,8 @@ class MenuScene:
             ("Ramasser objet",      "E"),
             ("Pouvoir special",     "P"),
             ("Retour au menu",      "Echap"),
+            ("Sauvegarder",      "F5"),
+            ("Charger",      "F9"),
         ]
 
         y = 210
