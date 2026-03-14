@@ -163,6 +163,7 @@ class Gameplay_Scene:
         if self.player.health <= 0:
             from scenes.gameover_scene import GameOverScene
             elapsed = (pygame.time.get_ticks() - self.start_time) / 1000
+            self.game.player = self.player 
             self.game.change_scene(GameOverScene(self.game, {
                 "enemies_killed": self.enemies_killed,
                 "time_survived":  elapsed

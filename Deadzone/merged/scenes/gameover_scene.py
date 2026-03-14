@@ -30,7 +30,8 @@ class GameOverScene:
                 sys.exit()
 
     def _restart_game(self):
-        new_player = Player()
+        player_class = type(self.game.player) if hasattr(self.game, "player") else Player
+        new_player = player_class()
         self.game.change_scene(Gameplay_Scene(self.game, new_player))
 
     def update(self, dt):
