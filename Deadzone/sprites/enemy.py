@@ -228,14 +228,30 @@ class Enemy:
     def calculate_distance(self,tx,ty):
         return math.sqrt((tx-self.x)**2+(ty-self.y)**2)
 
-    def move_towards(self,tx,ty,dt):
-        d=self.calculate_distance(tx,ty)
-        if d>0:
-            self.x+=(tx-self.x)/d*self.speed*dt
-            self.y+=(ty-self.y)/d*self.speed*dt
-            self._moving=True
-            if (tx-self.x)<0: self._flip=True
-            elif (tx-self.x)>0: self._flip=False
+    def move_towards(self, tx, ty, dt, walls=None):
+        d = self.calculate_distance(tx, ty)
+        if d > 0:
+            old_x, old_y = self.x, self.y
+            self.x += (tx - self.x) / d * self.speed * dt
+            self.y += (ty - self.y) / d * self.speed * dt
+            self._moving = True
+            if (tx - self.x) < 0: self._flip = True
+            elif (tx - self.x) > 0: self._flip = False
+            if walls:
+                r = pygame.Rect(self.x - self.radius, self.y - self.radius,
+                                self.radius * 2, self.radius * 2)
+                if r.collidelist(walls) != -1:
+                    self.x, self.y = old_x, old_y
+                    self.x += (tx - self.x) / d * self.speed * dt
+                    rx = pygame.Rect(self.x - self.radius, self.y - self.radius,
+                                    self.radius * 2, self.radius * 2)
+                    if rx.collidelist(walls) != -1:
+                        self.x = old_x
+                    self.y += (ty - self.y) / d * self.speed * dt
+                    ry = pygame.Rect(self.x - self.radius, self.y - self.radius,
+                                    self.radius * 2, self.radius * 2)
+                    if ry.collidelist(walls) != -1:
+                        self.y = old_y
 
     def can_attack(self):
         return pygame.time.get_ticks()-self.last_attack>=self.attack_cooldown
@@ -262,7 +278,7 @@ class Enemy:
         if dist<=self.attack_distance:
             self.attack(player); self._atk=True
         elif dist<=self.detection_radius:
-            self.move_towards(px,py,dt)
+            self.move_towards(px, py, dt, getattr(self, '_walls', None))
         if self._hit:
             self._hit_t-=dt
             if self._hit_t<=0: self._hit=False
@@ -425,7 +441,7 @@ class BossEnemy(Enemy):
             dist=self.calculate_distance(px,py)
             self.state=self.CHASE if dist<=self.detection_radius else self.IDLE
             if self.state==self.CHASE and dist>self.attack_distance:
-                self.move_towards(px,py,dt)
+                self.move_towards(px, py, dt, getattr(self, '_walls', None))
             elif dist<=self.attack_distance: self._atk=True
             if (now-self.last_special)>=self.global_cd:
                 sk=self._pick_skill(now)

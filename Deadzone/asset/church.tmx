@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="53">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="61">
  <editorsettings>
   <export target="Interieur_eglise.tmx" format="tmx"/>
  </editorsettings>
@@ -38,6 +38,9 @@
 0,0,0,0,0,141,142,143,144,145,146,147,148,149,150,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="3" name="enemy_spawn">
+  <object id="58" type="enemy_spawn" x="125.19" y="324.233" width="80" height="60"/>
+ </objectgroup>
  <objectgroup id="2" name="Calque d'Objets 1">
   <object id="1" name="exit_church" x="142.045" y="471.091" width="38.6364" height="7.09091"/>
   <object id="2" name="spawn_church" x="161.273" y="452.227">
