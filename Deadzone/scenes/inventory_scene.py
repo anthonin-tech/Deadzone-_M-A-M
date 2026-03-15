@@ -28,9 +28,7 @@ RARITY_COL = {
     "commun":       (100, 100, 100),
     "rare":         ( 40, 100, 195),
     "epique":       (120,  35, 190),
-    "\u00e9pique":  (120,  35, 190),
     "legendaire":   (185, 120,  18),
-    "l\u00e9gendaire": (185, 120, 18),
 }
 SLOT_LABELS = {"helmet":"Casque","chestplate":"Plastron","boots":"Bottes","weapon":"Arme"}
 

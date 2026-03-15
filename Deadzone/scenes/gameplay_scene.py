@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from scenes.inventory_scene import InventoryScene
 from sprites.dropped_item import DroppedItem
 from sprites.item import Items
-from sprites.library_item import ITEMS_BY_NAME
+from sprites.library_item import *
 from sprites.enemy import BossEnemy, Enemy, FastEnemy, TankEnemy
 
 
