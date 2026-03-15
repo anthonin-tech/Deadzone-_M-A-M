@@ -1,4 +1,5 @@
 import sys
+import copy
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from sprites.recipes import RECIPES
@@ -15,7 +16,7 @@ class CraftingManager:
         for item_name, qty_needed in recipe["ingredients"].items():
             if not self.inventory.has_item(item_name, qty_needed):
                 return False
-            return True
+        return True
 
     def craft(self, recipe):
         if not self.can_craft(recipe):
@@ -24,16 +25,8 @@ class CraftingManager:
         for item_name, quantity in recipe["ingredients"].items():
             self.inventory.remove_item_by_name(item_name, quantity)
 
-        r = recipe["result"]
-        crafted_item = Items(
-            name=r["name"],
-            category=r["category"],
-            rarity=r["rarity"],
-            illustration=r["illustration"],
-            description=r["description"],
-            effect=r.get("effect", 0),
-            quantity=r["quantity"]
-        )
+        crafted_item = copy.copy(recipe["result"]) 
+        crafted_item.quantity = 1
         self.inventory.add_item(crafted_item)
 
         return True

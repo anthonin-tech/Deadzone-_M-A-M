@@ -15,22 +15,22 @@ class Weapon:
             "projectile_damage": 12,
             "pellets": 1,
             "spread_deg": 1.5,
-            "max_distance": 380
+            "max_distance": 75
         },
         "shotgun": {
             "attack_type": "ranged",
             "cooldown_ms": 900,
             "projectile_speed": 540,
-            "projectile_damage": 7,
+            "projectile_damage": 4,
             "pellets": 8,
             "spread_deg": 18,
-            "max_distance": 175
+            "max_distance": 50
         },
         "axe": {
             "cooldown_ms": 1000,
             "attack_type": "melee",
-            "melee_damage": 26,
-            "melee_range": 68,
+            "melee_damage": 10,
+            "melee_range": 15,
             "melee_arc_deg": 150
         }
     }

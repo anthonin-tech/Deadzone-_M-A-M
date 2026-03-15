@@ -172,13 +172,12 @@ class CraftScene:
                 ox=(ico_sz-img.get_width())//2; oy=(ico_sz-img.get_height())//2
                 screen.blit(img, (ico_x+ox, ico_y+oy))
 
-            if result.get("quantity",1) > 1:
-                qt = self.F["tag"].render(f"x{result['quantity']}", True, GOLD_L)
-                screen.blit(qt, (ico_x+ico_sz-qt.get_width()-2, ico_y+ico_sz-qt.get_height()-1))
+            if result.quantity > 1:                                
+               qt = self.F["tag"].render(f"x{result.quantity}", True, GOLD_L)
 
             tx = ico_x + ico_sz + 10
             nc = GOLD_L if can else (100,90,70)
-            nt = self.F["name"].render(result["name"], True, nc)
+            nt = self.F["name"].render(result.name, True, nc)
             screen.blit(nt, (tx, y+8))
 
             tag_x = tx; tag_y = y+32
@@ -222,10 +221,10 @@ class CraftScene:
 
     _img_cache = {}
     def _get_result_img(self, result, sz):
-        key = (result.get("illustration",""), sz)
+        key = (result.illustration, sz)  
         if key in self._img_cache: return self._img_cache[key]
         try:
-            surf = pygame.image.load(str(Path(__file__).parent.parent / "assets" / "items" / result["illustration"])).convert_alpha()
+            surf = pygame.image.load(str(Path(__file__).parent.parent / "assets" / "items" / result.illustration)).convert_alpha()
             surf = pygame.transform.scale(surf, (sz, sz))
             self._img_cache[key] = surf
         except:

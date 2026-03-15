@@ -147,6 +147,21 @@ class Player(pygame.sprite.Sprite):
         a(HELMET_SOLDAT)
         a(CHESPLATE_SOLDAT)
         a(BOTTS_SOLDAT)
+        a(WOOD)
+        a(IRON)
+        a(FIBER)
+        a(REINFORCED_WOOD)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(WEED)
+        a(SPRING)
+        a(ADHESIVE_TAPE)
+        a(FABRIC)
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
         remaining = amount
