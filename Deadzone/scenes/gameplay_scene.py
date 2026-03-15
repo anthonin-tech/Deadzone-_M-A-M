@@ -3,6 +3,7 @@ import math
 import sys
 import os
 import json
+import random
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -40,9 +41,10 @@ class Gameplay_Scene:
         self.map_manager = None
         self._try_init_map()
         
+        self._spawn_timer = 0
+        self._spawn_interval = 15
         self._spawn_enemies()
-        self._spawn_test_items()
-       
+        self._spawn_test_items()       
     
     def _try_init_map(self):
         import traceback
@@ -62,6 +64,22 @@ class Gameplay_Scene:
         except Exception as e:
             traceback.print_exc()
             self.map_manager = None
+
+        if self.map_manager:
+            self.map_manager.on_map_change = self._on_map_changed
+
+    def _on_map_changed(self, new_map_name):
+        self.enemies.clear()
+
+        zones = self.map_manager.get_spawn_zones()
+        TYPES = [Enemy, Enemy, Enemy, FastEnemy, TankEnemy]
+        
+        for zone in zones:
+            nb = random.randint(2, 4)
+            for _ in range(nb):
+                x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
+                y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
+                self.enemies.append(random.choice(TYPES)(x, y))
 
     def world_to_screen(self, wx, wy):
         if not self.map_manager:
@@ -91,6 +109,16 @@ class Gameplay_Scene:
         self.enemies.append(Enemy      (px - 180, py -  90))
         self.enemies.append(FastEnemy  (px + 220, py - 170))
         self.enemies.append(TankEnemy  (px - 160, py + 200))
+
+        if self.map_manager:
+            zones = self.map_manager.get_spawn_zones()
+            TYPES = [Enemy, Enemy, Enemy, FastEnemy, TankEnemy]
+            for zone in zones:
+                nb = random.randint(2, 4)
+                for _ in range(nb):
+                    x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
+                    y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
+                    self.enemies.append(random.choice(TYPES)(x, y))
 
     def _spawn_test_items(self):
         from sprites.library_item import CARE_KIT, SHOTGUN, WATER
@@ -134,6 +162,20 @@ class Gameplay_Scene:
         if ok:
             self.dropped_items.remove(self.nearby_item)
             self.nearby_item = None
+    
+    def _respawn_enemies(self):
+        if not self.map_manager:
+            return
+        zones = self.map_manager.get_spawn_zones()
+        if not zones:
+            return
+        TYPES = [Enemy, TankEnemy, FastEnemy]
+        for zone in zones:
+            nb = random.randint(1, 2)
+            for _ in range(nb):
+                x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
+                y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
+                self.enemies.append(random.choice(TYPES)(x, y))
 
     def update(self, dt):
         if self.paused:
@@ -175,6 +217,11 @@ class Gameplay_Scene:
             world_target = self.screen_to_world(mx, my)
             self.projectiles.extend(self.player.shoot(world_target, enemies=self.enemies))
             self._remove_dead_enemies()
+        
+        self._spawn_timer += dt
+        if self._spawn_timer >= self._spawn_interval:
+            self._spawn_timer = 0
+            self._respawn_enemies()
 
     def _remove_dead_enemies(self):
         for e in self.enemies[:]:
@@ -193,9 +240,10 @@ class Gameplay_Scene:
                 self.nearby_item = dropped
 
     def update_enemies(self, dt):
+        walls = self.map_manager.get_walls() if self.map_manager else []
         player_invisible = getattr(self.player, "is_invisible", False)
-
         for enemy in self.enemies[:]:
+            enemy._walls = walls  
             if player_invisible:
                 enemy.update(dt, None, self.enemies, self.projectiles)
             else:
