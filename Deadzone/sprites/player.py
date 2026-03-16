@@ -97,7 +97,6 @@ class Player(pygame.sprite.Sprite):
             "weapon": None, "helmet": None,
             "chestplate": None, "boots": None,
         }
-        self._add_test_items()
 
     def _update_animation(self, dt):
         target_seq   = ANIM_WALK  if self._moving else ANIM_IDLE
@@ -134,34 +133,6 @@ class Player(pygame.sprite.Sprite):
         self.position.x = self.old_position[0]
         self.position.y = self.old_position[1]
         self._sync_rect()
-
-    def _add_test_items(self):
-        a = self.inventory.add_item
-        a(CARE_KIT)
-        a(BANDAGE)
-        a(WATER)
-        a(MEAT)
-        a(SHOTGUN)
-        a(GUN)
-        a(AXE)
-        a(HELMET_SOLDAT)
-        a(CHESPLATE_SOLDAT)
-        a(BOTTS_SOLDAT)
-        a(WOOD)
-        a(IRON)
-        a(FIBER)
-        a(REINFORCED_WOOD)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(WEED)
-        a(SPRING)
-        a(ADHESIVE_TAPE)
-        a(FABRIC)
 
     def take_damage(self, amount, attacker_x=None, attacker_y=None):
         remaining = amount

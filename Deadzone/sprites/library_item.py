@@ -177,3 +177,27 @@ FABRIC = Items(
     illustration = "Tissu_Ressource.png",
     description = "Utile pour ce faire des bandages",
 )
+
+ITEMS_BY_NAME = {
+    "CARE_KIT":        CARE_KIT,
+    "BANDAGE":         BANDAGE,
+    "MEAT":            MEAT,
+    "WATER":           WATER,
+    "SHOTGUN":         SHOTGUN,
+    "GUN":             GUN,
+    "AXE":             AXE,
+    "CAP":             CAP,
+    "TSHIRT":          TSHIRT,
+    "PANTS":           PANTS,
+    "HELMET_SOLDAT":   HELMET_SOLDAT,
+    "CHESPLATE_SOLDAT": CHESPLATE_SOLDAT,
+    "BOTTS_SOLDAT":    BOTTS_SOLDAT,
+    "WOOD":            WOOD,
+    "REINFORCED_WOOD": REINFORCED_WOOD,
+    "IRON":            IRON,
+    "WEED":            WEED,
+    "FIBER":           FIBER,
+    "SPRING":          SPRING,
+    "ADHESIVE_TAPE":   ADHESIVE_TAPE,
+    "FABRIC":          FABRIC,
+}

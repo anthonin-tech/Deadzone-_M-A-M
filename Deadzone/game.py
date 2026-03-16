@@ -10,7 +10,7 @@ from sprites.player import Player
 class Game:
 
     def __init__(self):
-        self.screen = pygame.display.set_mode((1280, 720))
+        self.screen = pygame.display.set_mode((1280, 720), pygame.FULLSCREEN)
         pygame.display.set_caption("Deadzone - Survie Zombie")
 
         self.clock = pygame.time.Clock()

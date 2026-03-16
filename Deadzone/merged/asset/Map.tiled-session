@@ -1,0 +1,99 @@
+{
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "Projets Tiled (*.tiled-project)",
+    "fileStates": {
+        "All_Chest_Sprites_Combined.tsx": {
+            "scaleInDock": 1
+        },
+        "Bord-trottoir-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Building_.tsx": {
+            "scaleInDock": 1
+        },
+        "Bunker_resized_half.tsx": {
+            "scaleInDock": 1
+        },
+        "Camp_resized_0.75x.tsx": {
+            "scaleInDock": 1
+        },
+        "Cave.tsx": {
+            "scaleInDock": 1
+        },
+        "Church_upscaled_1_5x.tsx": {
+            "scaleInDock": 1
+        },
+        "Dechetterie_resized_half.tsx": {
+            "scaleInDock": 1
+        },
+        "Lac.tsx": {
+            "scaleInDock": 1
+        },
+        "Object.tsx": {
+            "scaleInDock": 1
+        },
+        "Rock.tsx": {
+            "scaleInDock": 1
+        },
+        "Route 1-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Route 2-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Route ligne blanche-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Sol-camp.tsx": {
+            "scaleInDock": 1
+        },
+        "Sol.tsx": {
+            "scaleInDock": 1
+        },
+        "Troittoir 1-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Troittoir 2-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Trottoir-angle-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "Wire-Fence_TileSet_x2.tsx": {
+            "scaleInDock": 1
+        },
+        "angle-interieur-trottoir-1.tsx": {
+            "scaleInDock": 1
+        },
+        "dead-tree-1-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "dead-tree-2-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "dead-tree-3-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "dead-tree-4-1.png.tsx": {
+            "scaleInDock": 1
+        },
+        "map.tmx": {
+            "scale": 1,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 464.5,
+                "y": 604
+            }
+        }
+    },
+    "openFiles": [
+        "map.tmx"
+    ],
+    "project": "Map.tiled-project",
+    "recentFiles": [
+        "map.tmx"
+    ]
+}
