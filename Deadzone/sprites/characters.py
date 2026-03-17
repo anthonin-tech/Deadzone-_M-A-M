@@ -22,7 +22,8 @@ class MAMPlayer(Player):
 
         self.power_active    = False
         self.cooldown_active = False
-        self._power_start    = 0.0
+        self._power_start = 0
+        self._cooldown_start = 0
         self.POWER_DURATION  = 60.0
         self.POWER_COOLDOWN  = 60.0
 
@@ -93,12 +94,16 @@ class MAMPlayer(Player):
 
     def update_power(self):
         now = time.time()
-        if self.power_active and now - self._power_start >= self.POWER_DURATION:
-            self.power_active    = False
-            self.cooldown_active = True
-            self._power_start    = now
-        elif self.cooldown_active and now - self._power_start >= self.POWER_COOLDOWN:
-            self.cooldown_active = False
+
+        if self.power_active:
+            if now - self._power_start >= self.POWER_DURATION:
+                self.power_active = False
+                self.cooldown_active = True
+                self._cooldown_start = now
+
+        elif self.cooldown_active:
+            if now - self._cooldown_start >= self.POWER_COOLDOWN:
+                self.cooldown_active = False
 
     def get_power_status(self):
         now = time.time()
