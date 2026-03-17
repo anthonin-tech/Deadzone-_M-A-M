@@ -42,7 +42,7 @@ class MenuScene:
     STATE_HELP      = "help"
 
     CHARACTERS = [
-        (Mahe,     "Mahe",     "Uppercut : +6 degats melee (60s)", "mahe"),
+        (Mahe,     "Mahe",     "Uppercut : Boost de vitesse (60s)", "mahe"),
         (Maelys,   "Maelys",   "Bouclier : reduit les degats (60s)", "maelys"),
         (Anthonin, "Anthonin", "Invisibilite : zombies ignores (60s)", "anthonin"),
     ]
@@ -62,7 +62,7 @@ class MenuScene:
 
         bw, bh, gap = 280, 52, 12
         bx = cx - bw // 2
-        self._btn_play  = Button("Jouer",              bx, 230, bw, bh)
+        self._btn_play  = Button("Nouvelle partie",              bx, 230, bw, bh)
         self._btn_char  = Button("Choisir personnage", bx, 230 + (bh+gap),     bw, bh)
         self._btn_help  = Button("Aide",               bx, 230 + (bh+gap)*2,   bw, bh)
         self._btn_load  = Button("Partie sauvegarder",               bx, 230 + (bh+gap)*3,   bw, bh)

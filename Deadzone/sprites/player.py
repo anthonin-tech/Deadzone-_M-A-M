@@ -171,7 +171,7 @@ class Player(pygame.sprite.Sprite):
 
         w_item = self.equipment["weapon"]
         if w_item:
-            w_item.durability = max(0, w_item.durability - 1)
+            w_item.durability = max(0, w_item.durability - 5)
             if w_item.durability == 0:
                 self.equipment["weapon"] = None
                 return []
