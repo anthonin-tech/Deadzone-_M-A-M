@@ -3,17 +3,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from sprites.projectile import Projectile
 
-Z_SKIN   = (100, 140,  90)
-Z_SKIN_S = ( 70, 100,  62)
-Z_BODY   = ( 62,  88, 105)
-Z_BODY_S = ( 42,  62,  78)
-Z_PANTS  = ( 48,  52,  68)
-Z_BOOT   = ( 32,  34,  44)
-Z_HAIR   = ( 28,  30,  38)
-Z_TEETH  = (220, 210, 185)
-Z_EYE    = (210,  30,  30)
-Z_BLOOD  = (150,  15,  15)
-Z_OUT    = ( 18,  18,  22)
+Z_SKIN   = ( 92, 150,  92)
+Z_SKIN_S = ( 60, 110,  70)
+Z_BODY   = ( 55,  95, 118)
+Z_BODY_S = ( 35,  70,  92)
+Z_PANTS  = ( 48,  54,  76)
+Z_BOOT   = ( 28,  30,  42)
+Z_HAIR   = ( 22,  24,  32)
+Z_TEETH  = (235, 226, 205)
+Z_EYE    = (225,  40,  40)
+Z_BLOOD  = (160,  18,  18)
+Z_OUT    = ( 12,  12,  14)
 
 def _s(w=16,h=20): return pygame.Surface((w,h),pygame.SRCALPHA)
 def _r(s,c,x,y,w,h): pygame.draw.rect(s,c,(x,y,w,h))
@@ -35,6 +35,13 @@ def _outline(s, col=Z_OUT):
     res=pygame.Surface((w,h),pygame.SRCALPHA)
     res.blit(o,(0,0)); res.blit(s,(0,0))
     return res
+
+def _finalize(s, hit=False, outline=True):
+    if outline:
+        s = _outline(s)
+    if hit:
+        _hit(s)
+    return s
 
 class ZombieAnim:
 
@@ -77,8 +84,7 @@ class ZombieAnim:
         else:
             _r(s,Z_PANTS,4,15,3,4); _r(s,Z_PANTS,9,14,3,3)
             _r(s,Z_BOOT, 4,19,3,2); _r(s,Z_BOOT, 9,17,3,2)
-        if hit: _hit(s)
-        return s
+        return _finalize(s, hit=hit, outline=True)
 
     @staticmethod
     def fast(frame=0, hit=False, atk=False):
@@ -114,8 +120,7 @@ class ZombieAnim:
         else:
             _r(s,Z_PANTS,4,14,2,4); _r(s,Z_PANTS,8,13,2,5)
             _r(s,Z_BOOT, 4,18,2,3); _r(s,Z_BOOT, 8,18,2,3)
-        if hit: _hit(s)
-        return s
+        return _finalize(s, hit=hit, outline=True)
 
     @staticmethod
     def tank(frame=0, hit=False, atk=False):
@@ -149,8 +154,7 @@ class ZombieAnim:
         else:
             _r(s,Z_PANTS,3,19,6,4); _r(s,Z_PANTS,13,18,6,4)
             _r(s,Z_BOOT, 3,22,6,2); _r(s,Z_BOOT, 13,21,6,2)
-        if hit: _hit(s)
-        return s
+        return _finalize(s, hit=hit, outline=True)
 
     @staticmethod
     def boss(frame=0, hit=False, atk=False, phase=1):
@@ -205,8 +209,7 @@ class ZombieAnim:
         else:
             _r(s,ROBE,3,22,6,3); _r(s,ROBE,13,21,6,3)
             _r(s,Z_BOOT,3,24,6,2); _r(s,Z_BOOT,13,23,6,2)
-        if hit: _hit(s)
-        return s
+        return _finalize(s, hit=hit, outline=True)
 
 class Enemy:
     WALK_FPS=6; IDLE_FPS=1.5; SPRITE_W=16; SPRITE_H=22
@@ -396,11 +399,23 @@ class BossEnemy(Enemy):
         if self.calculate_distance(*self._get_player_pos(player))<=120:
             player.take_damage(12 if self.phase<3 else 20,self.x,self.y)
 
+    def _find_summon_pos(self, attempts=25):
+        walls = getattr(self, "_walls", None) or []
+        for _ in range(attempts):
+            x = self.x + random.randint(-70, 70)
+            y = self.y + random.randint(-70, 70)
+            r = pygame.Rect(x - 10, y - 10, 20, 20)
+            if r.collidelist(walls) == -1:
+                return x, y
+        return self.x, self.y
+
     def _do_summon(self,enemies):
         for _ in range(2 if self.phase==2 else 3):
-            enemies.append(Enemy(self.x+random.randint(-70,70),self.y+random.randint(-70,70)))
+            x, y = self._find_summon_pos()
+            enemies.append(Enemy(x, y))
         for _ in range(1 if self.phase==2 else 2):
-            enemies.append(FastEnemy(self.x+random.randint(-70,70),self.y+random.randint(-70,70)))
+            x, y = self._find_summon_pos()
+            enemies.append(FastEnemy(x, y))
 
     def _do_proj(self,projs,player):
         px,py=(player.position.x,player.position.y) if hasattr(player,"position") else (player.x,player.y)

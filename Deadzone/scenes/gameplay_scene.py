@@ -34,6 +34,7 @@ class Gameplay_Scene:
         self.nearby_chest  = None
         self.enemies_killed = 0
         self.start_time    = pygame.time.get_ticks()
+        self.boss_defeated = False
 
         self.bg_color    = (30, 80, 30)
         self.font        = pygame.font.Font(None, 24)
@@ -43,6 +44,7 @@ class Gameplay_Scene:
         self._spawn_interval = 15
 
         self.map_manager = None
+        self._enemy_sprites = {}
         self._try_init_map()
 
         self._spawn_enemies()
@@ -71,16 +73,109 @@ class Gameplay_Scene:
         if self.map_manager:
             self.map_manager.on_map_change = self._on_map_changed
 
+    class _EnemySprite(pygame.sprite.Sprite):
+        def __init__(self, enemy):
+            super().__init__()
+            self._enemy = enemy
+            self.image = pygame.Surface((1, 1), pygame.SRCALPHA)
+            self.rect = self.image.get_rect()
+
+        def sync(self):
+            enemy = self._enemy
+            sc = enemy._get_raw()
+            if getattr(enemy, "_flip", False):
+                sc = pygame.transform.flip(sc, True, False)
+            self.image = sc
+            self.rect = sc.get_rect(center=(int(enemy.x), int(enemy.y)))
+
+    def _sync_enemy_sprites(self):
+        if not self.map_manager:
+            self._enemy_sprites.clear()
+            return
+
+        group = self.map_manager.get_group()
+        # Garder les ennemis sous les layers "top"/"top2" de la map (voir asset/*.tmx)
+        base_layer = 10
+
+        existing = set(self._enemy_sprites.keys())
+        current = set(self.enemies)
+
+        for enemy in existing - current:
+            sp = self._enemy_sprites.pop(enemy, None)
+            if sp:
+                group.remove(sp)
+
+        for enemy in current - existing:
+            sp = Gameplay_Scene._EnemySprite(enemy)
+            self._enemy_sprites[enemy] = sp
+            group.add(sp, layer=base_layer)
+
+        for enemy, sp in self._enemy_sprites.items():
+            sp.sync()
+
+    def _has_boss(self):
+        return any(isinstance(e, BossEnemy) for e in self.enemies)
+
+    def _persist_boss_defeated_flag(self):
+        if not self.boss_defeated:
+            return
+        if not os.path.exists(SAVE_FILE):
+            return
+        try:
+            with open(SAVE_FILE, "r") as f:
+                data = json.load(f) or {}
+        except Exception:
+            return
+        if data.get("boss_defeated") is True:
+            return
+        data["boss_defeated"] = True
+        try:
+            with open(SAVE_FILE, "w") as f:
+                json.dump(data, f)
+        except Exception:
+            return
+
+    def _on_enemy_killed(self, enemy):
+        if isinstance(enemy, BossEnemy):
+            self.boss_defeated = True
+            self._persist_boss_defeated_flag()
+        if enemy in self.enemies:
+            self.enemies.remove(enemy)
+        if enemy in self._enemy_sprites and self.map_manager:
+            try:
+                self.map_manager.get_group().remove(self._enemy_sprites[enemy])
+            except Exception:
+                pass
+            self._enemy_sprites.pop(enemy, None)
+        self.enemies_killed += 1
+
+    def _spawn_boss_once(self):
+        if not self.map_manager:
+            return
+        if self.boss_defeated or self._has_boss():
+            return
+
+        boss_zones = self.map_manager.get_boss_spawn() or []
+        if not boss_zones:
+            return
+
+        zone = random.choice(boss_zones)
+        x = random.randint(zone.left + 8, max(zone.left + 9, zone.right - 8))
+        y = random.randint(zone.top + 8, max(zone.top + 9, zone.bottom - 8))
+        self.enemies.append(BossEnemy(x, y))
+
     def _on_map_changed(self, new_map_name):
         self.enemies.clear()
-        zones = self.map_manager.get_spawn_zones()
-        TYPES = [Enemy, Enemy, Enemy, FastEnemy, TankEnemy]
-        for zone in zones:
+        self._enemy_sprites.clear()
+        enemy_zones = self.map_manager.get_spawn_zones()
+        self._spawn_boss_once()
+
+        for zone in enemy_zones:
             nb = random.randint(2, 4)
             for _ in range(nb):
                 x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
                 y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
-                self.enemies.append(random.choice(TYPES)(x, y))
+                self.enemies.append(random.choice([Enemy, Enemy, Enemy, FastEnemy, TankEnemy])(x, y))
 
     def world_to_screen(self, wx, wy):
         if not self.map_manager:
@@ -108,14 +203,15 @@ class Gameplay_Scene:
         py = self.player.position.y
 
         if self.map_manager:
-            zones = self.map_manager.get_spawn_zones()
-            TYPES = [Enemy, Enemy, Enemy, FastEnemy, TankEnemy]
-            for zone in zones:
+            enemy_zones = self.map_manager.get_spawn_zones()
+            self._spawn_boss_once()
+
+            for zone in enemy_zones:
                 nb = random.randint(2, 4)
                 for _ in range(nb):
                     x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
                     y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
-                    self.enemies.append(random.choice(TYPES)(x, y))
+                    self.enemies.append(random.choice([Enemy, Enemy, Enemy, FastEnemy, TankEnemy])(x, y))
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -153,16 +249,16 @@ class Gameplay_Scene:
     def _respawn_enemies(self):
         if not self.map_manager:
             return
-        zones = self.map_manager.get_spawn_zones()
-        if not zones:
+        enemy_zones = self.map_manager.get_spawn_zones()
+        if not enemy_zones:
             return
-        TYPES = [Enemy, TankEnemy, FastEnemy]
-        for zone in zones:
+
+        for zone in enemy_zones:
             nb = random.randint(1, 2)
             for _ in range(nb):
                 x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
                 y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
-                self.enemies.append(random.choice(TYPES)(x, y))
+                self.enemies.append(random.choice([Enemy, TankEnemy, FastEnemy])(x, y))
 
     def update(self, dt):
         if self.paused:
@@ -181,6 +277,7 @@ class Gameplay_Scene:
 
         self.update_enemies(dt)
         self.update_projectiles(dt)
+        self._sync_enemy_sprites()
         self.check_nearby_items()
         self.check_nearby_chests()
 
@@ -267,8 +364,7 @@ class Gameplay_Scene:
     def _remove_dead_enemies(self):
         for e in self.enemies[:]:
             if e.health <= 0:
-                self.enemies.remove(e)
-                self.enemies_killed += 1
+                self._on_enemy_killed(e)
 
     def check_nearby_items(self):
         self.nearby_item = None
@@ -343,8 +439,7 @@ class Gameplay_Scene:
             else:
                 enemy.update(dt, self.player, self.enemies, self.projectiles)
             if enemy.health <= 0 and enemy in self.enemies:
-                self.enemies.remove(enemy)
-                self.enemies_killed += 1
+                self._on_enemy_killed(enemy)
 
     def update_projectiles(self, dt):
         for proj in self.projectiles[:]:
@@ -374,8 +469,7 @@ class Gameplay_Scene:
                         enemy.take_hit()
                         proj.alive = False
                         if enemy.health <= 0 and enemy in self.enemies:
-                            self.enemies.remove(enemy)
-                            self.enemies_killed += 1
+                            self._on_enemy_killed(enemy)
                         break
 
             elif proj.owner == "enemy":
@@ -389,6 +483,7 @@ class Gameplay_Scene:
 
     def draw(self, screen):
         if self.map_manager:
+            self._sync_enemy_sprites()
             self.map_manager.draw()
         else:
             screen.fill(self.bg_color)
@@ -403,9 +498,17 @@ class Gameplay_Scene:
                 screen.blit(dropped.image, (sx, draw_y))
 
         zoom = MAP_ZOOM if self.map_manager else 1
-        for enemy in self.enemies:
-            sx, sy = self.world_to_screen(enemy.x, enemy.y)
-            enemy.draw(screen, sx, sy, zoom)
+        if not self.map_manager:
+            for enemy in self.enemies:
+                sx, sy = self.world_to_screen(enemy.x, enemy.y)
+                enemy.draw(screen, sx, sy, zoom)
+        else:
+            # Les sprites des ennemis sont gérés par pyscroll (occlusion par les layers supérieurs).
+            # On dessine les barres de vie après la map.
+            for enemy in self.enemies:
+                sx, sy = self.world_to_screen(enemy.x, enemy.y)
+                scaled = enemy._get_scaled(zoom)
+                enemy._draw_hp(screen, sx, sy, scaled.get_height())
 
         if not self.map_manager:
             self.player.draw(screen)
@@ -609,7 +712,8 @@ class Gameplay_Scene:
             "enemies": enemies_data,
             "enemies_killed": self.enemies_killed,
             "time": pygame.time.get_ticks() - self.start_time,
-            "chests": chests_data
+            "chests": chests_data,
+            "boss_defeated": self.boss_defeated
         }
 
         with open(SAVE_FILE, "w") as f:
@@ -621,6 +725,8 @@ class Gameplay_Scene:
 
         with open(SAVE_FILE, "r") as f:
             data = json.load(f)
+
+        self.boss_defeated = bool(data.get("boss_defeated", False))
 
         player_class_name = data.get("player_class")
         player_class = globals().get(player_class_name)
@@ -658,6 +764,8 @@ class Gameplay_Scene:
             if enemy_class:
                 enemy = enemy_class(enemy_data["x"], enemy_data["y"])
                 enemy.health = enemy_data["health"]
+                if self.boss_defeated and isinstance(enemy, BossEnemy):
+                    continue
                 self.enemies.append(enemy)
 
         self.enemies_killed = data["enemies_killed"]

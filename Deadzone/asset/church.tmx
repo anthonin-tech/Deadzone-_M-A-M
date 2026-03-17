@@ -74,7 +74,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="enemy_spawn">
-  <object id="58" type="enemy_spawn" x="125.19" y="324.233" width="80" height="60"/>
+  <object id="58" type="enemy_spawn" x="125.19" y="324.233" width="80" height="21"/>
  </objectgroup>
  <objectgroup id="2" name="Calque d'Objets 1">
   <object id="1" name="exit_church" x="142.045" y="471.091" width="38.6364" height="7.09091"/>

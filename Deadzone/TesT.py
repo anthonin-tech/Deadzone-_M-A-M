@@ -58,17 +58,26 @@ class GameplaySceneUnitTests(unittest.TestCase):
 
     def _make_scene_without_spawns(self):
         original_try_init_map = Gameplay_Scene._try_init_map
-        original_spawn_enemies = Gameplay_Scene._spawn_enemies
-        original_spawn_test_items = Gameplay_Scene._spawn_test_items
+        original_spawn_enemies = getattr(Gameplay_Scene, "_spawn_enemies", None)
+        original_load_chests_from_map = getattr(Gameplay_Scene, "_load_chests_from_map", None)
+        original_spawn_ground_items = getattr(Gameplay_Scene, "_spawn_ground_items", None)
         try:
             Gameplay_Scene._try_init_map = lambda *_args, **_kwargs: None
-            Gameplay_Scene._spawn_enemies = lambda *_args, **_kwargs: None
-            Gameplay_Scene._spawn_test_items = lambda *_args, **_kwargs: None
+            if original_spawn_enemies is not None:
+                Gameplay_Scene._spawn_enemies = lambda *_args, **_kwargs: None
+            if original_load_chests_from_map is not None:
+                Gameplay_Scene._load_chests_from_map = lambda *_args, **_kwargs: None
+            if original_spawn_ground_items is not None:
+                Gameplay_Scene._spawn_ground_items = lambda *_args, **_kwargs: None
             return Gameplay_Scene(_DummyGame(), _DummyPlayer())
         finally:
             Gameplay_Scene._try_init_map = original_try_init_map
-            Gameplay_Scene._spawn_enemies = original_spawn_enemies
-            Gameplay_Scene._spawn_test_items = original_spawn_test_items
+            if original_spawn_enemies is not None:
+                Gameplay_Scene._spawn_enemies = original_spawn_enemies
+            if original_load_chests_from_map is not None:
+                Gameplay_Scene._load_chests_from_map = original_load_chests_from_map
+            if original_spawn_ground_items is not None:
+                Gameplay_Scene._spawn_ground_items = original_spawn_ground_items
 
     def test_world_to_screen_without_map_manager_returns_identity(self):
         scene = self._make_scene_without_spawns()

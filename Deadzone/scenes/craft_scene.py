@@ -53,6 +53,7 @@ class CraftScene:
         self.scroll = 0
         self.selected = None
         self._anim  = {}
+        self._crafted_since_last_poll = False
 
         sw, sh = game.screen.get_width(), game.screen.get_height()
         pw, ph = 460, 560
@@ -103,6 +104,11 @@ class CraftScene:
         if self.visible and self._panel_surf is None:
             self._build_panel_surf()
 
+    def poll_crafted(self):
+        crafted = self._crafted_since_last_poll
+        self._crafted_since_last_poll = False
+        return crafted
+
     def handle_event(self, event):
         if not self.visible: return
         if event.type == pygame.MOUSEMOTION:
@@ -113,6 +119,7 @@ class CraftScene:
                 if self.cm.can_craft(recipe):
                     self.cm.craft(recipe)
                     self._anim[recipe["id"]] = pygame.time.get_ticks()
+                    self._crafted_since_last_poll = True
         if event.type == pygame.MOUSEWHEEL:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 max_scroll = max(0, len(RECIPES)*self.ROW_H - self.clip_rect.h)
