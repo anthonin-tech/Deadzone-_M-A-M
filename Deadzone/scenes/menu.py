@@ -37,9 +37,9 @@ class Button:
 
 class MenuScene:
 
-    STATE_MAIN      = "main"
+    STATE_MAIN = "main"
     STATE_CHARACTER = "character"
-    STATE_HELP      = "help"
+    STATE_HELP = "help"
 
     CHARACTERS = [
         (Mahe,     "Mahe",     "Uppercut : Boost de vitesse (60s)", "mahe"),
@@ -56,9 +56,9 @@ class MenuScene:
         cx = sw // 2
 
         self._font_title = pygame.font.Font(None, 80)
-        self._font_btn   = pygame.font.Font(None, 38)
-        self._font_sub   = pygame.font.Font(None, 28)
-        self._font_info  = pygame.font.Font(None, 23)
+        self._font_btn = pygame.font.Font(None, 38)
+        self._font_sub = pygame.font.Font(None, 28)
+        self._font_info = pygame.font.Font(None, 23)
 
         bw, bh, gap = 280, 52, 12
         bx = cx - bw // 2
@@ -247,14 +247,14 @@ class MenuScene:
         sw = screen.get_width()
 
         lines = [
-            ("Deplacement",         "Z / Q / S / D"),
-            ("Tirer",               "Clic gauche"),
-            ("Inventaire",          "TAB"),
-            ("Ramasser objet",      "E"),
-            ("Pouvoir special",     "P"),
-            ("Retour au menu",      "Echap"),
-            ("Sauvegarder",      "F5"),
-            ("Charger",      "F9"),
+            ("Deplacement", "Z / Q / S / D"),
+            ("Tirer", "Clic gauche"),
+            ("Inventaire", "TAB"),
+            ("Ramasser objet", "E"),
+            ("Pouvoir special", "P"),
+            ("Retour au menu", "Echap"),
+            ("Sauvegarder", "F5"),
+            ("Charger", "F9"),
         ]
 
         y = 210

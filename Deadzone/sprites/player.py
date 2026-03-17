@@ -71,7 +71,9 @@ class Player(pygame.sprite.Sprite):
         self.shield      = 0
         self.max_shield  = 0
         self.default_armor_shield_bonus = {
-            "helmet": 15, "chestplate": 30, "boots": 15
+            "helmet": 15, 
+            "chestplate": 30, 
+            "boots": 15
         }
         self.shield_regen_rate  = 12
         self.shield_regen_delay = 4
@@ -221,9 +223,9 @@ class Player(pygame.sprite.Sprite):
 
     def _get_armor_slot_for_item(self, item):
         n = item.name.lower()
-        if "casque"   in n or "helmet"     in n: return "helmet"
+        if "casque" in n or "helmet" in n: return "helmet"
         if "plastron" in n or "chestplate" in n: return "chestplate"
-        if "botte"    in n or "boots"      in n: return "boots"
+        if "botte" in n or "boots" in n: return "boots"
         return None
 
     def _get_item_shield_value(self, item, slot=None):
@@ -242,7 +244,7 @@ class Player(pygame.sprite.Sprite):
         self.max_shield = max(0, new_max)
         if refill and self.max_shield > old_max:
             self.shield = min(self.max_shield,
-                              self.shield + (self.max_shield - old_max))
+            self.shield + (self.max_shield - old_max))
         else:
             self.shield = min(self.shield, self.max_shield)
 

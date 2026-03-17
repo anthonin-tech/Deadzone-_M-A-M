@@ -29,7 +29,7 @@ MEAT = Items(
 
 WATER = Items(
     name = "Eau",
-    category = "nourriture",
+    category = "boisson",
     rarity = "rare",
     illustration = "Eau_Nourriture.png",
     description = "Hydrate de 12 et cette fois il boit tout",

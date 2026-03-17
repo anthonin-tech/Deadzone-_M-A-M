@@ -16,10 +16,10 @@ class AnimateSprite(pygame.sprite.Sprite):
         self.sprite_column = sprite_column
 
         self.images = {
-            "down":  self.get_images(0),
-            "left":  self.get_images(1),
+            "down": self.get_images(0),
+            "left": self.get_images(1),
             "right": self.get_images(2),
-            "up":    self.get_images(3),
+            "up": self.get_images(3),
         }
 
         self.image = self.images["down"][0]

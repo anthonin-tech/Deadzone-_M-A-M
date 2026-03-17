@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="49">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="50">
  <tileset firstgid="1" source="School-desk_.tsx"/>
  <tileset firstgid="401" source="All_Chest_Sprites_Combined.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
@@ -130,7 +130,7 @@
   <object id="39" type="collision" x="429.818" y="319.636" width="3.81818" height="5.09091"/>
   <object id="40" type="collision" x="260.545" y="314.182" width="100.364" height="26.75"/>
   <object id="41" type="collision" x="300" y="295.455" width="24.5455" height="18.7273"/>
-  <object id="45" name="exit_school_desk" x="168" y="330.5" width="3.40909" height="38"/>
+  <object id="45" name="exit_school_desk" x="156.667" y="330.5" width="14.7424" height="38"/>
   <object id="46" type="collision" x="174.5" y="294.75" width="23" height="24.75"/>
   <object id="47" name="spawn_school_desk" x="194.75" y="345.25">
    <point/>
