@@ -103,14 +103,6 @@ class Gameplay_Scene:
             return self.map_manager.get_player_screen_pos()
         return self.player.rect.centerx, self.player.rect.centery
 
-    def _spawn_enemies(self):
-        px = self.player.position.x
-        py = self.player.position.y
-        self.enemies.append(BossEnemy  (px + 200, py + 150))
-        self.enemies.append(Enemy      (px - 180, py -  90))
-        self.enemies.append(FastEnemy  (px + 220, py - 170))
-        self.enemies.append(TankEnemy  (px - 160, py + 200))
-
         if self.map_manager:
             zones = self.map_manager.get_spawn_zones()
             TYPES = [Enemy, Enemy, Enemy, FastEnemy, TankEnemy]
