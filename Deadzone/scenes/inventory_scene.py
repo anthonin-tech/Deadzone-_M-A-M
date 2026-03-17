@@ -210,6 +210,8 @@ class InventoryScene:
             if event.button==1: self._click(event.pos)
             if event.button==3: self._rclick(event.pos)
         self.craf_scene.handle_event(event)
+        if self.craf_scene.poll_crafted():
+            self._load_item_images()
 
     def _equip_hovered_item(self):
         item=self.hovered_item

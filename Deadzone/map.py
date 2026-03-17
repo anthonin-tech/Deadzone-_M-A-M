@@ -27,6 +27,7 @@ class Map:
     tmx_data: object
     portals: list
     spawn_zones: list
+    boss_spawn: list
     item_spawn_zones: list
 
 class MapManager:
@@ -114,6 +115,14 @@ class MapManager:
                 obj_type = obj.properties.get("type")
             if obj_type == "enemy_spawn":
                 spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
+
+        boss_spawn = []
+        for obj in tmx_data.objects:
+            obj_type = getattr(obj, "type", None)
+            if not obj_type and hasattr(obj, "properties"):
+                obj_type = obj.properties.get("type")
+            if obj_type == "boss_spawn":
+                boss_spawn.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
         
         item_spawn_zones = []
         for obj in tmx_data.objects:
@@ -126,7 +135,7 @@ class MapManager:
         group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=10)
         group.add(self.player)
 
-        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones, item_spawn_zones)
+        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones, boss_spawn, item_spawn_zones)
 
     def teleport_player(self, name):
         try:
@@ -163,6 +172,8 @@ class MapManager:
                         break
 
         for sprite in self.get_group().sprites():
+            if not hasattr(sprite, "feet"):
+                continue
             if sprite.feet.collidelist(self.get_walls()) > -1:
                 sprite.move_back()
 
@@ -176,6 +187,7 @@ class MapManager:
     def get_group(self): return self.get_map().group
     def get_walls(self): return self.get_map().walls
     def get_spawn_zones(self): return self.get_map().spawn_zones
+    def get_boss_spawn(self): return self.get_map().boss_spawn
     def get_object(self, name): return self.get_map().tmx_data.get_object_by_name(name)
     
     def get_chest_positions(self):
