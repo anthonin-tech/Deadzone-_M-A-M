@@ -5,6 +5,7 @@ import os
 import json
 import random
 from pathlib import Path
+import unittest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -105,10 +106,7 @@ class Gameplay_Scene:
     def _spawn_enemies(self):
         px = self.player.position.x
         py = self.player.position.y
-        self.enemies.append(BossEnemy  (px + 200, py + 150))
-        self.enemies.append(Enemy      (px - 180, py -  90))
-        self.enemies.append(FastEnemy  (px + 220, py - 170))
-        self.enemies.append(TankEnemy  (px - 160, py + 200))
+        self.enemies.append(BossEnemy  (px + 220, py - 170))
 
         if self.map_manager:
             zones = self.map_manager.get_spawn_zones()
@@ -146,7 +144,6 @@ class Gameplay_Scene:
 
             if event.key == pygame.K_F5:
                 self.save_game()
-
 
             if event.key == pygame.K_F9:
                  if os.path.exists(SAVE_FILE):
@@ -538,7 +535,6 @@ class Gameplay_Scene:
                     DroppedItem(item, dropped["x"], dropped["y"])
                 )
 
-        
         self.enemies.clear()
         for enemy_data in data.get("enemies", []):
             enemy_class = globals().get(enemy_data["type"])

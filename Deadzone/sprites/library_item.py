@@ -29,7 +29,7 @@ MEAT = Items(
 
 WATER = Items(
     name = "Eau",
-    category = "nourriture",
+    category = "boisson",
     rarity = "rare",
     illustration = "Eau_Nourriture.png",
     description = "Hydrate de 12 et cette fois il boit tout",
@@ -177,3 +177,11 @@ FABRIC = Items(
     illustration = "Tissu_Ressource.png",
     description = "Utile pour ce faire des bandages",
 )
+
+# Mapping utilitaire pour sérialiser/désérialiser l'inventaire et les items au sol.
+# Clés = noms de variables (ex: "CARE_KIT"), valeurs = instances Items correspondantes.
+ITEMS_BY_NAME = {
+    key: value
+    for key, value in globals().items()
+    if key.isupper() and isinstance(value, Items)
+}
