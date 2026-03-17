@@ -178,10 +178,26 @@ FABRIC = Items(
     description = "Utile pour ce faire des bandages",
 )
 
-# Mapping utilitaire pour sérialiser/désérialiser l'inventaire et les items au sol.
-# Clés = noms de variables (ex: "CARE_KIT"), valeurs = instances Items correspondantes.
 ITEMS_BY_NAME = {
-    key: value
-    for key, value in globals().items()
-    if key.isupper() and isinstance(value, Items)
+    "CARE_KIT":        CARE_KIT,
+    "BANDAGE":         BANDAGE,
+    "MEAT":            MEAT,
+    "WATER":           WATER,
+    "SHOTGUN":         SHOTGUN,
+    "GUN":             GUN,
+    "AXE":             AXE,
+    "CAP":             CAP,
+    "TSHIRT":          TSHIRT,
+    "PANTS":           PANTS,
+    "HELMET_SOLDAT":   HELMET_SOLDAT,
+    "CHESPLATE_SOLDAT": CHESPLATE_SOLDAT,
+    "BOTTS_SOLDAT":    BOTTS_SOLDAT,
+    "WOOD":            WOOD,
+    "REINFORCED_WOOD": REINFORCED_WOOD,
+    "IRON":            IRON,
+    "WEED":            WEED,
+    "FIBER":           FIBER,
+    "SPRING":          SPRING,
+    "ADHESIVE_TAPE":   ADHESIVE_TAPE,
+    "FABRIC":          FABRIC,
 }

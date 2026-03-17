@@ -49,10 +49,10 @@
   <object id="24" type="collision" x="332" y="388.364" width="16.1818" height="8.54545"/>
   <object id="25" type="collision" x="323.273" y="397.091" width="37.0909" height="7.27273"/>
   <object id="26" type="collision" x="256.182" y="398" width="37.0909" height="6"/>
-  <object id="27" type="collision" x="272.182" y="366.727" width="15.2727" height="18.3636"/>
+  <object id="27" name="chest_bunker" type="collision" x="272.182" y="366.727" width="15.2727" height="18.3636"/>
   <object id="28" type="collision" x="279.455" y="389.273" width="15.4545" height="7.27273"/>
-  <object id="29" type="collision" x="267.455" y="370.545" width="10.9091" height="26.9091"/>
-  <object id="30" type="collision" x="273.818" y="363.636" width="12" height="3.27273"/>
+  <object id="29" type="collision" x="267.455" y="371.727" width="4.18183" height="25.7273"/>
+  <object id="30" name="chest_bunker" type="collision" x="273.818" y="363.636" width="12" height="3.27273"/>
   <object id="31" type="collision" x="265.636" y="315.455" width="14.9091" height="45.0909"/>
   <object id="32" type="collision" x="268.545" y="279.455" width="38" height="21.8182"/>
   <object id="33" type="collision" x="310.545" y="281.273" width="32.7273" height="16"/>

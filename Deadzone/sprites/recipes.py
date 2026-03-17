@@ -55,7 +55,7 @@ RECIPES = [
         "id": "Pompe",
         "ingredients": {
             "Fer": 2,
-            "Bois Renforcé": 1,
+            "Bois Renforcé": 4,
             "Ressort": 3,
             "Bande Adhésive": 4,
         },

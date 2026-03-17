@@ -27,6 +27,7 @@ class Map:
     tmx_data: object
     portals: list
     spawn_zones: list
+    item_spawn_zones: list
 
 class MapManager:
 
@@ -103,8 +104,7 @@ class MapManager:
             obj_type = getattr(obj, "type", None)
             if not obj_type and hasattr(obj, "properties"):
                 obj_type = obj.properties.get("type")
-
-            if obj_type == "collision" and not getattr(obj, "name", ""):
+            if obj_type == "collision":
                 walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
         
         spawn_zones = []
@@ -114,11 +114,19 @@ class MapManager:
                 obj_type = obj.properties.get("type")
             if obj_type == "enemy_spawn":
                 spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
+        
+        item_spawn_zones = []
+        for obj in tmx_data.objects:
+            obj_type = getattr(obj, "type", None)
+            if not obj_type and hasattr(obj, "properties"):
+                obj_type = obj.properties.get("type")
+            if obj_type == "item_spawn":
+                item_spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
 
         group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=10)
         group.add(self.player)
 
-        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones)
+        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones, item_spawn_zones)
 
     def teleport_player(self, name):
         try:
@@ -169,7 +177,18 @@ class MapManager:
     def get_walls(self): return self.get_map().walls
     def get_spawn_zones(self): return self.get_map().spawn_zones
     def get_object(self, name): return self.get_map().tmx_data.get_object_by_name(name)
-
+    
+    def get_chest_positions(self):
+            current_map = self.get_map()
+            if current_map is None:
+                return []
+            chests = []
+            for obj in current_map.tmx_data.objects:
+                obj_name = getattr(obj, "name", "") or ""
+                if "chest" in obj_name.lower():
+                    chests.append({"x": obj.x, "y": obj.y, "name": obj_name})
+            return chests
+    
     def get_player_screen_pos(self):
         if not self.maps:
             return None
