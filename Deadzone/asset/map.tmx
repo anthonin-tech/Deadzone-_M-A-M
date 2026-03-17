@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="584">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="603">
  <tileset firstgid="1" source="Sol.tsx"/>
  <tileset firstgid="1729" source="Cave.tsx"/>
  <tileset firstgid="1985" source="Lac.tsx"/>
@@ -1338,5 +1338,26 @@
   <object id="575" name="chest_map_4" type="collision" x="847.875" y="244.125" width="16.125" height="11.625"/>
   <object id="576" name="chest_map_2" type="collision" x="1503.94" y="68.125" width="16.4375" height="11.9375"/>
   <object id="578" name="chest_map_3" type="collision" x="1328" y="740.273" width="16.2727" height="11.4545"/>
+ </objectgroup>
+ <objectgroup id="17" name=" item_spawn">
+  <object id="584" type="item_spawn" x="2" y="880.667" width="810.667" height="78.6667"/>
+  <object id="585" type="item_spawn" x="3" y="417" width="96" height="459"/>
+  <object id="586" type="item_spawn" x="100" y="800" width="441" height="81"/>
+  <object id="587" type="item_spawn" x="237" y="604" width="302" height="196"/>
+  <object id="588" type="item_spawn" x="97" y="120" width="540" height="441"/>
+  <object id="589" type="item_spawn" x="239" y="558" width="576" height="47"/>
+  <object id="590" type="item_spawn" x="537" y="602" width="279" height="144"/>
+  <object id="591" type="item_spawn" x="337" y="11" width="405" height="113"/>
+  <object id="592" type="item_spawn" x="1260" y="5" width="338" height="145"/>
+  <object id="593" type="item_spawn" x="743" y="27" width="40" height="530"/>
+  <object id="594" type="item_spawn" x="638" y="280" width="109" height="277"/>
+  <object id="595" type="item_spawn" x="781" y="27" width="54" height="308"/>
+  <object id="596" type="item_spawn" x="1026" y="340" width="566" height="35"/>
+  <object id="597" type="item_spawn" x="834" y="176" width="426" height="124"/>
+  <object id="598" type="item_spawn" x="969.667" y="300" width="298.333" height="41"/>
+  <object id="599" type="item_spawn" x="836.667" y="119.333" width="176" height="58.6667"/>
+  <object id="600" type="item_spawn" x="996" y="562.667" width="185.333" height="394"/>
+  <object id="601" type="item_spawn" x="1182.67" y="897.333" width="418.667" height="61.3333"/>
+  <object id="602" type="item_spawn" x="1182" y="562" width="416.667" height="80"/>
  </objectgroup>
 </map>
