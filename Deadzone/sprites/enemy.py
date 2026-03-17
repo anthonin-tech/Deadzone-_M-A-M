@@ -1,7 +1,7 @@
 import pygame, sys, random, math
 from pathlib import Path
-from sprites.projectile import Projectile
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from sprites.projectile import Projectile
 
 Z_SKIN   = (100, 140,  90)
 Z_SKIN_S = ( 70, 100,  62)

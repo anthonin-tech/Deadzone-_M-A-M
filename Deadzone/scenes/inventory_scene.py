@@ -48,9 +48,9 @@ def leather_panel(surf, x, y, w, h):
         py2= rng.randint(y+6, y+h-7)
         v = rng.randint(-12, 8)
         cf = PARCH
-        surf.set_at((px,py2),(max(0,min(255,c[0]+v)),
-                              max(0,min(255,c[1]+v)),
-                              max(0,min(255,c[2]+v))))
+        surf.set_at((px,py2),(max(0,min(255,cf[0]+v)),
+                              max(0,min(255,cf[1]+v)),
+                              max(0,min(255,cf[2]+v))))
 
     for cx2, cy2 in [(x+8,y+8),(x+w-9,y+8),(x+8,y+h-9),(x+w-9,y+h-9)]:
         rivet(surf, cx2, cy2)
