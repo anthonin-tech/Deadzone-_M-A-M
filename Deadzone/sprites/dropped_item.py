@@ -2,19 +2,23 @@ import pygame
 from pathlib import Path
 from sprites.item import Items
 
-class DroppedItem:
+class DroppedItem(pygame.sprite.Sprite):
     def __init__(self, item, x, y):
+        super().__init__()
         self.item = item
         self.x = x
         self.y = y
-        self.width = 48
-        self.height = 48
+        self.width = 16
+        self.height = 16
         self.image = None
         self.pickup_radius = 50
         self.load_image()
 
         self.float_offset = 0
         self.float_speed = 2
+
+        self.rect = pygame.Rect(int(self.x), int(self.y), self.width, self.height)
+
 
     def load_image(self):
         try:
@@ -38,15 +42,12 @@ class DroppedItem:
         distance = (dx**2 + dy**2) ** 0.5
         return distance <= self.pickup_radius
 
-    def update(self, dt):
+    def update(self, dt=0):
         self.float_offset += self.float_speed * dt
         if self.float_offset > 10:
             self.float_speed = -abs(self.float_speed)
         elif self.float_offset < -10:
             self.float_speed = abs(self.float_speed)
-
-    def draw(self, screen, camera_x=0, camera_y=0):
-        if self.image:
-            draw_y = self.y - camera_y + self.float_offset
-            screen.blit(self.image, (self.x - camera_x, draw_y))
-
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
+        self.rect.y = int(self.y + self.float_offset)

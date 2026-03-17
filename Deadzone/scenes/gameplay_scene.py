@@ -243,8 +243,23 @@ class Gameplay_Scene:
             return
         ok = self.player.inventory.add_item(self.nearby_item.item)
         if ok:
+            if self.map_manager:
+                map_name = getattr(self.nearby_item, 'map_name', None)
+                if map_name and map_name in self.map_manager.maps:
+                    self.map_manager.maps[map_name].group.remove(self.nearby_item)
+                else:
+                    self.map_manager.get_group().remove(self.nearby_item)
             self.dropped_items.remove(self.nearby_item)
             self.nearby_item = None
+    
+    def _add_dropped_item(self, dropped):
+        self.dropped_items.append(dropped)
+        if self.map_manager:
+            map_name = getattr(dropped, 'map_name', None)
+            if map_name and map_name in self.map_manager.maps:
+                self.map_manager.maps[map_name].group.add(dropped, layer=5)
+            else:
+                self.map_manager.get_group().add(dropped, layer=5)
 
     def _respawn_enemies(self):
         if not self.map_manager:
@@ -271,9 +286,6 @@ class Gameplay_Scene:
 
         if self.map_manager:
             self.map_manager.update()
-
-        for item in self.dropped_items:
-            item.update(dt)
 
         self.update_enemies(dt)
         self.update_projectiles(dt)
@@ -424,9 +436,9 @@ class Gameplay_Scene:
                         continue
                     item          = copy.copy(ITEMS_BY_NAME[key])
                     item.quantity = random.randint(qty_min, qty_max)
-                    dropped       = DroppedItem(item, x, y)
+                    dropped = DroppedItem(item, x, y)
                     dropped.map_name = map_name
-                    self.dropped_items.append(dropped)
+                    self._add_dropped_item(dropped)
                     spawned += 1
 
     def update_enemies(self, dt):
@@ -488,24 +500,13 @@ class Gameplay_Scene:
         else:
             screen.fill(self.bg_color)
 
-        for dropped in self.dropped_items:
-            item_map = getattr(dropped, 'map_name', None)
-            if item_map is not None and self.map_manager and item_map != self.map_manager.current_map:
-                continue
-            sx, sy = self.world_to_screen(dropped.x, dropped.y)
-            if dropped.image:
-                draw_y = sy + dropped.float_offset
-                screen.blit(dropped.image, (sx, draw_y))
-
         zoom = MAP_ZOOM if self.map_manager else 1
         if not self.map_manager:
             for enemy in self.enemies:
                 sx, sy = self.world_to_screen(enemy.x, enemy.y)
                 enemy.draw(screen, sx, sy, zoom)
         else:
-            # Les sprites des ennemis sont gérés par pyscroll (occlusion par les layers supérieurs).
-            # On dessine les barres de vie après la map.
-            for enemy in self.enemies:
+           for enemy in self.enemies:
                 sx, sy = self.world_to_screen(enemy.x, enemy.y)
                 scaled = enemy._get_scaled(zoom)
                 enemy._draw_hp(screen, sx, sy, scaled.get_height())
@@ -587,7 +588,7 @@ class Gameplay_Scene:
             self.nearby_item.y - 10)
         text = f"[E] {self.nearby_item.item.name}"
         rendered = self.font_pickup.render(text, True, (255, 255, 255))
-        tx = sx - rendered.get_width() // 1.2
+        tx = sx - rendered.get_width() // 2
         ty = sy - rendered.get_height() // 10
         bg = pygame.Surface((rendered.get_width() + 10, rendered.get_height() + 6))
         bg.fill((0, 0, 0)); bg.set_alpha(180)
