@@ -4,50 +4,50 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from systems.crafting_manager import CraftingManager
 from scenes.craft_scene import CraftScene
 
-BG_CHECK_A  = ( 58,  52,  72)
-BG_CHECK_B  = ( 48,  44,  62)
-LEATHER     = ( 62,  42,  28)
-LEATHER_L   = ( 90,  62,  38)
-PARCH       = (208, 192, 152)
-PARCH_D     = (185, 168, 124)
-PARCH_L     = (228, 215, 180)
-SEAM        = (140, 118,  80)
-SLOT_BG     = (158, 142, 102)
-SLOT_BG_H   = (188, 172, 135)
-SLOT_IN     = (138, 122,  88)
-SLOT_EQ     = (142, 150, 130)
-INK         = ( 28,  22,  14)
-INK_D       = ( 80,  68,  48)
-GOLD        = (195, 158,  42)
-GOLD_L      = (225, 192,  70)
-RED_INK     = (160,  40,  30)
-RIVET       = ( 72,  78,  88)
-RIVET_L     = (110, 118, 130)
+BG_CHECK_A = ( 58,  52,  72)
+BG_CHECK_B = ( 48,  44,  62)
+LEATHER = ( 62,  42,  28)
+LEATHER_L = ( 90,  62,  38)
+PARCH = (208, 192, 152)
+PARCH_D = (185, 168, 124)
+PARCH_L = (228, 215, 180)
+SEAM = (140, 118,  80)
+SLOT_BG = (158, 142, 102)
+SLOT_BG_H = (188, 172, 135)
+SLOT_IN = (138, 122,  88)
+SLOT_EQ = (142, 150, 130)
+INK = ( 28,  22,  14)
+INK_D = ( 80,  68,  48)
+GOLD = (195, 158,  42)
+GOLD_L = (225, 192,  70)
+RED_INK = (160,  40,  30)
+RIVET = ( 72,  78,  88)
+RIVET_L = (110, 118, 130)
 
 RARITY_COL = {
-    "commun":       (100, 100, 100),
-    "rare":         ( 40, 100, 195),
-    "epique":       (120,  35, 190),
-    "legendaire":   (185, 120,  18),
+    "commun": (100, 100, 100),
+    "rare": ( 40, 100, 195),
+    "epique": (120,  35, 190),
+    "legendaire": (185, 120,  18),
 }
 SLOT_LABELS = {"helmet":"Casque","chestplate":"Plastron","boots":"Bottes","weapon":"Arme"}
 
 def rivet(surf, cx, cy, r=5):
-    pygame.draw.circle(surf, RIVET,   (cx, cy), r)
+    pygame.draw.circle(surf, RIVET, (cx, cy), r)
     pygame.draw.circle(surf, RIVET_L, (cx, cy), r-1)
-    pygame.draw.circle(surf, RIVET,   (cx, cy), r-2)
+    pygame.draw.circle(surf, RIVET, (cx, cy), r-2)
 
 def leather_panel(surf, x, y, w, h):
-    pygame.draw.rect(surf, LEATHER,  (x,   y,   w,   h))
+    pygame.draw.rect(surf, LEATHER, (x,   y,   w,   h))
     pygame.draw.rect(surf, LEATHER_L,(x+2, y+2, w-4, h-4), 2)
-    pygame.draw.rect(surf, PARCH,    (x+6, y+6, w-12,h-12))
+    pygame.draw.rect(surf, PARCH, (x+6, y+6, w-12,h-12))
 
     rng = random.Random(x*31+y)
     for _ in range((w-12)*(h-12)//25):
         px = rng.randint(x+6, x+w-7)
         py2= rng.randint(y+6, y+h-7)
-        v  = rng.randint(-12, 8)
-        c  = PARCH
+        v = rng.randint(-12, 8)
+        cf = PARCH
         surf.set_at((px,py2),(max(0,min(255,c[0]+v)),
                               max(0,min(255,c[1]+v)),
                               max(0,min(255,c[2]+v))))
@@ -69,10 +69,10 @@ def panel_title(surf, text, rx, ry, rw, font, col=RED_INK):
 
 def draw_slot(surf, x, y, sz, hover=False, rarity=None, eq=False):
     bg = SLOT_EQ if eq else (SLOT_BG_H if hover else SLOT_BG)
-    pygame.draw.rect(surf, bg,     (x,   y,   sz,  sz))
-    pygame.draw.rect(surf, SLOT_IN,(x,   y,   sz,  2))
-    pygame.draw.rect(surf, SLOT_IN,(x,   y,   2,   sz))
-    pygame.draw.rect(surf, PARCH_L,(x,   y+sz-2, sz, 2))
+    pygame.draw.rect(surf, bg, (x, y, sz, sz))
+    pygame.draw.rect(surf, SLOT_IN,(x, y, sz, 2))
+    pygame.draw.rect(surf, SLOT_IN,(x, y, 2, sz))
+    pygame.draw.rect(surf, PARCH_L,(x, y+sz-2, sz, 2))
     pygame.draw.rect(surf, PARCH_L,(x+sz-2, y, 2, sz))
     if rarity:
         rc = RARITY_COL.get(rarity, SLOT_IN)
@@ -90,7 +90,7 @@ def draw_char_silhouette(surf, cx, cy):
     pygame.draw.rect(surf, S, (cx+16, cy-48, 12, 30))
 
     pygame.draw.rect(surf, S, (cx-15, cy-12, 13, 34))
-    pygame.draw.rect(surf, S, (cx+2,  cy-12, 13, 34))
+    pygame.draw.rect(surf, S, (cx+2, cy-12, 13, 34))
 
 def stitch_line(surf, x1, y1, x2, y2):
     dx, dy = x2-x1, y2-y1
@@ -132,18 +132,18 @@ class InventoryScene:
 
         esz=self.SLOT+6
         self.equipment_positions={
-            "helmet":     (self.ccx-esz*2-14, self.ccy-80),
+            "helmet": (self.ccx-esz*2-14, self.ccy-80),
             "chestplate": (self.ccx-esz*2-14, self.ccy-20),
-            "boots":      (self.ccx-esz*2-14, self.ccy+40),
-            "weapon":     (self.ccx+esz+14,   self.ccy-50),
+            "boots": (self.ccx-esz*2-14, self.ccy+40),
+            "weapon": (self.ccx+esz+14,   self.ccy-50),
         }
         self.equipment_slot_size=esz
 
         self.F={"title": pygame.font.Font(None,38),
-                "sec":   pygame.font.Font(None,21),
-                "item":  pygame.font.Font(None,19),
-                "hint":  pygame.font.Font(None,17),
-                "qty":   pygame.font.Font(None,20)}
+                "sec": pygame.font.Font(None,21),
+                "item": pygame.font.Font(None,19),
+                "hint": pygame.font.Font(None,17),
+                "qty": pygame.font.Font(None,20)}
 
         self.hovered_item=None; self.hovered_slot=None; self.desc_item=None
         self.crafting_manager=CraftingManager(self.player.inventory)

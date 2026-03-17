@@ -367,8 +367,8 @@ class BossEnemy(Enemy):
         self.last_special=0; self.global_cd=6000
         self.skill_order=["projectile","aoe","summon"]; self.skill_idx=0
         self.skills={
-            "aoe":        {"cd":10000,"last":-99999,"cast":900, "rec":800, "pmin":1},
-            "summon":     {"cd":18000,"last":-99999,"cast":1300,"rec":1000,"pmin":2},
+            "aoe": {"cd":10000,"last":-99999,"cast":900, "rec":800, "pmin":1},
+            "summon": {"cd":18000,"last":-99999,"cast":1300,"rec":1000,"pmin":2},
             "projectile": {"cd":5000, "last":-99999,"cast":600, "rec":500, "pmin":1},
         }
 

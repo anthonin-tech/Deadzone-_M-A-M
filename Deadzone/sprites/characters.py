@@ -2,6 +2,7 @@ import time
 import pygame
 import os
 import sys
+import math
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -12,7 +13,6 @@ class MAMPlayer(Player):
     SPRITE_COLUMN     = 0
     CHARACTER_NAME    = "MAM"
     POWER_NAME        = "Pouvoir"
-    POWER_DESCRIPTION = ""
 
     DISPLAY_W = 16
     DISPLAY_H = 16
@@ -20,15 +20,15 @@ class MAMPlayer(Player):
     def __init__(self, x=640, y=360):
         super().__init__(x=x, y=y)
 
-        self.power_active    = False
+        self.power_active = False
         self.cooldown_active = False
         self._power_start = 0
         self._cooldown_start = 0
         self.POWER_DURATION  = 60.0
         self.POWER_COOLDOWN  = 60.0
 
-        self._current_dir   = "down"
-        self._sheet_loaded  = False
+        self._current_dir = "down"
+        self._sheet_loaded = False
         self._try_load_sheet()
 
     def _try_load_sheet(self):
@@ -39,18 +39,18 @@ class MAMPlayer(Player):
         try:
             sheet = pygame.image.load(sheet_path).convert_alpha()
             self._sheet_images = {
-                "down":  self._cut_frames(sheet, 0),
-                "left":  self._cut_frames(sheet, 1),
+                "down": self._cut_frames(sheet, 0),
+                "left": self._cut_frames(sheet, 1),
                 "right": self._cut_frames(sheet, 2),
-                "up":    self._cut_frames(sheet, 3),
+                "up": self._cut_frames(sheet, 3),
             }
-            self._sheet_anim_idx   = 0.0
+            self._sheet_anim_idx = 0.0
             self._sheet_anim_speed = 0.15
-            self._sheet_loaded     = True
+            self._sheet_loaded = True
 
             self.image = self._sheet_images["down"][0]
-            self.rect  = self.image.get_rect(center=(int(self.position.x), int(self.position.y)))
-            self.feet  = pygame.Rect(0, 0, max(1, self.DISPLAY_W // 2), 3)
+            self.rect = self.image.get_rect(center=(int(self.position.x), int(self.position.y)))
+            self.feet = pygame.Rect(0, 0, max(1, self.DISPLAY_W // 2), 3)
             self.feet.midbottom = self.rect.midbottom
         except Exception as e:
             print(f"[{self.CHARACTER_NAME}] Sprite sheet non chargée : {e}")
@@ -118,9 +118,9 @@ class MAMPlayer(Player):
         self.update_power()
 
 class Mahe(MAMPlayer):
-    SPRITE_COLUMN     = 0
-    CHARACTER_NAME    = "Mahe"
-    POWER_NAME        = "Uppercut"
+    SPRITE_COLUMN = 0
+    CHARACTER_NAME = "Mahe"
+    POWER_NAME = "Uppercut"
     POWER_DESCRIPTION = "+6 degats melee pendant 60s"
 
     def activate_power(self):
@@ -131,11 +131,10 @@ class Mahe(MAMPlayer):
         return True
 
     def shoot(self, mouse_pos, enemies=None):
-        import math
         weapon = self.get_equipped_weapon()
         if weapon and weapon.attack_type == "melee" and enemies is not None:
-            origin  = pygame.Vector2(self.rect.centerx, self.rect.centery)
-            target  = pygame.Vector2(mouse_pos)
+            origin = pygame.Vector2(self.rect.centerx, self.rect.centery)
+            target = pygame.Vector2(mouse_pos)
             direction = target - origin
             if direction.length_squared() > 0:
                 direction = direction.normalize()
@@ -156,9 +155,9 @@ class Mahe(MAMPlayer):
         return super().shoot(mouse_pos, enemies)
 
 class Maelys(MAMPlayer):
-    SPRITE_COLUMN     = 2
-    CHARACTER_NAME    = "Maelys"
-    POWER_NAME        = "Bouclier"
+    SPRITE_COLUMN = 2
+    CHARACTER_NAME = "Maelys"
+    POWER_NAME = "Bouclier"
     POWER_DESCRIPTION = "Reduit les degats de moitie pendant 60s"
 
     def activate_power(self):
@@ -174,9 +173,9 @@ class Maelys(MAMPlayer):
         super().take_damage(amount, attacker_x, attacker_y)
 
 class Anthonin(MAMPlayer):
-    SPRITE_COLUMN     = 1
-    CHARACTER_NAME    = "Anthonin"
-    POWER_NAME        = "Invisibilite"
+    SPRITE_COLUMN = 1
+    CHARACTER_NAME = "Anthonin"
+    POWER_NAME = "Invisibilite"
     POWER_DESCRIPTION = "Zombies ignores pendant 60s"
 
     def activate_power(self):
