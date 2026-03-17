@@ -1,4 +1,4 @@
-import pygame
+import pygame, copy
 import sys
 from pathlib import Path
 
@@ -185,8 +185,9 @@ class ChestScene:
         for i, item in enumerate(list(self.player.inventory.items)):
             x, y = self._slot_pos(i, self.inv_gx, self.inv_gy)
             if pygame.Rect(x, y, self.SLOT, self.SLOT).collidepoint(mx, my):
-                self.chest.items.append(item)
+                chest_item = copy.copy(item)          
                 self.player.inventory.remove_item(item, quantity=item.quantity)
+                self.chest.items.append(chest_item)   
                 self._load_images()
                 return
 
