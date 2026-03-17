@@ -27,6 +27,7 @@ class Map:
     tmx_data: object
     portals: list
     spawn_zones: list
+    item_spawn_zones: list
 
 class MapManager:
 
@@ -113,11 +114,19 @@ class MapManager:
                 obj_type = obj.properties.get("type")
             if obj_type == "enemy_spawn":
                 spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
+        
+        item_spawn_zones = []
+        for obj in tmx_data.objects:
+            obj_type = getattr(obj, "type", None)
+            if not obj_type and hasattr(obj, "properties"):
+                obj_type = obj.properties.get("type")
+            if obj_type == "item_spawn":
+                item_spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
 
         group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=10)
         group.add(self.player)
 
-        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones)
+        self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones, item_spawn_zones)
 
     def teleport_player(self, name):
         try:

@@ -46,8 +46,8 @@ class Gameplay_Scene:
         self._try_init_map()
 
         self._spawn_enemies()
-        self._spawn_test_items()
         self._load_chests_from_map()
+        self._spawn_ground_items()
 
     def _try_init_map(self):
         import traceback
@@ -120,13 +120,6 @@ class Gameplay_Scene:
                     x = random.randint(zone.left + 8, max(zone.left + 9, zone.right  - 8))
                     y = random.randint(zone.top  + 8, max(zone.top  + 9, zone.bottom - 8))
                     self.enemies.append(random.choice(TYPES)(x, y))
-
-    def _spawn_test_items(self):
-        px = self.player.position.x
-        py = self.player.position.y
-        self.dropped_items.append(DroppedItem(copy.copy(ITEMS_BY_NAME["CARE_KIT"]), px +  60, py +  30))
-        self.dropped_items.append(DroppedItem(copy.copy(ITEMS_BY_NAME["SHOTGUN"]),  px -  80, py +  50))
-        self.dropped_items.append(DroppedItem(copy.copy(ITEMS_BY_NAME["WATER"]),    px + 100, py -  60))
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -283,13 +276,66 @@ class Gameplay_Scene:
 
     def check_nearby_items(self):
         self.nearby_item = None
+        current = self.map_manager.current_map if self.map_manager else None
         px, py = self.player.position.x, self.player.position.y
         closest = float("inf")
         for dropped in self.dropped_items:
+            item_map = getattr(dropped, 'map_name', None)
+            if item_map is not None and item_map != current:
+                continue
             dist = math.hypot(dropped.x - px, dropped.y - py)
             if dist < closest and dropped.is_near(px, py):
                 closest = dist
                 self.nearby_item = dropped
+
+    def _spawn_ground_items(self):
+        if not self.map_manager:
+            return
+
+        spawn_config = {
+            "map": [
+                ("WEED", 1, 4, 20),
+                ("WOOD", 1, 3, 20),
+            ],
+            "cave-2": [
+                ("IRON", 1, 2, 10),
+            ],
+        }
+
+        
+
+        for map_name, spawn_table in spawn_config.items():
+            if map_name not in self.map_manager.maps:
+                continue
+
+            map_obj = self.map_manager.maps[map_name]
+            walls   = map_obj.walls
+            map_w   = map_obj.tmx_data.width  * map_obj.tmx_data.tilewidth
+            map_h   = map_obj.tmx_data.height * map_obj.tmx_data.tileheight
+
+            zones = self.map_manager.maps[map_name].item_spawn_zones
+            if not zones:
+                continue
+
+            for key, qty_min, qty_max, count in spawn_table:
+                if key not in ITEMS_BY_NAME:
+                    continue
+                spawned  = 0
+                attempts = 0
+                while spawned < count and attempts < count * 20:
+                    attempts += 1
+                    zone = random.choice(zones)
+                    x = random.uniform(zone.left, zone.right)
+                    y = random.uniform(zone.top, zone.bottom)
+                    item_rect = pygame.Rect(x - 8, y - 8, 16, 16)
+                    if item_rect.collidelist(walls) != -1:
+                        continue
+                    item          = copy.copy(ITEMS_BY_NAME[key])
+                    item.quantity = random.randint(qty_min, qty_max)
+                    dropped       = DroppedItem(item, x, y)
+                    dropped.map_name = map_name
+                    self.dropped_items.append(dropped)
+                    spawned += 1
 
     def update_enemies(self, dt):
         walls = self.map_manager.get_walls() if self.map_manager else []
@@ -352,6 +398,9 @@ class Gameplay_Scene:
             screen.fill(self.bg_color)
 
         for dropped in self.dropped_items:
+            item_map = getattr(dropped, 'map_name', None)
+            if item_map is not None and self.map_manager and item_map != self.map_manager.current_map:
+                continue
             sx, sy = self.world_to_screen(dropped.x, dropped.y)
             if dropped.image:
                 draw_y = sy + dropped.float_offset
