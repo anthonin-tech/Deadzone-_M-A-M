@@ -5,7 +5,7 @@ import os
 import json
 import random
 from pathlib import Path
-import unittest
+from sprites.chest import Chest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -106,7 +106,10 @@ class Gameplay_Scene:
     def _spawn_enemies(self):
         px = self.player.position.x
         py = self.player.position.y
-        self.enemies.append(BossEnemy  (px + 220, py - 170))
+        self.enemies.append(BossEnemy  (px + 200, py + 150))
+        self.enemies.append(Enemy      (px - 180, py -  90))
+        self.enemies.append(FastEnemy  (px + 220, py - 170))
+        self.enemies.append(TankEnemy  (px - 160, py + 200))
 
         if self.map_manager:
             zones = self.map_manager.get_spawn_zones()
@@ -140,13 +143,6 @@ class Gameplay_Scene:
                         name = getattr(self.player, "POWER_NAME", "Pouvoir")
             if event.key == pygame.K_F5:
                 self.save_game()
-
-            if event.key == pygame.K_F9:
-                 if os.path.exists(SAVE_FILE):
-                  self.load_game()
-
-            if event.key == pygame.K_m:  
-                self.paused = not self.paused  
             if event.key == pygame.K_m:
                 self.paused = not self.paused
 
@@ -666,7 +662,6 @@ class Gameplay_Scene:
         self.enemies_killed = data["enemies_killed"]
         self.start_time = pygame.time.get_ticks() - data["time"]
 
-        print("Sauvegarde chargée !")
 
         for chest_data in data.get("chests", []):
             for chest in self.chests:
