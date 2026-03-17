@@ -12,10 +12,11 @@ class Inventory:
     def items(self):
         return self._inventory
 
-    def add_item(self, item, quantity=1):
+    def add_item(self, item, quantity=None):
+        qty = quantity if quantity is not None else item.quantity
         for existing in self._inventory:
             if existing.is_same_item(item):
-                existing.quantity += quantity
+                existing.quantity += qty
                 return True
 
         if len(self._inventory) >= self.capacity:
