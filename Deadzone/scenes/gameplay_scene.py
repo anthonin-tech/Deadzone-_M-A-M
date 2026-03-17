@@ -539,6 +539,21 @@ class Gameplay_Scene:
                 "health": enemy.health
             })
 
+        chests_data = []
+        for chest in self.chests:
+            chest_items = []
+            for item in chest.items:
+                for key, value in ITEMS_BY_NAME.items():
+                    if value.name == item.name:
+                        chest_items.append(key)
+
+            chests_data.append({
+            "id": chest.id,
+            "x": chest.x,
+            "y": chest.y,
+            "items": chest_items
+        })
+
         data = {
             "player_class": self.player.__class__.__name__,
             "player_x": self.player.position.x,
@@ -548,7 +563,8 @@ class Gameplay_Scene:
             "dropped_items": dropped_items,
             "enemies": enemies_data,
             "enemies_killed": self.enemies_killed,
-            "time": pygame.time.get_ticks() - self.start_time
+            "time": pygame.time.get_ticks() - self.start_time,
+            "chests": chests_data
         }
 
         with open(SAVE_FILE, "w") as f:
@@ -596,3 +612,14 @@ class Gameplay_Scene:
 
         self.enemies_killed = data["enemies_killed"]
         self.start_time = pygame.time.get_ticks() - data["time"]
+
+
+        for chest_data in data.get("chests", []):
+            for chest in self.chests:
+             if chest.id == chest_data["id"]:
+                chest.items.clear()
+
+                for item_id in chest_data["items"]:
+                    item = ITEMS_BY_NAME.get(item_id)
+                    if item:
+                        chest.items.append(copy.copy(item))

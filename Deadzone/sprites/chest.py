@@ -38,6 +38,8 @@ class Chest:
         self.x      = x
         self.y      = y
         self.items  = list(items) if items else []
+
+        self.id = f"{self.x}_{self.y}"
         self.is_open = False
 
         self._surf_closed: pygame.Surface | None = None
