@@ -666,7 +666,7 @@ class Gameplay_Scene:
             if item:
                 for key, value in ITEMS_BY_NAME.items():
                     if value.name == item.name:
-                        inventory_items.append(key)
+                        inventory_items.append({"id": key, "quantity": item.quantity})
 
         dropped_items = []
         for dropped in self.dropped_items:
@@ -740,12 +740,17 @@ class Gameplay_Scene:
         self.player.health = data["player_health"]
 
         self.player.inventory.items.clear()
-        for item_id in data.get("inventory", []):
+        for entry in data.get("inventory", []):
+            item_id  = entry["id"]
+            quantity = entry.get("quantity", 1)
             item = ITEMS_BY_NAME.get(item_id)
             if item:
-                self.player.inventory.add_item(copy.copy(item))
+                loaded = copy.copy(item)
+                loaded.quantity = quantity
+                self.player.inventory.add_item(loaded)
 
-        self.dropped_items.clear()
+                self.dropped_items.clear()
+        
         for dropped in data.get("dropped_items", []):
             item = ITEMS_BY_NAME.get(dropped["id"])
             if item:
