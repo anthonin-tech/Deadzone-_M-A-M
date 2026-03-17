@@ -567,7 +567,11 @@ class Gameplay_Scene:
             if item:
                 for key, value in ITEMS_BY_NAME.items():
                     if value.name == item.name:
-                        inventory_items.append(key)
+                        inventory_items.append({
+                            "id": key,
+                            "quantity": item.quantity,
+                            "durability": getattr(item, "durability", None)
+                        })
 
         dropped_items = []
         for dropped in self.dropped_items:
@@ -638,12 +642,17 @@ class Gameplay_Scene:
         self.player.health = data["player_health"]
 
         self.player.inventory.items.clear()
-        for item_id in data.get("inventory", []):
-            item = ITEMS_BY_NAME.get(item_id)
+        for item_data in data.get("inventory", []):
+            item = ITEMS_BY_NAME.get(item_data["id"])
             if item:
-                self.player.inventory.add_item(copy.copy(item))
+                new_item = copy.copy(item)
+                new_item.quantity = item_data["quantity"]
+                if hasattr(new_item, "durability") and item_data["durability"] is not None:
+                    new_item.durability = item_data["durability"]
+                self.player.inventory.add_item(new_item)
 
-        self.dropped_items.clear()
+                self.dropped_items.clear()
+        
         for dropped in data.get("dropped_items", []):
             item = ITEMS_BY_NAME.get(dropped["id"])
             if item:
