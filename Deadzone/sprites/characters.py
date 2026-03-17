@@ -120,39 +120,29 @@ class MAMPlayer(Player):
 class Mahe(MAMPlayer):
     SPRITE_COLUMN = 0
     CHARACTER_NAME = "Mahe"
-    POWER_NAME = "Uppercut"
-    POWER_DESCRIPTION = "+6 degats melee pendant 60s"
+    POWER_NAME = "Boost de vitesse"
+    POWER_DESCRIPTION = "Augmente la vitesse de déplacement de 50% pendant 10s"    
+    SPEED_MULTIPLIER = 1.5   
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
             return False
         self.power_active = True
         self._power_start = time.time()
+        self.original_speed = self.speed  
+        self.speed *= self.SPEED_MULTIPLIER
         return True
 
-    def shoot(self, mouse_pos, enemies=None):
-        weapon = self.get_equipped_weapon()
-        if weapon and weapon.attack_type == "melee" and enemies is not None:
-            origin = pygame.Vector2(self.rect.centerx, self.rect.centery)
-            target = pygame.Vector2(mouse_pos)
-            direction = target - origin
-            if direction.length_squared() > 0:
-                direction = direction.normalize()
-            min_dot = math.cos(math.radians(weapon.melee_arc_deg / 2))
-            bonus = 6 if self.power_active else 0
-            for enemy in enemies:
-                to_e = pygame.Vector2(enemy.x, enemy.y) - origin
-                dist = to_e.length()
-                if dist > 0 and dist <= (weapon.melee_range + enemy.radius):
-                    if direction.dot(to_e.normalize()) >= min_dot:
-                        enemy.health -= weapon.melee_damage + bonus
-            w_item = self.equipment["weapon"]
-            if w_item:
-                w_item.durability = max(0, w_item.durability - 1)
-                if w_item.durability == 0:
-                    self.equipment["weapon"] = None
-            return []
-        return super().shoot(mouse_pos, enemies)
+    def update_power(self):
+        """Appeler à chaque update pour gérer la durée et le cooldown."""
+        now = time.time()
+        if self.power_active and now - self._power_start >= self.POWER_DURATION:
+            self.power_active = False
+            self.cooldown_active = True
+            self._power_start = now
+            self.speed = self.original_speed  
+        elif self.cooldown_active and now - self._power_start >= self.POWER_COOLDOWN:
+            self.cooldown_active = False
 
 class Maelys(MAMPlayer):
     SPRITE_COLUMN = 2
