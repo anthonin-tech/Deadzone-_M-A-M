@@ -662,13 +662,19 @@ class Gameplay_Scene:
                                      (int(ep.x), int(ep.y)), 1)
 
     def save_game(self):
+    # Sauvegarde de l'inventaire
         inventory_items = []
         for item in self.player.inventory.items:
             if item:
                 for key, value in ITEMS_BY_NAME.items():
                     if value.name == item.name:
-                        inventory_items.append({"id": key, "quantity": item.quantity})
+                        inventory_items.append({
+                            "id": key,
+                            "quantity": item.quantity,
+                            "durability": item.durability
+                        })
 
+        # Sauvegarde des items posés dans le monde
         dropped_items = []
         for dropped in self.dropped_items:
             for key, value in ITEMS_BY_NAME.items():
@@ -677,10 +683,12 @@ class Gameplay_Scene:
                         "id": key,
                         "x": dropped.x,
                         "y": dropped.y,
-                        "quantity": dropped.item.quantity,          
-                        "map_name": getattr(dropped, 'map_name', None)  
+                        "quantity": dropped.item.quantity,
+                        "durability": dropped.item.durability,
+                        "map_name": getattr(dropped, 'map_name', None)
                     })
 
+        # Sauvegarde des ennemis
         enemies_data = []
         for enemy in self.enemies:
             enemies_data.append({
@@ -690,20 +698,36 @@ class Gameplay_Scene:
                 "health": enemy.health
             })
 
+        # Sauvegarde des coffres
         chests_data = []
         for chest in self.chests:
             chest_items = []
             for item in chest.items:
                 for key, value in ITEMS_BY_NAME.items():
                     if value.name == item.name:
-                        chest_items.append(key)
-
+                        chest_items.append({
+                            "id": key,
+                            "quantity": item.quantity,
+                            "durability": item.durability
+                        })
             chests_data.append({
-            "id": chest.id,
-            "x": chest.x,
-            "y": chest.y,
-            "items": chest_items
-        })
+                "id": chest.id,
+                "x": chest.x,
+                "y": chest.y,
+                "items": chest_items
+            })
+
+        # Sauvegarde de l'équipement
+        equipment_data = {}
+        for slot, item in self.player.equipment.items():
+            if item:
+                for key, value in ITEMS_BY_NAME.items():
+                    if value.name == item.name:
+                        equipment_data[slot] = {
+                            "id": key,
+                            "quantity": item.quantity,
+                            "durability": item.durability
+                        }
 
         data = {
             "player_class": self.player.__class__.__name__,
@@ -711,6 +735,8 @@ class Gameplay_Scene:
             "player_y": self.player.position.y,
             "player_health": self.player.health,
             "inventory": inventory_items,
+            "equipment": equipment_data,
+            "current_map": self.map_manager.current_map,
             "dropped_items": dropped_items,
             "enemies": enemies_data,
             "enemies_killed": self.enemies_killed,
@@ -722,6 +748,7 @@ class Gameplay_Scene:
         with open(SAVE_FILE, "w") as f:
             json.dump(data, f)
 
+
     def load_game(self):
         if not os.path.exists(SAVE_FILE):
             return
@@ -731,6 +758,7 @@ class Gameplay_Scene:
 
         self.boss_defeated = bool(data.get("boss_defeated", False))
 
+        # Recrée le joueur
         player_class_name = data.get("player_class")
         player_class = globals().get(player_class_name)
         if player_class:
@@ -742,16 +770,40 @@ class Gameplay_Scene:
         self.player.rect.centery = int(self.player.position.y)
         self.player.health = data["player_health"]
 
+        # Réinitialise l'inventaire
         self.player.inventory.items.clear()
         for entry in data.get("inventory", []):
-            item_id  = entry["id"]
-            quantity = entry.get("quantity", 1)
-            item = ITEMS_BY_NAME.get(item_id)
-            if item:
-                loaded = copy.copy(item)
-                loaded.quantity = quantity
+            item_template = ITEMS_BY_NAME.get(entry["id"])
+            if item_template:
+                loaded = copy.copy(item_template)
+                loaded.quantity = entry.get("quantity", 1)
+                loaded.durability = entry.get("durability", 100)
                 self.player.inventory.add_item(loaded)
-        
+
+        # Réinitialise l'équipement
+        self.player.equipment = {
+            "weapon": None,
+            "helmet": None,
+            "chestplate": None,
+            "pants": None,
+            "boots": None
+        }
+        for slot, entry in data.get("equipment", {}).items():
+            item_template = ITEMS_BY_NAME.get(entry["id"])
+            if item_template:
+                loaded = copy.copy(item_template)
+                loaded.quantity = entry.get("quantity", 1)
+                loaded.durability = entry.get("durability", 100)
+                self.player.equipment[slot] = loaded
+
+        # Repositionne le joueur sur la carte
+        map_name = data.get("current_map")
+        if self.map_manager and map_name:
+            self.map_manager.current_map = map_name
+        self.player.rect.centerx = int(self.player.position.x)
+        self.player.rect.centery = int(self.player.position.y)
+
+        # Réinitialise les items posés
         if self.map_manager:
             for dropped in self.dropped_items:
                 map_name = getattr(dropped, 'map_name', None)
@@ -761,15 +813,16 @@ class Gameplay_Scene:
                     self.map_manager.get_group().remove(dropped)
         self.dropped_items.clear()
 
-        # Puis charge les items sauvegardés par-dessus
         for dropped_data in data.get("dropped_items", []):
-            item = ITEMS_BY_NAME.get(dropped_data["id"])
-            if item:
-                d = DroppedItem(copy.copy(item), dropped_data["x"], dropped_data["y"])
-                d.item.quantity = dropped_data.get("quantity", 1)   
-                d.map_name = dropped_data.get("map_name", None)     
-                self._add_dropped_item(d)  
-        
+            item_template = ITEMS_BY_NAME.get(dropped_data["id"])
+            if item_template:
+                d = DroppedItem(copy.copy(item_template), dropped_data["x"], dropped_data["y"])
+                d.item.quantity = dropped_data.get("quantity", 1)
+                d.item.durability = dropped_data.get("durability", 100)
+                d.map_name = dropped_data.get("map_name", None)
+                self._add_dropped_item(d)
+
+        # Réinitialise les ennemis
         self.enemies.clear()
         for enemy_data in data.get("enemies", []):
             enemy_class = globals().get(enemy_data["type"])
@@ -783,13 +836,15 @@ class Gameplay_Scene:
         self.enemies_killed = data["enemies_killed"]
         self.start_time = pygame.time.get_ticks() - data["time"]
 
-
+        # Réinitialise les coffres
         for chest_data in data.get("chests", []):
             for chest in self.chests:
-             if chest.id == chest_data["id"]:
-                chest.items.clear()
-
-                for item_id in chest_data["items"]:
-                    item = ITEMS_BY_NAME.get(item_id)
-                    if item:
-                        chest.items.append(copy.copy(item))
+                if chest.id == chest_data["id"]:
+                    chest.items.clear()
+                    for item_entry in chest_data["items"]:
+                        item_template = ITEMS_BY_NAME.get(item_entry["id"])
+                        if item_template:
+                            loaded = copy.copy(item_template)
+                            loaded.quantity = item_entry.get("quantity", 1)
+                            loaded.durability = item_entry.get("durability", 100)
+                            chest.items.append(loaded)

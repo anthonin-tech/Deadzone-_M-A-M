@@ -1,6 +1,7 @@
 class Items:
-    def __init__(self, name, category, rarity, illustration,  description, durability=100, effect=0, quantity=1):
+    def __init__(self, id, name, category, rarity, illustration,  description, durability=100, effect=0, quantity=1):
         self._name = name
+        self.id = id
         self.durability = durability
         self._category = category
         self._rarity = rarity
