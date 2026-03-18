@@ -47,7 +47,7 @@
 </data>
  </layer>
  <objectgroup id="4" name="enemy_spawn">
-  <object id="48" type="enemy_spawn" x="309.914" y="308.024" width="60" height="30"/>
+  <object id="48" type="enemy_spawn" x="455.914" y="334.691" width="10" height="10"/>
  </objectgroup>
  <layer id="3" name="Calque de Tuiles 2" width="40" height="40">
   <data encoding="csv">

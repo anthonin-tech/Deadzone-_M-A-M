@@ -45,6 +45,7 @@ class Gameplay_Scene:
 
         self.map_manager = None
         self._enemy_sprites = {}
+        self._warned_enemy_layer = False
         self._try_init_map()
 
         self._spawn_enemies()
@@ -95,7 +96,7 @@ class Gameplay_Scene:
 
         group = self.map_manager.get_group()
         # Garder les ennemis sous les layers "top"/"top2" de la map (voir asset/*.tmx)
-        base_layer = 10
+        base_layer = self._get_enemy_layer()
 
         existing = set(self._enemy_sprites.keys())
         current = set(self.enemies)
@@ -112,6 +113,39 @@ class Gameplay_Scene:
 
         for enemy, sp in self._enemy_sprites.items():
             sp.sync()
+
+    def _get_enemy_layer(self):
+        if not self.map_manager:
+            return 10
+
+        map_obj = self.map_manager.get_map()
+        if not map_obj or not getattr(map_obj, "tmx_data", None):
+            return 10
+
+        tmx = map_obj.tmx_data
+        layers = list(getattr(tmx, "layers", []) or [])
+        if not layers:
+            return 10
+
+        top_names = {"top", "top2"}
+        top_indices = []
+        for i, layer in enumerate(layers):
+            name = (getattr(layer, "name", "") or "").strip().lower()
+            if name in top_names:
+                top_indices.append(i)
+
+        if top_indices:
+            return max(0, min(top_indices) - 1)
+
+        # Fallback: place enemies above the ground-ish layers without forcing them over everything.
+        if not self._warned_enemy_layer:
+            try:
+                layer_names = [getattr(l, "name", "") for l in layers]
+                print(f"[map] Aucun layer 'top'/'top2' trouvé. Layers={layer_names}.")
+            except Exception:
+                pass
+            self._warned_enemy_layer = True
+        return max(0, min(len(layers) - 1, 2))
 
     def _has_boss(self):
         return any(isinstance(e, BossEnemy) for e in self.enemies)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="50">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="51">
  <tileset firstgid="1" source="School-desk_.tsx"/>
  <tileset firstgid="401" source="All_Chest_Sprites_Combined.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
@@ -99,7 +99,6 @@
   <object id="6" type="collision" x="168.667" y="402.333" width="109.333" height="30.3333"/>
   <object id="7" type="collision" x="276.333" y="415" width="65.3333" height="18"/>
   <object id="8" type="collision" x="340" y="405" width="118.667" height="26.6667"/>
-  <object id="9" type="collision" x="479" y="414"/>
   <object id="10" type="collision" x="170" y="294" width="3.66667" height="36"/>
   <object id="11" type="collision" x="170.333" y="368.667" width="3.33333" height="39"/>
   <object id="12" type="collision" x="176" y="373" width="20.6667" height="27.6667"/>
@@ -136,5 +135,8 @@
    <point/>
   </object>
   <object id="48" name="chest_desk" type="collision" x="432" y="339.455" width="16.9091" height="13.0909"/>
+ </objectgroup>
+ <objectgroup id="5" name="enemy_spawn">
+  <object id="50" type="enemy_spawn" x="336" y="372" width="10" height="10"/>
  </objectgroup>
 </map>

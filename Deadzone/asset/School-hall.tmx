@@ -46,7 +46,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="enemy_spawn">
-  <object id="46" type="enemy_spawn" x="285.347" y="316.528" width="80" height="60"/>
+  <object id="46" type="enemy_spawn" x="270.229" y="298.576" width="80" height="60"/>
  </objectgroup>
  <objectgroup id="2" name="Calque d'Objets 1">
   <object id="1" type="collision" x="168.667" y="416" width="113.667" height="12.3333"/>
