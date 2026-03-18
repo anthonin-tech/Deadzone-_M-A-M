@@ -16,11 +16,12 @@ class Inventory:
         category = getattr(item, "category", None)
         return category not in ("arme", "armure")
 
-    def add_item(self, item, quantity=1):
+    def add_item(self, item, quantity=None):
+        qty = quantity if quantity is not None else (item.quantity if item.quantity is not None else 1)
         if self._is_stackable(item):
             for existing in self._inventory:
                 if existing.is_same_item(item):
-                    existing.quantity += quantity
+                    existing.quantity += qty
                     return True
 
         if len(self._inventory) >= self.capacity:
