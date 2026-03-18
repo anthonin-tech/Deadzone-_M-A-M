@@ -49,7 +49,7 @@ class Gameplay_Scene:
 
         self._spawn_enemies()
         self._load_chests_from_map()
-        self._spawn_ground_items()
+        self._spawn_ground_items() 
 
     def _try_init_map(self):
         import traceback
@@ -676,7 +676,9 @@ class Gameplay_Scene:
                     dropped_items.append({
                         "id": key,
                         "x": dropped.x,
-                        "y": dropped.y
+                        "y": dropped.y,
+                        "quantity": dropped.item.quantity,          
+                        "map_name": getattr(dropped, 'map_name', None)  
                     })
 
         enemies_data = []
@@ -749,16 +751,25 @@ class Gameplay_Scene:
                 loaded = copy.copy(item)
                 loaded.quantity = quantity
                 self.player.inventory.add_item(loaded)
-
-                self.dropped_items.clear()
         
-        for dropped in data.get("dropped_items", []):
-            item = ITEMS_BY_NAME.get(dropped["id"])
-            if item:
-                self.dropped_items.append(
-                    DroppedItem(copy.copy(item), dropped["x"], dropped["y"])
-                )
+        if self.map_manager:
+            for dropped in self.dropped_items:
+                map_name = getattr(dropped, 'map_name', None)
+                if map_name and map_name in self.map_manager.maps:
+                    self.map_manager.maps[map_name].group.remove(dropped)
+                else:
+                    self.map_manager.get_group().remove(dropped)
+        self.dropped_items.clear()
 
+        # Puis charge les items sauvegardés par-dessus
+        for dropped_data in data.get("dropped_items", []):
+            item = ITEMS_BY_NAME.get(dropped_data["id"])
+            if item:
+                d = DroppedItem(copy.copy(item), dropped_data["x"], dropped_data["y"])
+                d.item.quantity = dropped_data.get("quantity", 1)   
+                d.map_name = dropped_data.get("map_name", None)     
+                self._add_dropped_item(d)  
+        
         self.enemies.clear()
         for enemy_data in data.get("enemies", []):
             enemy_class = globals().get(enemy_data["type"])
