@@ -433,9 +433,13 @@ Le chargement reconstruit chaque entité dynamiquement grâce à `ITEMS_BY_NAME`
 
 ## Équipe
 
-•**Anthonin** 
-•**Mahé** 
-•**Maëlys** 
+Ce projet a été développé en collaboration par trois étudiants, chacun responsable d'un périmètre technique distinct.
+
+| Membre | Domaines de responsabilité |
+|--------|---------------------------|
+| **Anthonin** | Système d'inventaire · Ennemis & IA des ennemies· Items & catalogue · Craft · Mécanique faim/soif · Attaques & armes |
+| **Maëlys** | Carte & zones (Tiled) · Mécanique des coffres · Objets au sol |
+| **Mahé** | Sauvegarde & chargement · Personnages jouables · Pouvoirs spéciaux · Animations |
 
 ---
 
