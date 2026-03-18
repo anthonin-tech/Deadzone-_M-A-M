@@ -77,6 +77,7 @@ class Gameplay_Scene:
         def __init__(self, enemy):
             super().__init__()
             self._enemy = enemy
+            self._is_enemy_sprite = True
             self.image = pygame.Surface((1, 1), pygame.SRCALPHA)
             self.rect = self.image.get_rect()
 
@@ -88,6 +89,20 @@ class Gameplay_Scene:
             self.image = sc
             self.rect = sc.get_rect(center=(int(enemy.x), int(enemy.y)))
 
+    def _clear_enemy_sprites_from_all_groups(self):
+        if not self.map_manager:
+            return
+        for map_obj in self.map_manager.maps.values():
+            group = getattr(map_obj, "group", None)
+            if not group:
+                continue
+            try:
+                for sp in group.sprites():
+                    if getattr(sp, "_is_enemy_sprite", False):
+                        group.remove(sp)
+            except Exception:
+                continue
+
     def _sync_enemy_sprites(self):
         if not self.map_manager:
             self._enemy_sprites.clear()
@@ -95,7 +110,8 @@ class Gameplay_Scene:
 
         group = self.map_manager.get_group()
         # Garder les ennemis sous les layers "top"/"top2" de la map (voir asset/*.tmx)
-        base_layer = 10
+        # Le MapManager positionne le `default_layer` juste sous ces overlays.
+        base_layer = getattr(group, "default_layer", 10)
 
         existing = set(self._enemy_sprites.keys())
         current = set(self.enemies)
@@ -166,6 +182,7 @@ class Gameplay_Scene:
 
     def _on_map_changed(self, new_map_name):
         self.enemies.clear()
+        self._clear_enemy_sprites_from_all_groups()
         self._enemy_sprites.clear()
         enemy_zones = self.map_manager.get_spawn_zones()
         self._spawn_boss_once()
