@@ -85,6 +85,31 @@ class MapManager:
         if self.maps:
             self.teleport_player("player")
 
+    def _compute_sprite_layer(self, tmx_data):
+        """
+        Pick a sprite layer that stays below overlay layers like "top"/"top2".
+        Falls back to 10 if we cannot determine anything.
+        """
+        try:
+            layers = list(getattr(tmx_data, "layers", []) or [])
+        except Exception:
+            layers = []
+
+        if not layers:
+            return 10
+
+        overlay_indexes = []
+        for idx, layer in enumerate(layers):
+            lname = getattr(layer, "name", None)
+            if lname in ("top", "top2"):
+                overlay_indexes.append(idx)
+
+        if not overlay_indexes:
+            return 10
+
+        # Put sprites right below the first overlay layer.
+        return max(0, min(overlay_indexes) - 1)
+
     def register_map(self, name, portals=[]):
         tmx_path = os.path.join(ASSET_DIR, f"{name}.tmx")
         if not os.path.exists(tmx_path):
@@ -132,7 +157,8 @@ class MapManager:
             if obj_type == "item_spawn":
                 item_spawn_zones.append(pygame.Rect(int(obj.x), int(obj.y), int(obj.width), int(obj.height)))
 
-        group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=10)
+        sprite_layer = self._compute_sprite_layer(tmx_data)
+        group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=sprite_layer)
         group.add(self.player)
 
         self.maps[name] = Map(name, walls, group, tmx_data, portals, spawn_zones, boss_spawn, item_spawn_zones)
