@@ -22,7 +22,7 @@ class DroppedItem(pygame.sprite.Sprite):
 
     def load_image(self):
         try:
-            img_path = Path(__file__).parent.parent / "assets" / "items" / self.item.illustration
+            img_path = Path(__file__).parent.parent / "assets_items" / "items" / self.item.illustration
             self.image = pygame.image.load(str(img_path)).convert_alpha()
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
         except:

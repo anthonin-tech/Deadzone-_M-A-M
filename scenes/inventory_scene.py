@@ -184,7 +184,7 @@ class InventoryScene:
             if item.image_surface is None:
                 try:
                     _base=Path(__file__).parent.parent
-                    _img_path=_base/"assets"/"items"/item.illustration
+                    _img_path=_base/"assets_items"/"items"/item.illustration
                     surf=pygame.image.load(str(_img_path)).convert_alpha()
                     item.image_surface=pygame.transform.scale(surf,(sz,sz))
                 except:

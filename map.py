@@ -10,7 +10,7 @@ except ImportError:
     MAP_AVAILABLE = False
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-ASSET_DIR    = os.path.join(PROJECT_ROOT, "asset")
+ASSET_DIR    = os.path.join(PROJECT_ROOT, "asset_map")
 
 @dataclass
 class Portal:

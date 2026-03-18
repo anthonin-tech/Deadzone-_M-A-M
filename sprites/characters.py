@@ -33,7 +33,7 @@ class MAMPlayer(Player):
 
     def _try_load_sheet(self):
         base_dir   = os.path.dirname(os.path.abspath(__file__))
-        sheet_path = os.path.join(base_dir, "..", "asset", "player_sheet.png")
+        sheet_path = os.path.join(base_dir, "..", "asset_map", "player_sheet.png")
         if not os.path.exists(sheet_path):
             return
         try:

@@ -80,7 +80,7 @@ class MenuScene:
 
         self._portraits = {}
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        asset_dir = os.path.join(base_dir, "asset")
+        asset_dir = os.path.join(base_dir, "asset_map")
         for _, _, _, key in self.CHARACTERS:
             path = os.path.join(asset_dir, f"portrait_{key}.png")
             if os.path.exists(path):

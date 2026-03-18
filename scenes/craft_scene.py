@@ -231,7 +231,7 @@ class CraftScene:
         key = (result.illustration, sz)  
         if key in self._img_cache: return self._img_cache[key]
         try:
-            surf = pygame.image.load(str(Path(__file__).parent.parent / "assets" / "items" / result.illustration)).convert_alpha()
+            surf = pygame.image.load(str(Path(__file__).parent.parent / "assets_items" / "items" / result.illustration)).convert_alpha()
             surf = pygame.transform.scale(surf, (sz, sz))
             self._img_cache[key] = surf
         except:

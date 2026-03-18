@@ -19,7 +19,7 @@ _spritesheet: pygame.Surface | None = None
 def _get_spritesheet() -> pygame.Surface:
     global _spritesheet
     if _spritesheet is None:
-        path = Path(__file__).parent.parent / "asset" / "All_Chest_Sprites_Combined.png"
+        path = Path(__file__).parent.parent / "asset_map" / "All_Chest_Sprites_Combined.png"
         _spritesheet = pygame.image.load(str(path)).convert_alpha()
     return _spritesheet
 

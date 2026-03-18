@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         base_dir   = os.path.dirname(os.path.abspath(__file__))
-        asset_dir  = os.path.join(base_dir, "..", "asset")
+        asset_dir  = os.path.join(base_dir, "..", "asset_map")
         sprite_path = os.path.join(asset_dir, "Player.png")
 
         self._use_sprite = os.path.exists(sprite_path)

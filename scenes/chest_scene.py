@@ -139,7 +139,7 @@ class ChestScene:
         for item in all_items:
             if item.image_surface is None:
                 try:
-                    surf = pygame.image.load(str(base / "assets" / "items" / item.illustration)).convert_alpha()
+                    surf = pygame.image.load(str(base / "assets_items" / "items" / item.illustration)).convert_alpha()
                     item.image_surface = pygame.transform.scale(surf, (sz, sz))
                 except Exception:
                     s = pygame.Surface((sz, sz), pygame.SRCALPHA)

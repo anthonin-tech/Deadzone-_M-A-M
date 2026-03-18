@@ -6,7 +6,7 @@ class AnimateSprite(pygame.sprite.Sprite):
         super().__init__()
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        asset_dir = os.path.join(base_dir, "..", "asset")
+        asset_dir = os.path.join(base_dir, "..", "asset_map")
         sprite_path = os.path.join(asset_dir, "player_sheet.png")
 
         self.sprite_sheet = pygame.image.load(sprite_path).convert_alpha()

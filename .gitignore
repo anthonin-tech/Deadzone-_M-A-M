@@ -18,7 +18,8 @@ save.pkl
 saves/
 *.sav
 
-asset/*.tiled-session
+asset_map/*.tiled-session
+merged/
 
 .vscode/
 .idea/
