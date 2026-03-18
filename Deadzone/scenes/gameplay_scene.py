@@ -78,6 +78,7 @@ class Gameplay_Scene:
         def __init__(self, enemy):
             super().__init__()
             self._enemy = enemy
+            self._is_enemy_sprite = True
             self.image = pygame.Surface((1, 1), pygame.SRCALPHA)
             self.rect = self.image.get_rect()
 
@@ -89,13 +90,26 @@ class Gameplay_Scene:
             self.image = sc
             self.rect = sc.get_rect(center=(int(enemy.x), int(enemy.y)))
 
+    def _clear_enemy_sprites_from_all_groups(self):
+        if not self.map_manager:
+            return
+        for map_obj in self.map_manager.maps.values():
+            group = getattr(map_obj, "group", None)
+            if not group:
+                continue
+            try:
+                for sp in group.sprites():
+                    if getattr(sp, "_is_enemy_sprite", False):
+                        group.remove(sp)
+            except Exception:
+                continue
+
     def _sync_enemy_sprites(self):
         if not self.map_manager:
             self._enemy_sprites.clear()
             return
 
         group = self.map_manager.get_group()
-        # Garder les ennemis sous les layers "top"/"top2" de la map (voir asset/*.tmx)
         base_layer = self._get_enemy_layer()
 
         existing = set(self._enemy_sprites.keys())
@@ -137,7 +151,6 @@ class Gameplay_Scene:
         if top_indices:
             return max(0, min(top_indices) - 1)
 
-        # Fallback: place enemies above the ground-ish layers without forcing them over everything.
         if not self._warned_enemy_layer:
             try:
                 layer_names = [getattr(l, "name", "") for l in layers]
@@ -200,6 +213,7 @@ class Gameplay_Scene:
 
     def _on_map_changed(self, new_map_name):
         self.enemies.clear()
+        self._clear_enemy_sprites_from_all_groups()
         self._enemy_sprites.clear()
         enemy_zones = self.map_manager.get_spawn_zones()
         self._spawn_boss_once()
@@ -696,7 +710,6 @@ class Gameplay_Scene:
                                      (int(ep.x), int(ep.y)), 1)
 
     def save_game(self):
-    # Sauvegarde de l'inventaire
         inventory_items = []
         for item in self.player.inventory.items:
             if item:
@@ -708,7 +721,6 @@ class Gameplay_Scene:
                             "durability": item.durability
                         })
 
-        # Sauvegarde des items posés dans le monde
         dropped_items = []
         for dropped in self.dropped_items:
             for key, value in ITEMS_BY_NAME.items():
@@ -722,7 +734,6 @@ class Gameplay_Scene:
                         "map_name": getattr(dropped, 'map_name', None)
                     })
 
-        # Sauvegarde des ennemis
         enemies_data = []
         for enemy in self.enemies:
             enemies_data.append({
@@ -732,7 +743,6 @@ class Gameplay_Scene:
                 "health": enemy.health
             })
 
-        # Sauvegarde des coffres
         chests_data = []
         for chest in self.chests:
             chest_items = []
@@ -751,7 +761,6 @@ class Gameplay_Scene:
                 "items": chest_items
             })
 
-        # Sauvegarde de l'équipement
         equipment_data = {}
         for slot, item in self.player.equipment.items():
             if item:
@@ -792,7 +801,6 @@ class Gameplay_Scene:
 
         self.boss_defeated = bool(data.get("boss_defeated", False))
 
-        # Recrée le joueur
         player_class_name = data.get("player_class")
         player_class = globals().get(player_class_name)
         if player_class:
@@ -804,7 +812,6 @@ class Gameplay_Scene:
         self.player.rect.centery = int(self.player.position.y)
         self.player.health = data["player_health"]
 
-        # Réinitialise l'inventaire
         self.player.inventory.items.clear()
         for entry in data.get("inventory", []):
             item_template = ITEMS_BY_NAME.get(entry["id"])
@@ -814,7 +821,6 @@ class Gameplay_Scene:
                 loaded.durability = entry.get("durability", 100)
                 self.player.inventory.add_item(loaded)
 
-        # Réinitialise l'équipement
         self.player.equipment = {
             "weapon": None,
             "helmet": None,
@@ -830,14 +836,12 @@ class Gameplay_Scene:
                 loaded.durability = entry.get("durability", 100)
                 self.player.equipment[slot] = loaded
 
-        # Repositionne le joueur sur la carte
         map_name = data.get("current_map")
         if self.map_manager and map_name:
             self.map_manager.current_map = map_name
         self.player.rect.centerx = int(self.player.position.x)
         self.player.rect.centery = int(self.player.position.y)
 
-        # Réinitialise les items posés
         if self.map_manager:
             for dropped in self.dropped_items:
                 map_name = getattr(dropped, 'map_name', None)
@@ -856,7 +860,6 @@ class Gameplay_Scene:
                 d.map_name = dropped_data.get("map_name", None)
                 self._add_dropped_item(d)
 
-        # Réinitialise les ennemis
         self.enemies.clear()
         for enemy_data in data.get("enemies", []):
             enemy_class = globals().get(enemy_data["type"])
@@ -870,7 +873,6 @@ class Gameplay_Scene:
         self.enemies_killed = data["enemies_killed"]
         self.start_time = pygame.time.get_ticks() - data["time"]
 
-        # Réinitialise les coffres
         for chest_data in data.get("chests", []):
             for chest in self.chests:
                 if chest.id == chest_data["id"]:
