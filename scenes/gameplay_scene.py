@@ -412,7 +412,7 @@ class Gameplay_Scene:
         elif "camp" in name:
             keys = ["REINFORCED_WOOD", "MEAT", "FABRIC"]
         elif "church" in name:
-            keys = ["WEED", "WEED","BOTTS_SOLDAT", "BANDAGE", "BANDAGE","AHESIVE_TAPE"]
+            keys = ["WEED", "WEED","BOTTS_SOLDAT", "BANDAGE", "BANDAGE","ADHESIVE_TAPE"]
         elif "canteen" in name:
             keys = ["MEAT","MEAT","MEAT", "WATER", "WATER"]
         elif "class" in name:
