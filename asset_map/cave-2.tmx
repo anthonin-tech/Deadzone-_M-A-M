@@ -91,7 +91,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="Calque d'Objets 1">
-  <object id="1" name="exit_cave_2" x="304.5" y="200.5" width="19.5" height="9.16667"/>
+  <object id="1" name="exit_cave_2" x="304.5" y="200.5" width="19.5" height="18.7121"/>
   <object id="2" name="spawn_cave_2" x="314" y="233">
    <point/>
   </object>

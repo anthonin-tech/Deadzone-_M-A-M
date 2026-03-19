@@ -21,26 +21,26 @@ SAVE_FILE = "savegame.json"
 class Gameplay_Scene:
 
     def __init__(self, game, player):
-        self.game   = game
+        self.game = game
         self.player = player
         self.paused = False
 
-        self.enemies       = []
+        self.enemies = []
         self.dropped_items = []
-        self.chests        = []
-        self.projectiles   = []
+        self.chests = []
+        self.projectiles = []
 
-        self.nearby_item   = None
-        self.nearby_chest  = None
+        self.nearby_item = None
+        self.nearby_chest = None
         self.enemies_killed = 0
-        self.start_time    = pygame.time.get_ticks()
+        self.start_time = pygame.time.get_ticks()
         self.boss_defeated = False
 
-        self.bg_color    = (30, 80, 30)
-        self.font        = pygame.font.Font(None, 24)
+        self.bg_color = (30, 80, 30)
+        self.font = pygame.font.Font(None, 24)
         self.font_pickup = pygame.font.Font(None, 28)
 
-        self._spawn_timer    = 0
+        self._spawn_timer = 0
         self._spawn_interval = 15
 
         self.map_manager = None
@@ -276,14 +276,14 @@ class Gameplay_Scene:
                 self.player.take_damage(5, 400, 300)
             if event.key == pygame.K_j:
                 self.player.heal(5)
-            if event.key == pygame.K_p:
+            if event.key == pygame.K_r:
                 if hasattr(self.player, "activate_power"):
                     activated = self.player.activate_power()
                     if activated:
                         name = getattr(self.player, "POWER_NAME", "Pouvoir")
             if event.key == pygame.K_F5:
                 self.save_game()
-            if event.key == pygame.K_m:
+            if event.key == pygame.K_c:
                 self.paused = not self.paused
 
     def try_pickup_item(self):
@@ -454,16 +454,14 @@ class Gameplay_Scene:
             ],
         }
 
-        
-
         for map_name, spawn_table in spawn_config.items():
             if map_name not in self.map_manager.maps:
                 continue
 
             map_obj = self.map_manager.maps[map_name]
-            walls   = map_obj.walls
-            map_w   = map_obj.tmx_data.width  * map_obj.tmx_data.tilewidth
-            map_h   = map_obj.tmx_data.height * map_obj.tmx_data.tileheight
+            walls = map_obj.walls
+            map_w = map_obj.tmx_data.width  * map_obj.tmx_data.tilewidth
+            map_h = map_obj.tmx_data.height * map_obj.tmx_data.tileheight
 
             zones = self.map_manager.maps[map_name].item_spawn_zones
             if not zones:
@@ -482,7 +480,7 @@ class Gameplay_Scene:
                     item_rect = pygame.Rect(x - 8, y - 8, 16, 16)
                     if item_rect.collidelist(walls) != -1:
                         continue
-                    item          = copy.copy(ITEMS_BY_NAME[key])
+                    item = copy.copy(ITEMS_BY_NAME[key])
                     item.quantity = random.randint(qty_min, qty_max)
                     dropped = DroppedItem(item, x, y)
                     dropped.map_name = map_name
@@ -602,13 +600,13 @@ class Gameplay_Scene:
 
         if power_active:
             color = (80, 255, 80)
-            label = f"[P] {power_name} : {remaining:.0f}s"
+            label = f"[R] {power_name} : {remaining:.0f}s"
         elif cooldown_active:
             color = (255, 160, 40)
-            label = f"[P] Recharge : {remaining:.0f}s"
+            label = f"[R]] Recharge : {remaining:.0f}s"
         else:
             color = (160, 160, 255)
-            label = f"[P] {power_name} : pret"
+            label = f"[R] {power_name} : pret"
 
         bg = pygame.Surface((220, 38), pygame.SRCALPHA)
         bg.fill((0, 0, 0, 140))
@@ -649,8 +647,8 @@ class Gameplay_Scene:
             "TAB : Inventaire",
             "E : Ramasser / Ouvrir coffre",
             "Clic gauche : Tirer / Attaquer",
-            "P : Pouvoir spécial",
-            "M : Pause",
+            "R : Pouvoir spécial",
+            "C : Pause",
             "F5 : Sauvegarder",
         ]
         y_start = screen.get_height() // 2 - (len(lines) * 15)

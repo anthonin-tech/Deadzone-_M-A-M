@@ -69,8 +69,8 @@
   <object id="23" name="spawn_cave" x="156.419" y="285.567">
    <point/>
   </object>
-  <object id="25" name="enter_cave_2" x="117.571" y="81.1243" width="85.2393" height="29.3929"/>
-  <object id="26" name="enter_cave_2_exit" x="159.309" y="156.958">
+  <object id="25" name="enter_cave_2" x="117.571" y="81.1243" width="85.2393" height="57.0677"/>
+  <object id="26" name="enter_cave_2_exit" x="159.704" y="167.237">
    <point/>
   </object>
   <object id="28" name="chest_cave_1" type="collision" x="224.5" y="227" width="15.375" height="12.9375"/>

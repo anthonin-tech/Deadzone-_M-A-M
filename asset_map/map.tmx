@@ -866,7 +866,7 @@
 </data>
  </layer>
  <objectgroup id="14" name="Object" class="collision">
-  <object id="1" name="player" type="collision" x="356.409" y="876.629">
+  <object id="1" name="player" type="collision" x="791.659" y="819.129">
    <point/>
   </object>
   <object id="9" type="collision" x="1256.67" y="0.666667" width="0.666667"/>
@@ -1310,20 +1310,20 @@
   <object id="540" type="collision" x="-4" y="-6" width="6" height="970"/>
   <object id="542" type="collision" x="1598.67" y="0" width="5.33333" height="964"/>
   <object id="543" type="collision" x="-6.54545" y="958.455" width="1606.55" height="4.54545"/>
-  <object id="544" name="enter_cave" x="165" y="66.5" width="24.75" height="27.6136"/>
+  <object id="544" name="enter_cave" x="165" y="66.5" width="24.75" height="22.0681"/>
   <object id="545" name="enter_cave_exit" x="177.182" y="105">
    <point/>
   </object>
   <object id="546" name="enter_bunker" x="1553.09" y="720.455" width="14" height="14.6364"/>
-  <object id="547" name="enter_bunker_exit" x="1545.75" y="744">
+  <object id="547" name="enter_bunker_exit" x="1539.39" y="736.364">
    <point/>
   </object>
-  <object id="549" name="enter_church" x="169.5" y="764.25" width="35.25" height="21.5"/>
+  <object id="549" name="enter_church" x="169.5" y="764.25" width="35.25" height="29.75"/>
   <object id="550" name="enter_church_exit" x="186.5" y="817.25">
    <point/>
   </object>
-  <object id="551" name="enter_camp" x="664.182" y="202.364" width="15.5455" height="18.3636"/>
-  <object id="552" name="enter_camp_exit" x="664.909" y="231.364">
+  <object id="551" name="enter_camp" x="664.182" y="202.614" width="15.5455" height="15.5852"/>
+  <object id="552" name="enter_camp_exit" x="665.471" y="231.302">
    <point/>
   </object>
   <object id="553" type="collision" x="857.636" y="199.273" width="13.4545" height="4.18182"/>
@@ -1350,7 +1350,7 @@
  <objectgroup id="17" name=" item_spawn">
   <object id="584" type="item_spawn" x="2" y="880.667" width="810.667" height="78.6667"/>
   <object id="585" type="item_spawn" x="3" y="417" width="96" height="459"/>
-  <object id="586" type="item_spawn" x="100" y="800" width="441" height="81"/>
+  <object id="586" type="item_spawn" x="100" y="800" width="441" height="79.6667"/>
   <object id="587" type="item_spawn" x="237" y="604" width="302" height="196"/>
   <object id="588" type="item_spawn" x="97" y="120" width="540" height="441"/>
   <object id="589" type="item_spawn" x="239" y="558" width="576" height="47"/>

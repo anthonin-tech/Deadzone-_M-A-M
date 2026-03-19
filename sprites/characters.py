@@ -10,9 +10,9 @@ from sprites.player import Player
 
 
 class MAMPlayer(Player):
-    SPRITE_COLUMN     = 0
-    CHARACTER_NAME    = "MAM"
-    POWER_NAME        = "Pouvoir"
+    SPRITE_COLUMN = 0
+    CHARACTER_NAME = "MAM"
+    POWER_NAME = "Pouvoir"
 
     DISPLAY_W = 16
     DISPLAY_H = 16
@@ -134,7 +134,6 @@ class Mahe(MAMPlayer):
         return True
 
     def update_power(self):
-        """Appeler à chaque update pour gérer la durée et le cooldown."""
         now = time.time()
         if self.power_active and now - self._power_start >= self.POWER_DURATION:
             self.power_active = False
