@@ -42,9 +42,9 @@ class MenuScene:
     STATE_HELP = "help"
 
     CHARACTERS = [
-        (Mahe,     "Mahe",     "Uppercut : Boost de vitesse (60s)", "mahe"),
-        (Maelys,   "Maelys",   "Bouclier : reduit les degats (60s)", "maelys"),
-        (Anthonin, "Anthonin", "Invisibilite : zombies ignores (60s)", "anthonin"),
+        (Mahe,     "Mahe",     "Uppercut : Boost de vitesse (15s)", "mahe"),
+        (Maelys,   "Maelys",   "Bouclier : reduit les degats (15s)", "maelys"),
+        (Anthonin, "Anthonin", "Invisibilite : zombies ignores (15s)", "anthonin"),
     ]
 
     def __init__(self, game):

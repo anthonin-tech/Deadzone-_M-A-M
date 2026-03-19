@@ -25,7 +25,7 @@ class MAMPlayer(Player):
         self._power_start = 0
         self._cooldown_start = 0
 
-        self.POWER_DURATION = 60.0
+        self.POWER_DURATION = 15.0
         self.POWER_COOLDOWN = 60.0
 
         self._current_dir = "down"
@@ -127,7 +127,7 @@ class Mahe(MAMPlayer):
     SPRITE_COLUMN = 0
     CHARACTER_NAME = "Mahe"
     POWER_NAME = "Boost de vitesse"
-    POWER_DESCRIPTION = "Augmente la vitesse de déplacement de 50% pendant 60s"
+    POWER_DESCRIPTION = "Augmente la vitesse de déplacement de 50% pendant 15s"
 
     SPEED_MULTIPLIER = 1.5
 
@@ -159,7 +159,7 @@ class Maelys(MAMPlayer):
     SPRITE_COLUMN = 2
     CHARACTER_NAME = "Maelys"
     POWER_NAME = "Bouclier"
-    POWER_DESCRIPTION = "Réduit les dégâts de moitié pendant 10s"
+    POWER_DESCRIPTION = "Réduit les dégâts de moitié pendant 15s"
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
@@ -179,7 +179,7 @@ class Anthonin(MAMPlayer):
     SPRITE_COLUMN = 1
     CHARACTER_NAME = "Anthonin"
     POWER_NAME = "Invisibilité"
-    POWER_DESCRIPTION = "Les zombies ignorent le joueur pendant 10s"
+    POWER_DESCRIPTION = "Les zombies ignorent le joueur pendant 15s"
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
