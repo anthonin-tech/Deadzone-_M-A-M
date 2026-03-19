@@ -41,7 +41,7 @@ class Gameplay_Scene:
         self.font_pickup = pygame.font.Font(None, 28)
 
         self._spawn_timer = 0
-        self._spawn_interval = 15
+        self._spawn_interval = 60
 
         self.map_manager = None
         self._enemy_sprites = {}
