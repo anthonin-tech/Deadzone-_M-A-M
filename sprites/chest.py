@@ -10,9 +10,9 @@ _DISPLAY_W = _TILE_W * 3
 _DISPLAY_H = _TILE_H * 3   
 
 _CLOSED_COL = 0
-_OPEN_COL   = 0
+_OPEN_COL = 0
 _ROW_CLOSED = 0
-_ROW_OPEN   = 1
+_ROW_OPEN = 1
 
 _spritesheet: pygame.Surface | None = None
 
@@ -35,20 +35,20 @@ class Chest:
     INTERACT_DIST = 20
 
     def __init__(self, x: float, y: float, items=None):
-        self.x      = x
-        self.y      = y
-        self.items  = list(items) if items else []
+        self.x = x
+        self.y = y
+        self.items = list(items) if items else []
 
         self.id = f"{self.x}_{self.y}"
         self.is_open = False
 
         self._surf_closed: pygame.Surface | None = None
-        self._surf_open:   pygame.Surface | None = None
+        self._surf_open: pygame.Surface | None = None
 
     def _ensure_surfaces(self):
         if self._surf_closed is None:
             self._surf_closed = _crop_tile(_CLOSED_COL, _ROW_CLOSED)
-            self._surf_open   = _crop_tile(_OPEN_COL,   _ROW_OPEN)
+            self._surf_open = _crop_tile(_OPEN_COL,   _ROW_OPEN)
 
     @property
     def width(self)  -> int: return _TILE_W

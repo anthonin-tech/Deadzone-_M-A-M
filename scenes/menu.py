@@ -251,10 +251,10 @@ class MenuScene:
             ("Tirer", "Clic gauche"),
             ("Inventaire", "TAB"),
             ("Ramasser objet", "E"),
-            ("Pouvoir special", "P"),
+            ("Pouvoir special", "R"),
             ("Retour au menu", "Echap"),
+            ("Pause", "C"),
             ("Sauvegarder", "F5"),
-            ("Charger", "F9"),
         ]
 
         y = 210

@@ -10,7 +10,7 @@ except ImportError:
     MAP_AVAILABLE = False
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-ASSET_DIR    = os.path.join(PROJECT_ROOT, "asset_map")
+ASSET_DIR = os.path.join(PROJECT_ROOT, "asset_map")
 
 @dataclass
 class Portal:
@@ -86,10 +86,6 @@ class MapManager:
             self.teleport_player("player")
 
     def _compute_sprite_layer(self, tmx_data):
-        """
-        Pick a sprite layer that stays below overlay layers like "top"/"top2".
-        Falls back to 10 if we cannot determine anything.
-        """
         try:
             layers = list(getattr(tmx_data, "layers", []) or [])
         except Exception:
@@ -106,8 +102,6 @@ class MapManager:
 
         if not overlay_indexes:
             return 10
-
-        # Put sprites right below the first overlay layer.
         return max(0, min(overlay_indexes) - 1)
 
     def register_map(self, name, portals=[]):
@@ -186,8 +180,8 @@ class MapManager:
                         point = self.get_object(portal.origin_point)
                     except Exception:
                         continue
-                    w = max(int(getattr(point, "width",  0) or 48), 48)
-                    h = max(int(getattr(point, "height", 0) or 48), 48)
+                    w = int(getattr(point, "width",  1) or 1)
+                    h = int(getattr(point, "height", 1) or 1)
                     rect = pygame.Rect(int(point.x), int(point.y), w, h)
                     if self.player.feet.colliderect(rect):
                         self.current_map = portal.target_world

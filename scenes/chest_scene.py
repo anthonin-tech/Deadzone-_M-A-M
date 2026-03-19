@@ -58,14 +58,14 @@ def _draw_slot(surf, x, y, sz, hover=False, rarity=None):
 
 class ChestScene:
 
-    SLOT   = 48
+    SLOT = 48
     MARGIN = 5
-    COLS   = 4         
+    COLS = 4         
 
     def __init__(self, game, player, chest, return_scene=None):
-        self.game         = game
-        self.player       = player
-        self.chest        = chest
+        self.game = game
+        self.player = player
+        self.chest = chest
         self.return_scene = return_scene
 
         sw = game.screen.get_width()
@@ -89,20 +89,20 @@ class ChestScene:
         self.inv_gy = py + 40 + 28
 
        
-        desc_y         = py + 40 + grid_h + 10
-        desc_h         = 100
+        desc_y = py + 40 + grid_h + 10
+        desc_h = 100
         self.desc_rect = (px + 10, desc_y, pw - 20, desc_h)
 
         self.F = {
             "title": pygame.font.Font(None, 34),
-            "sec":   pygame.font.Font(None, 20),
-            "item":  pygame.font.Font(None, 19),
-            "hint":  pygame.font.Font(None, 17),
-            "qty":   pygame.font.Font(None, 20),
+            "sec": pygame.font.Font(None, 20),
+            "item": pygame.font.Font(None, 19),
+            "hint": pygame.font.Font(None, 17),
+            "qty": pygame.font.Font(None, 20),
         }
 
         self.hovered_chest_item = None
-        self.hovered_inv_item   = None
+        self.hovered_inv_item = None
 
         self._load_images()
         self._bg = self._build_bg(sw, sh)
@@ -234,7 +234,7 @@ class ChestScene:
  
 
         hints = [
-            ("Clic  Prendre",    (55, 160, 55)),
+            ("Clic  Prendre", (55, 160, 55)),
             ("Clic droit  Déposer", (190, 100, 15)),
             ("[E / Échap]  Fermer",  INK_D),
         ]
