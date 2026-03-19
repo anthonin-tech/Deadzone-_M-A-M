@@ -24,8 +24,9 @@ class MAMPlayer(Player):
         self.cooldown_active = False
         self._power_start = 0
         self._cooldown_start = 0
-        self.POWER_DURATION  = 60.0
-        self.POWER_COOLDOWN  = 60.0
+
+        self.POWER_DURATION = 60.0
+        self.POWER_COOLDOWN = 60.0
 
         self._current_dir = "down"
         self._sheet_loaded = False
@@ -95,63 +96,75 @@ class MAMPlayer(Player):
     def update_power(self):
         now = time.time()
 
-        if self.power_active:
-            if now - self._power_start >= self.POWER_DURATION:
-                self.power_active = False
-                self.cooldown_active = True
-                self._cooldown_start = now
+        
+        if self.power_active and now - self._power_start >= self.POWER_DURATION:
+            self.power_active = False
+            self.cooldown_active = True
+            self._cooldown_start = now
 
-        elif self.cooldown_active:
-            if now - self._cooldown_start >= self.POWER_COOLDOWN:
-                self.cooldown_active = False
+        
+        if self.cooldown_active and now - self._cooldown_start >= self.POWER_COOLDOWN:
+            self.cooldown_active = False
 
     def get_power_status(self):
         now = time.time()
+
         if self.power_active:
             return True, False, max(0.0, self.POWER_DURATION - (now - self._power_start))
+
         elif self.cooldown_active:
-            return False, True, max(0.0, self.POWER_COOLDOWN - (now - self._power_start))
+            return False, True, max(0.0, self.POWER_COOLDOWN - (now - self._cooldown_start))
+
         return False, False, 0.0
 
     def update(self, dt=None):
         super().update(dt)
         self.update_power()
 
+
+
 class Mahe(MAMPlayer):
     SPRITE_COLUMN = 0
     CHARACTER_NAME = "Mahe"
     POWER_NAME = "Boost de vitesse"
-    POWER_DESCRIPTION = "Augmente la vitesse de déplacement de 50% pendant 10s"    
-    SPEED_MULTIPLIER = 1.5   
+    POWER_DESCRIPTION = "Augmente la vitesse de déplacement de 50% pendant 60s"
+
+    SPEED_MULTIPLIER = 1.5
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
             return False
+
         self.power_active = True
         self._power_start = time.time()
-        self.original_speed = self.speed  
+
+        self.original_speed = self.speed
         self.speed *= self.SPEED_MULTIPLIER
+
         return True
 
     def update_power(self):
         now = time.time()
+
         if self.power_active and now - self._power_start >= self.POWER_DURATION:
             self.power_active = False
             self.cooldown_active = True
-            self._power_start = now
-            self.speed = self.original_speed  
-        elif self.cooldown_active and now - self._power_start >= self.POWER_COOLDOWN:
+            self._cooldown_start = now
+            self.speed = self.original_speed
+
+        elif self.cooldown_active and now - self._cooldown_start >= self.POWER_COOLDOWN:
             self.cooldown_active = False
 
 class Maelys(MAMPlayer):
     SPRITE_COLUMN = 2
     CHARACTER_NAME = "Maelys"
     POWER_NAME = "Bouclier"
-    POWER_DESCRIPTION = "Reduit les degats de moitie pendant 60s"
+    POWER_DESCRIPTION = "Réduit les dégâts de moitié pendant 10s"
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
             return False
+
         self.power_active = True
         self._power_start = time.time()
         return True
@@ -161,15 +174,17 @@ class Maelys(MAMPlayer):
             amount = max(1, amount // 2)
         super().take_damage(amount, attacker_x, attacker_y)
 
+
 class Anthonin(MAMPlayer):
     SPRITE_COLUMN = 1
     CHARACTER_NAME = "Anthonin"
-    POWER_NAME = "Invisibilite"
-    POWER_DESCRIPTION = "Zombies ignores pendant 60s"
+    POWER_NAME = "Invisibilité"
+    POWER_DESCRIPTION = "Les zombies ignorent le joueur pendant 10s"
 
     def activate_power(self):
         if self.power_active or self.cooldown_active:
             return False
+
         self.power_active = True
         self._power_start = time.time()
         return True
