@@ -92,7 +92,7 @@
  </layer>
  <objectgroup id="2" name="Calque d'Objets 1">
   <object id="1" name="exit_cave_2" x="304.5" y="200.5" width="19.5" height="18.7121"/>
-  <object id="2" name="spawn_cave_2" x="314" y="233">
+  <object id="2" name="spawn_cave_2" x="307.25" y="401">
    <point/>
   </object>
   <object id="3" type="collision" x="142" y="191.333" width="163" height="36.3333"/>
@@ -223,7 +223,6 @@
  </objectgroup>
  <objectgroup id="4" name="item_spawn"/>
  <objectgroup id="7" name="enemy_spawn">
-  <object id="146" x="337.333" y="330"/>
   <object id="154" type="enemy_spawn" x="338" y="328.667" width="30" height="40"/>
  </objectgroup>
 </map>

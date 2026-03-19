@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="47">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="50">
  <tileset firstgid="1" source="School-hall_.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
   <data encoding="csv">
@@ -98,5 +98,8 @@
    <point/>
   </object>
   <object id="44" name="enter_school_desk" x="443.818" y="301.636" width="10.9091" height="43.2727"/>
+  <object id="47" type="collision" x="451.25" y="293.5" width="14" height="58.25"/>
+  <object id="48" type="collision" x="148.75" y="300.75" width="22.75" height="52.75"/>
+  <object id="49" type="collision" x="277.5" y="423.5" width="69" height="15"/>
  </objectgroup>
 </map>
