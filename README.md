@@ -206,8 +206,8 @@ python main.py
 | `Clic gauche` | Tirer / Attaquer |
 | `E` | Ramasser un objet au sol ou ouvrir un coffre |
 | `TAB` | Ouvrir / Fermer l'inventaire |
-| `P` | Activer le pouvoir spécial du personnage |
-| `M` | Mettre en pause et afficher les instructions |
+| `R` | Activer le pouvoir spécial du personnage |
+| `C` | Mettre en pause et afficher les instructions |
 | `F5` | Sauvegarder la partie |
 | `Échap` | Retourner au menu principal |
 
