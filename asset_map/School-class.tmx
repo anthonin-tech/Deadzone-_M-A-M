@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="49">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="50">
  <tileset firstgid="1" source="School-class_.tsx"/>
  <tileset firstgid="401" source="All_Chest_Sprites_Combined.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
@@ -142,5 +142,6 @@
   </object>
   <object id="46" name="exit_school_class" x="316.25" y="360.25" width="59.25" height="12.5"/>
   <object id="47" name="chest_class" type="collision" x="256.182" y="211.455" width="15.8182" height="11.8182"/>
+  <object id="49" type="collision" x="312.875" y="367" width="72.125" height="16.625"/>
  </objectgroup>
 </map>

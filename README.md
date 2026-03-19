@@ -188,7 +188,7 @@ git clone https://github.com/anthonin-tech/Deadzone-_M-A-M.git
 cd "Deadzone-_M-A-M/Deadzone"
 
 # 2. Installer les dépendances
-pip install pygame pytmx
+pip install pygame pytmx pyscroll
 
 # 3. Lancer le jeu
 python main.py

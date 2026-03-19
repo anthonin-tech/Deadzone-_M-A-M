@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="63">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="64">
  <tileset firstgid="1" source="School-canteen_.tsx"/>
  <tileset firstgid="401" source="All_Chest_Sprites_Combined.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
@@ -142,11 +142,12 @@
   <object id="52" type="collision" x="432.75" y="373.75" width="15" height="23"/>
   <object id="53" type="collision" x="435.25" y="367.5" width="13.75" height="6.75"/>
   <object id="54" type="collision" x="424.75" y="386.25" width="10" height="10.75"/>
-  <object id="55" name="exit_school_canteen" x="449" y="303" width="11" height="30"/>
+  <object id="55" name="exit_school_canteen" x="449.5" y="301.25" width="11" height="32.75"/>
   <object id="56" name="spawn_school_canteen" x="438.333" y="316">
    <point/>
   </object>
   <object id="58" name="chest_canteen" type="collision" x="176.25" y="275" width="15" height="12.125"/>
+  <object id="63" type="collision" x="453.25" y="287.875" width="10.5" height="61.75"/>
  </objectgroup>
  <objectgroup id="4" name="enemy_spawn">
   <object id="62" type="enemy_spawn" x="255.362" y="289.416" width="10" height="10"/>

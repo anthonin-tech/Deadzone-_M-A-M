@@ -1335,7 +1335,7 @@
   <object id="561" type="collision" x="660.625" y="160.188" width="21.25" height="3.125"/>
   <object id="562" type="collision" x="704.875" y="160.813" width="7.5" height="5.9375"/>
   <object id="563" type="collision" x="707.125" y="171.375" width="3" height="3.5"/>
-  <object id="567" name="enter_school" x="1403.45" y="297.091" width="38.9091" height="27.6364"/>
+  <object id="567" name="enter_school" x="1403.45" y="294.546" width="38.9091" height="30.1819"/>
   <object id="568" type="collision" x="1395.64" y="295.455" width="7.27273" height="28.5455"/>
   <object id="569" type="collision" x="1442.73" y="296.364" width="11.0909" height="27.0909"/>
   <object id="570" name="enter_school_exit" x="1424.73" y="345.636">

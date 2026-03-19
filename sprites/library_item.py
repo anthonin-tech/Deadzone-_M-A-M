@@ -138,7 +138,7 @@ WOOD = Items(
 
 REINFORCED_WOOD = Items(
     id="REINFORCED_WOOD",
-    name="Bois Renforcée",
+    name="Bois Renforcé",
     category="ressource",
     rarity="epique",
     illustration="Bois_Renforcée_Ressource.png",

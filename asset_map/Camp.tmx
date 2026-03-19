@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="59">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="60">
  <tileset firstgid="1" source="tente_half.tsx"/>
  <layer id="1" name="Calque de Tuiles 1" width="40" height="40">
   <data encoding="csv">
@@ -46,7 +46,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="Calque d'Objets 1">
-  <object id="1" name="exit_camp" x="294.167" y="453.098" width="55.5" height="10.75"/>
+  <object id="1" name="exit_camp" x="294.167" y="453.098" width="55.5" height="8.25"/>
   <object id="2" name="spawn_camp" x="319.75" y="433.765">
    <point/>
   </object>
@@ -102,5 +102,6 @@
   <object id="54" type="collision" x="273.5" y="447.265" width="20.75" height="12.75"/>
   <object id="55" type="collision" x="349.25" y="448.015" width="22.5" height="11.5"/>
   <object id="56" type="collision" x="367.75" y="299.265" width="6.75" height="158"/>
+  <object id="59" type="collision" x="270.75" y="458" width="105.75" height="16.5"/>
  </objectgroup>
 </map>

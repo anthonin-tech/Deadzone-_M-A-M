@@ -603,7 +603,7 @@ class Gameplay_Scene:
             label = f"[R] {power_name} : {remaining:.0f}s"
         elif cooldown_active:
             color = (255, 160, 40)
-            label = f"[R]] Recharge : {remaining:.0f}s"
+            label = f"[R] Recharge : {remaining:.0f}s"
         else:
             color = (160, 160, 255)
             label = f"[R] {power_name} : pret"
