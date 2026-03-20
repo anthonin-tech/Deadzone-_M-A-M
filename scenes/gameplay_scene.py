@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import random
+import time
 from pathlib import Path
 from sprites.chest import Chest
 
@@ -770,6 +771,14 @@ class Gameplay_Scene:
                             "durability": item.durability
                         }
 
+        now = time.time()
+        power_data = {
+            "active": self.player.power_active,
+            "cooldown": self.player.cooldown_active,
+            "power_remaining": max(0, self.player.POWER_DURATION - (now - self.player._power_start)) if self.player.power_active else 0,
+            "cooldown_remaining": max(0, self.player.POWER_COOLDOWN - (now - self.player._cooldown_start)) if self.player.cooldown_active else 0
+        }
+
         data = {
             "player_class": self.player.__class__.__name__,
             "player_x": self.player.position.x,
@@ -783,7 +792,8 @@ class Gameplay_Scene:
             "enemies_killed": self.enemies_killed,
             "time": pygame.time.get_ticks() - self.start_time,
             "chests": chests_data,
-            "boss_defeated": self.boss_defeated
+            "boss_defeated": self.boss_defeated,
+            "power": power_data
         }
 
         with open(SAVE_FILE, "w") as f:
@@ -806,8 +816,7 @@ class Gameplay_Scene:
 
         self.player.position.x = data["player_x"]
         self.player.position.y = data["player_y"]
-        self.player.rect.centerx = int(self.player.position.x)
-        self.player.rect.centery = int(self.player.position.y)
+        self.player.rect.center = (int(self.player.position.x), int(self.player.position.y))
         self.player.health = data["player_health"]
 
         self.player.inventory.items.clear()
@@ -826,6 +835,7 @@ class Gameplay_Scene:
             "pants": None,
             "boots": None
         }
+
         for slot, entry in data.get("equipment", {}).items():
             item_template = ITEMS_BY_NAME.get(entry["id"])
             if item_template:
@@ -882,3 +892,21 @@ class Gameplay_Scene:
                             loaded.quantity = item_entry.get("quantity", 1)
                             loaded.durability = item_entry.get("durability", 100)
                             chest.items.append(loaded)
+
+        power_data = data.get("power", {})
+        now = time.time()
+
+        self.player.power_active = power_data.get("active", False)
+        self.player.cooldown_active = power_data.get("cooldown", False)
+
+        if self.player.power_active:
+            remaining = power_data.get("power_remaining", 0)
+            self.player._power_start = now - (self.player.POWER_DURATION - remaining)
+
+            if hasattr(self.player, "SPEED_MULTIPLIER"):
+                self.player.original_speed = self.player.speed
+                self.player.speed *= self.player.SPEED_MULTIPLIER
+
+        elif self.player.cooldown_active:
+            remaining = power_data.get("cooldown_remaining", 0)
+            self.player._cooldown_start = now - (self.player.POWER_COOLDOWN - remaining)
